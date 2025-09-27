@@ -230,6 +230,112 @@ export const handler = async (event, context) => {
       };
     }
 
+    // ===== QUOTE REQUESTS =====
+    
+    // Create quote request
+    if (path === '/api/quote-requests' && httpMethod === 'POST') {
+      try {
+        const data = JSON.parse(event.body || '{}');
+        
+        // Verify company exists
+        const companyResult = await pool.query('SELECT id, name FROM companies WHERE id = $1', [data.companyId]);
+        if (companyResult.rows.length === 0) {
+          return {
+            statusCode: 404,
+            headers,
+            body: JSON.stringify({ message: 'Company not found' }),
+          };
+        }
+
+        const company = companyResult.rows[0];
+        
+        // Insert quote request
+        const result = await pool.query(`
+          INSERT INTO quote_requests (
+            company_id, name, email, phone, company_name, 
+            service_type, message, urgency, preferred_contact, submitted_at
+          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW())
+          RETURNING *
+        `, [
+          data.companyId,
+          data.name,
+          data.email,
+          data.phone || null,
+          data.company || null,
+          data.serviceType || null,
+          data.message || null,
+          data.urgency || 'planerad',
+          data.preferredContact || 'email'
+        ]);
+
+        console.log(`Quote request submitted for ${company.name}:`, result.rows[0]);
+        
+        return {
+          statusCode: 201,
+          headers,
+          body: JSON.stringify(result.rows[0]),
+        };
+      } catch (error) {
+        console.error('Error creating quote request:', error);
+        return {
+          statusCode: 500,
+          headers,
+          body: JSON.stringify({ message: 'Failed to create quote request' }),
+        };
+      }
+    }
+
+    // ===== CLAIM REQUESTS =====
+    
+    // Create claim request for specific company
+    if (path.startsWith('/api/companies/') && path.endsWith('/claim') && httpMethod === 'POST') {
+      try {
+        const companyId = path.split('/')[3];
+        const data = JSON.parse(event.body || '{}');
+        
+        // Verify company exists
+        const companyResult = await pool.query('SELECT id, name FROM companies WHERE id = $1', [companyId]);
+        if (companyResult.rows.length === 0) {
+          return {
+            statusCode: 404,
+            headers,
+            body: JSON.stringify({ message: 'Company not found' }),
+          };
+        }
+
+        const company = companyResult.rows[0];
+        
+        // Insert claim request
+        const result = await pool.query(`
+          INSERT INTO claim_requests (
+            company_id, name, email, phone, message, submitted_at
+          ) VALUES ($1, $2, $3, $4, $5, NOW())
+          RETURNING *
+        `, [
+          companyId,
+          data.name,
+          data.email,
+          data.phone || null,
+          data.message || null
+        ]);
+
+        console.log(`Claim request submitted for ${company.name}:`, result.rows[0]);
+        
+        return {
+          statusCode: 201,
+          headers,
+          body: JSON.stringify(result.rows[0]),
+        };
+      } catch (error) {
+        console.error('Error creating claim request:', error);
+        return {
+          statusCode: 500,
+          headers,
+          body: JSON.stringify({ message: 'Failed to create claim request' }),
+        };
+      }
+    }
+
     // ===== ADMIN ROUTES =====
 
     // Admin login
