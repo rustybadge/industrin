@@ -3,6 +3,28 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertQuoteRequestSchema, insertClaimRequestSchema, insertCompanySchema } from "@shared/schema";
 import { z } from "zod";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+
+// JWT secret - in production, use environment variable
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+
+// Middleware to verify admin authentication
+const verifyAdminAuth = (req: any, res: any, next: any) => {
+  const token = req.headers.authorization?.replace('Bearer ', '');
+  
+  if (!token) {
+    return res.status(401).json({ message: 'No token provided' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as any;
+    req.admin = decoded;
+    next();
+  } catch (error) {
+    return res.status(401).json({ message: 'Invalid token' });
+  }
+};
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Get companies with search and filtering
@@ -230,6 +252,125 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error seeding companies:", error);
       res.status(500).json({ message: "Failed to seed companies" });
+    }
+  });
+
+  // ===== ADMIN ROUTES =====
+
+  // Admin login
+  app.post("/api/admin/login", async (req, res) => {
+    try {
+      const { username, password } = req.body;
+
+      if (!username || !password) {
+        return res.status(400).json({ message: 'Username and password are required' });
+      }
+
+      // Get user from database
+      const user = await storage.getUserByUsername(username);
+      if (!user) {
+        return res.status(401).json({ message: 'Invalid credentials' });
+      }
+
+      // Check password
+      const isValidPassword = await bcrypt.compare(password, user.password);
+      if (!isValidPassword) {
+        return res.status(401).json({ message: 'Invalid credentials' });
+      }
+
+      // Generate JWT token
+      const token = jwt.sign(
+        { 
+          id: user.id, 
+          username: user.username, 
+          role: user.role,
+          isSuperAdmin: user.isSuperAdmin 
+        },
+        JWT_SECRET,
+        { expiresIn: '24h' }
+      );
+
+      res.json({
+        admin: {
+          id: user.id,
+          username: user.username,
+          role: user.role,
+          isSuperAdmin: user.isSuperAdmin,
+        },
+        token,
+      });
+    } catch (error) {
+      console.error("Admin login error:", error);
+      res.status(500).json({ message: "Login failed" });
+    }
+  });
+
+  // Verify admin token
+  app.get("/api/admin/verify", verifyAdminAuth, async (req: any, res) => {
+    res.json(req.admin);
+  });
+
+  // Get admin dashboard stats
+  app.get("/api/admin/stats", verifyAdminAuth, async (req, res) => {
+    try {
+      // Get total companies
+      const allCompanies = await storage.getCompanies({});
+      
+      // Get claim requests by status
+      const allClaims = await storage.getAllClaimRequests();
+      
+      const stats = {
+        totalCompanies: allCompanies.length,
+        pendingClaims: allClaims.filter(claim => claim.status === 'pending').length,
+        approvedClaims: allClaims.filter(claim => claim.status === 'approved').length,
+        rejectedClaims: allClaims.filter(claim => claim.status === 'rejected').length,
+      };
+
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching admin stats:", error);
+      res.status(500).json({ message: "Failed to fetch stats" });
+    }
+  });
+
+  // Get all claim requests
+  app.get("/api/admin/claim-requests", verifyAdminAuth, async (req, res) => {
+    try {
+      const claimRequests = await storage.getAllClaimRequests();
+      res.json(claimRequests);
+    } catch (error) {
+      console.error("Error fetching claim requests:", error);
+      res.status(500).json({ message: "Failed to fetch claim requests" });
+    }
+  });
+
+  // Approve claim request
+  app.post("/api/admin/claim-requests/:id/approve", verifyAdminAuth, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { reviewNotes } = req.body;
+
+      await storage.updateClaimRequestStatus(id, 'approved', req.admin.id, reviewNotes);
+      
+      res.json({ message: 'Claim request approved' });
+    } catch (error) {
+      console.error("Error approving claim request:", error);
+      res.status(500).json({ message: "Failed to approve claim request" });
+    }
+  });
+
+  // Reject claim request
+  app.post("/api/admin/claim-requests/:id/reject", verifyAdminAuth, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { reviewNotes } = req.body;
+
+      await storage.updateClaimRequestStatus(id, 'rejected', req.admin.id, reviewNotes);
+      
+      res.json({ message: 'Claim request rejected' });
+    } catch (error) {
+      console.error("Error rejecting claim request:", error);
+      res.status(500).json({ message: "Failed to reject claim request" });
     }
   });
 

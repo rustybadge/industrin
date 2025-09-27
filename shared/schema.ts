@@ -8,6 +8,9 @@ export const users = pgTable("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
+  role: text("role").default("admin"), // 'admin', 'super_admin'
+  isSuperAdmin: boolean("is_super_admin").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
 export const companies = pgTable("companies", {
@@ -45,6 +48,21 @@ export const claimRequests = pgTable("claim_requests", {
   message: text("message").notNull(),
   status: claimRequestStatusEnum("status").default('pending'),
   submittedAt: timestamp("submitted_at").defaultNow(),
+  reviewedAt: timestamp("reviewed_at"),
+  reviewedBy: varchar("reviewed_by").references(() => users.id),
+  reviewNotes: text("review_notes"),
+});
+
+export const companyUsers = pgTable("company_users", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  companyId: varchar("company_id").notNull().references(() => companies.id),
+  email: text("email").notNull().unique(),
+  name: text("name").notNull(),
+  role: text("role").default("editor"), // 'editor', 'admin', 'owner'
+  accessToken: text("access_token").notNull().unique(),
+  createdAt: timestamp("created_at").defaultNow(),
+  approvedBy: varchar("approved_by").references(() => users.id),
+  isActive: boolean("is_active").default(true),
 });
 
 export const quoteRequests = pgTable("quote_requests", {
@@ -65,12 +83,28 @@ export const quoteRequests = pgTable("quote_requests", {
 export const companiesRelations = relations(companies, ({ many }) => ({
   claimRequests: many(claimRequests),
   quoteRequests: many(quoteRequests),
+  companyUsers: many(companyUsers),
 }));
 
 export const claimRequestsRelations = relations(claimRequests, ({ one }) => ({
   company: one(companies, {
     fields: [claimRequests.companyId],
     references: [companies.id],
+  }),
+  reviewer: one(users, {
+    fields: [claimRequests.reviewedBy],
+    references: [users.id],
+  }),
+}));
+
+export const companyUsersRelations = relations(companyUsers, ({ one }) => ({
+  company: one(companies, {
+    fields: [companyUsers.companyId],
+    references: [companies.id],
+  }),
+  approver: one(users, {
+    fields: [companyUsers.approvedBy],
+    references: [users.id],
   }),
 }));
 
@@ -96,6 +130,16 @@ export const insertClaimRequestSchema = createInsertSchema(claimRequests).omit({
   id: true,
   submittedAt: true,
   status: true,
+  reviewedAt: true,
+  reviewedBy: true,
+  reviewNotes: true,
+});
+
+export const insertCompanyUserSchema = createInsertSchema(companyUsers).omit({
+  id: true,
+  createdAt: true,
+  approvedBy: true,
+  accessToken: true,
 });
 
 export const insertQuoteRequestSchema = createInsertSchema(quoteRequests).omit({
@@ -112,6 +156,9 @@ export type Company = typeof companies.$inferSelect;
 
 export type InsertClaimRequest = z.infer<typeof insertClaimRequestSchema>;
 export type ClaimRequest = typeof claimRequests.$inferSelect;
+
+export type InsertCompanyUser = z.infer<typeof insertCompanyUserSchema>;
+export type CompanyUser = typeof companyUsers.$inferSelect;
 
 export type InsertQuoteRequest = z.infer<typeof insertQuoteRequestSchema>;
 export type QuoteRequest = typeof quoteRequests.$inferSelect;

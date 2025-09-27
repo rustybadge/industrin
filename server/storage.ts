@@ -34,6 +34,8 @@ export interface IStorage {
   // Claim Requests
   createClaimRequest(claimRequest: InsertClaimRequest): Promise<ClaimRequest>;
   getClaimRequestsByCompany(companyId: string): Promise<ClaimRequest[]>;
+  getAllClaimRequests(): Promise<ClaimRequest[]>;
+  updateClaimRequestStatus(id: string, status: 'approved' | 'rejected', reviewedBy: string, reviewNotes?: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -263,6 +265,30 @@ export class DatabaseStorage implements IStorage {
       .from(claimRequests)
       .where(eq(claimRequests.companyId, companyId))
       .orderBy(desc(claimRequests.submittedAt));
+  }
+
+  async getAllClaimRequests(): Promise<ClaimRequest[]> {
+    return await db
+      .select()
+      .from(claimRequests)
+      .orderBy(desc(claimRequests.submittedAt));
+  }
+
+  async updateClaimRequestStatus(
+    id: string, 
+    status: 'approved' | 'rejected', 
+    reviewedBy: string, 
+    reviewNotes?: string
+  ): Promise<void> {
+    await db
+      .update(claimRequests)
+      .set({
+        status,
+        reviewedAt: new Date(),
+        reviewedBy,
+        reviewNotes,
+      })
+      .where(eq(claimRequests.id, id));
   }
 }
 
