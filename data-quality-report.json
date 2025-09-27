@@ -1,0 +1,4597 @@
+{
+  "summary": {
+    "total": 363,
+    "complete": 0,
+    "partial": 355,
+    "minimal": 8,
+    "withCompleteContact": 0,
+    "withPartialContact": 358,
+    "withNoContact": 5
+  },
+  "companiesByQuality": [
+    {
+      "name": "AB Bröderna Hedbergs Mekaniska",
+      "slug": "ab-bröderna-hedbergs-mekaniska",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "AB Eica-Bolaget",
+      "slug": "ab-eica-bolaget",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "AB Höglandets Kompressorservice",
+      "slug": "ab-höglandets-kompressorservice",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "ABUS Kransystem AB",
+      "slug": "abus-kransystem-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Amada Scandinavia AB",
+      "slug": "amada-scandinavia-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Anjo Mekanik AB",
+      "slug": "anjo-mekanik-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Ankarnäs Svetsmekaniska",
+      "slug": "ankarnäs-svetsmekaniska",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Aros Swede Service AB",
+      "slug": "aros-swede-service-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Aröds Mekaniska Verkstad AB",
+      "slug": "aröds-mekaniska-verkstad-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "B. Sandhs Mekaniska Verkstad AB",
+      "slug": "b-sandhs-mekaniska-verkstad-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "BERGU – Bertram Process Engineering AB",
+      "slug": "bergu-bertram-process-engineering-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "BEVI AB - Norra Sverige",
+      "slug": "bevi-ab-norra-sverige",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Biab Truckservice AB",
+      "slug": "biab-truckservice-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "BmuTek AB",
+      "slug": "bmutek-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "BoMek Verkstads AB i Göteborg",
+      "slug": "bomek-verkstads-ab-i-göteborg",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "CARLHAG AB",
+      "slug": "carlhag-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "CERTEX Svenska AB",
+      "slug": "certex-svenska-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "CONRIT AB",
+      "slug": "conrit-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Constructor Sverige AB",
+      "slug": "constructor-sverige-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Cranemech AB",
+      "slug": "cranemech-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Crescocito AB",
+      "slug": "crescocito-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Dala Industri och Värmeservice AB",
+      "slug": "dala-industri-och-värmeservice-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Dematek AB - Trygga Lyft sedan 1919",
+      "slug": "dematek-ab-trygga-lyft-sedan-1919",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Dendro Lift AB",
+      "slug": "dendro-lift-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Dibo Produktionspartner AB",
+      "slug": "dibo-produktionspartner-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Duroc Laser Coating AB",
+      "slug": "duroc-laser-coating-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "DynaMate AB",
+      "slug": "dynamate-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Element Metech AB",
+      "slug": "element-metech-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Entech Energiteknik AB",
+      "slug": "entech-energiteknik-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Etra Sweden",
+      "slug": "etra-sweden",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "FANUC Nordic AB",
+      "slug": "fanuc-nordic-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Flintab AB",
+      "slug": "flintab-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Fyhrs Tryckluft-Service AB",
+      "slug": "fyhrs-tryckluft-service-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "GESAB Garage Equipment Service AB",
+      "slug": "gesab-garage-equipment-service-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Glafsfjordens Maskin och Svets AB",
+      "slug": "glafsfjordens-maskin-och-svets-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Hako Ground & Garden AB",
+      "slug": "hako-ground-garden-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Halmstads elektriska aktiebolag",
+      "slug": "halmstads-elektriska-aktiebolag",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Härnösands Plastindustri AB",
+      "slug": "härnösands-plastindustri-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Inkit AB",
+      "slug": "inkit-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "JS Industriservice",
+      "slug": "js-industriservice",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "KJK Lagerprodukter AB",
+      "slug": "kjk-lagerprodukter-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Linde Metallteknik AB",
+      "slug": "linde-metallteknik-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Linköpings IndustriMekano AB",
+      "slug": "linköpings-industrimekano-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "MD Allteknik AB",
+      "slug": "md-allteknik-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Milenko Mekaniska AB",
+      "slug": "milenko-mekaniska-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Mosås Trading",
+      "slug": "mosås-trading",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "NC JOUR AB",
+      "slug": "nc-jour-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "NOA Mekaniska AB",
+      "slug": "noa-mekaniska-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Automizer AB",
+      "slug": "automizer-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Autonomteknik i Kristianstad AB",
+      "slug": "autonomteknik-i-kristianstad-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Bandtec i Kalmar AB",
+      "slug": "bandtec-i-kalmar-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Batterielektronik i Värmland AB",
+      "slug": "batterielektronik-i-värmland-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Be-Ge Plåtindustri AB",
+      "slug": "be-ge-plåtindustri-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Best Lås & Säkerhetssystem AB",
+      "slug": "best-lås-säkerhetssystem-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "BGG Service AB",
+      "slug": "bgg-service-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Bil & Industribroms i Helsingborg",
+      "slug": "bil-industribroms-i-helsingborg",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Bjäre Industriteknik AB",
+      "slug": "bjäre-industriteknik-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Björkholms El AB",
+      "slug": "björkholms-el-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "BLIXTSERVICE - Startmotor & Generator",
+      "slug": "blixtservice-startmotor-generator",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Blomberg & Stensson AB",
+      "slug": "blomberg-stensson-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Blästerteknik i Gislaved AB",
+      "slug": "blästerteknik-i-gislaved-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Bobic Allsvets AB",
+      "slug": "bobic-allsvets-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Bolest i Varberg AB",
+      "slug": "bolest-i-varberg-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "BR Hermansson Ingenjörs AB",
+      "slug": "br-hermansson-ingenjörs-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Broddson AB",
+      "slug": "broddson-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Bröderna Carlsson AB",
+      "slug": "bröderna-carlsson-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "BT Olaussons Mekaniska AB",
+      "slug": "bt-olaussons-mekaniska-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "BTLe Produkter",
+      "slug": "btle-produkter",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Bygg & industriassistans i Södertälje AB",
+      "slug": "bygg-industriassistans-i-södertälje-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "C.R Pump & Svetservice AB",
+      "slug": "c-r-pump-svetservice-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Calormet AB",
+      "slug": "calormet-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Camatec Industriteknik AB",
+      "slug": "camatec-industriteknik-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Cicon Mekaniska Verkstads AB",
+      "slug": "cicon-mekaniska-verkstads-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "City Industriservice i Göteborg AB",
+      "slug": "city-industriservice-i-göteborg-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "CNC Factory AB",
+      "slug": "cnc-factory-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Svenska Elektrod AB",
+      "slug": "svenska-elektrod-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "SVETSAB / POLPOWER AB",
+      "slug": "svetsab-polpower-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Svetsreparatörerna i Piteå AB",
+      "slug": "svetsreparatörerna-i-piteå-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Svetsservice AB",
+      "slug": "svetsservice-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "SWEWAY Office AB",
+      "slug": "sweway-office-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Switchgear AB",
+      "slug": "switchgear-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Södertälje Finmekaniska AB",
+      "slug": "södertälje-finmekaniska-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "T Svets & Maskin",
+      "slug": "t-svets-maskin",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "TBO-Haglinds AB",
+      "slug": "tbo-haglinds-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Teknisk Klimatservice Norr AB",
+      "slug": "teknisk-klimatservice-norr-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "TLS Container Trading",
+      "slug": "tls-container-trading",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "TMC Partner AB",
+      "slug": "tmc-partner-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Tolax AB",
+      "slug": "tolax-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Triator Larm Tele Data AB",
+      "slug": "triator-larm-tele-data-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Uddeholm Svenska AB",
+      "slug": "uddeholm-svenska-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Uddevalla Plåt & Svets AB",
+      "slug": "uddevalla-plåt-svets-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "AB Plåtcenter i Halmstad",
+      "slug": "ab-plåtcenter-i-halmstad",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Arcos Hydraulik AB",
+      "slug": "arcos-hydraulik-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Avans Production AB",
+      "slug": "avans-production-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Backes Transportbandservice AB",
+      "slug": "backes-transportbandservice-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Bema Elautomatik AB",
+      "slug": "bema-elautomatik-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Brubakken AB",
+      "slug": "brubakken-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Bällsta Mekaniska AB",
+      "slug": "bällsta-mekaniska-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "CA TOOL AB",
+      "slug": "ca-tool-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Clean Machine i Falkenberg AB",
+      "slug": "clean-machine-i-falkenberg-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Containerhandel CARU AB",
+      "slug": "containerhandel-caru-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "CPLgruppen",
+      "slug": "cplgruppen",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Cromocol Scandinavia AB",
+      "slug": "cromocol-scandinavia-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Elektroverkstaden AB",
+      "slug": "elektroverkstaden-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Formec Teknik AB",
+      "slug": "formec-teknik-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Fornegard",
+      "slug": "fornegard",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "GIGS mekaniska AB",
+      "slug": "gigs-mekaniska-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Gullängets Mekaniska Verkstad AB",
+      "slug": "gullängets-mekaniska-verkstad-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Halmstad Industri El AB",
+      "slug": "halmstad-industri-el-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Hifab Halmstads Industriförnödenheter",
+      "slug": "hifab-halmstads-industriförnödenheter",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Hyva Mekanik AB",
+      "slug": "hyva-mekanik-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Höganäs Verkstads AB",
+      "slug": "höganäs-verkstads-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "INAB Mekaniska AB",
+      "slug": "inab-mekaniska-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Itsab AB",
+      "slug": "itsab-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "RZ Mekpart",
+      "slug": "rz-mekpart",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Rörick El. Verkstad AB",
+      "slug": "rörick-el-verkstad-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Scanunit AB",
+      "slug": "scanunit-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Segelborgs Industriservice AB",
+      "slug": "segelborgs-industriservice-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "SEJFO Engineering AB",
+      "slug": "sejfo-engineering-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Steam Boiler Service AB",
+      "slug": "steam-boiler-service-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Stilmekaniska i Skellefteå AB",
+      "slug": "stilmekaniska-i-skellefteå-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Storebro Machine Tools i Varberg AB",
+      "slug": "storebro-machine-tools-i-varberg-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Sunds Mekaniska AB",
+      "slug": "sunds-mekaniska-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Svarvmekano i Malmö AB",
+      "slug": "svarvmekano-i-malmö-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Svensk Licens Svetsning AB",
+      "slug": "svensk-licens-svetsning-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Svenska Rix Trade AB",
+      "slug": "svenska-rix-trade-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Svets & Montage i Västervik AB",
+      "slug": "svets-montage-i-västervik-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Svets & Robotteknik i Småland AB",
+      "slug": "svets-robotteknik-i-småland-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "RL Robotservice AB",
+      "slug": "rl-robotservice-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "A Rubertsson Allkal AB",
+      "slug": "a-rubertsson-allkal-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Axelssons Industri & Maskinservice AB - Lengpac - Leng",
+      "slug": "axelssons-industri-maskinservice-ab-lengpac-leng",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Boas Industriservice AB",
+      "slug": "boas-industriservice-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Borlänge Motorrenovering AB",
+      "slug": "borlänge-motorrenovering-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Eliasson & Lund Industrial Partner AB",
+      "slug": "eliasson-lund-industrial-partner-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Tangra AB",
+      "slug": "tangra-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "TRUMPF Maskin AB",
+      "slug": "trumpf-maskin-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Uddevalla Industritjänst AB",
+      "slug": "uddevalla-industritjänst-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Upplands Tuna Mekaniska Verkstad AB",
+      "slug": "upplands-tuna-mekaniska-verkstad-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Åhmans Traktorcentrum AB",
+      "slug": "åhmans-traktorcentrum-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Öbako AB",
+      "slug": "öbako-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Jernbro Industrial Services AB",
+      "slug": "jernbro-industrial-services-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Lina Gård Materialhantering Aktiebolag",
+      "slug": "lina-gård-materialhantering-aktiebolag",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Svenska Batteripoolen i Borlänge",
+      "slug": "svenska-batteripoolen-i-borlänge",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Teknisk Fastighetsservice i Norrland AB",
+      "slug": "teknisk-fastighetsservice-i-norrland-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "TG Ventilation AB",
+      "slug": "tg-ventilation-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Tryckluftsteknik i Westervik AB",
+      "slug": "tryckluftsteknik-i-westervik-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Elbogen Electric",
+      "slug": "elbogen-electric",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Swecon Anläggningsmaskiner AB",
+      "slug": "swecon-anläggningsmaskiner-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Svets och Materialteknik i Skaraborg AB",
+      "slug": "svets-och-materialteknik-i-skaraborg-ab",
+      "qualityLevel": "partial",
+      "score": 12,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "WoG Partner AB",
+      "slug": "wog-partner-ab",
+      "qualityLevel": "partial",
+      "score": 11,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "website",
+        "address"
+      ]
+    },
+    {
+      "name": "AB Smireko",
+      "slug": "ab-smireko",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Aesseal Sweden AB",
+      "slug": "aesseal-sweden-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Andreas Risne Maskinservice AB, AR Maskinservice",
+      "slug": "andreas-risne-maskinservice-ab-ar-maskinservice",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "APG Industriservice AB",
+      "slug": "apg-industriservice-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Askalon AB",
+      "slug": "askalon-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Atlas Copco Compressor AB",
+      "slug": "atlas-copco-compressor-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Avesta Verkstäder AB",
+      "slug": "avesta-verkstäder-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Bengtssons Svets & Reparation AB",
+      "slug": "bengtssons-svets-reparation-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Bevi AB",
+      "slug": "bevi-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "BGC-Plåt i Horndal AB",
+      "slug": "bgc-plåt-i-horndal-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Bjärnums Stålprodukter AB",
+      "slug": "bjärnums-stålprodukter-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Texor AB",
+      "slug": "texor-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Bobbys Mek O Svets AB",
+      "slug": "bobbys-mek-o-svets-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Botab AB",
+      "slug": "botab-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "BS Verkstäder AB",
+      "slug": "bs-verkstäder-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Burseryds Mekaniska AB",
+      "slug": "burseryds-mekaniska-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "CIS Technic AB",
+      "slug": "cis-technic-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "CNC-Tekno Scandinavia AB",
+      "slug": "cnc-tekno-scandinavia-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Damaskus Maskinskydd AB",
+      "slug": "damaskus-maskinskydd-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Elme Magnets",
+      "slug": "elme-magnets",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "E-Rotor AB",
+      "slug": "e-rotor-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "FA-Tec i Falkenberg AB",
+      "slug": "fa-tec-i-falkenberg-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Ferrmek Verkstad AB",
+      "slug": "ferrmek-verkstad-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "G:berg Mekaniska AB",
+      "slug": "g-berg-mekaniska-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Gnosjö Automatsvarvning AB",
+      "slug": "gnosjö-automatsvarvning-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "GOTFire AB",
+      "slug": "gotfire-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Grindtech AB",
+      "slug": "grindtech-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Hagfors Vägstål AB",
+      "slug": "hagfors-vägstål-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Hamburg Machinery HM GmbH",
+      "slug": "hamburg-machinery-hm-gmbh",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Hestra Teknik AB",
+      "slug": "hestra-teknik-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Hestra Truck & Maskin AB",
+      "slug": "hestra-truck-maskin-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Hop Machines",
+      "slug": "hop-machines",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Hydraulik och industriservice i Kävlinge AB",
+      "slug": "hydraulik-och-industriservice-i-kävlinge-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Hydraulpartner i Sverige AB",
+      "slug": "hydraulpartner-i-sverige-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Härryda Mekaniska Verkstad AB",
+      "slug": "härryda-mekaniska-verkstad-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Industriunderhåll i Kungsäter AB",
+      "slug": "industriunderhåll-i-kungsäter-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "IQR Contract",
+      "slug": "iqr-contract",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "J. Persson Montage AB",
+      "slug": "j-persson-montage-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Jape Laserservice AB",
+      "slug": "jape-laserservice-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Järbo Svets & Press AB",
+      "slug": "järbo-svets-press-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Karlskoga Automatsvarvning AB",
+      "slug": "karlskoga-automatsvarvning-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "KIP Service AB",
+      "slug": "kip-service-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Laholms Mekaniska AB",
+      "slug": "laholms-mekaniska-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "LBY TECH AB",
+      "slug": "lby-tech-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Linto AB",
+      "slug": "linto-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Logscom AB",
+      "slug": "logscom-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Länna Svets & mekaniska verkstads AB",
+      "slug": "länna-svets-mekaniska-verkstads-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Marks Industriservice AB",
+      "slug": "marks-industriservice-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Meiszners Mekaniska AB",
+      "slug": "meiszners-mekaniska-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "MekHub AB",
+      "slug": "mekhub-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Melament AB",
+      "slug": "melament-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Nordholms Industriinstallationer AB",
+      "slug": "nordholms-industriinstallationer-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Nordic Bellows AB",
+      "slug": "nordic-bellows-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Norrbo Svets AB",
+      "slug": "norrbo-svets-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Northbound AB",
+      "slug": "northbound-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "OMP WORKS OY",
+      "slug": "omp-works-oy",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "PBH Teknik AB",
+      "slug": "pbh-teknik-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Atlings Maskinfabrik AB",
+      "slug": "atlings-maskinfabrik-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "AUTO CNC-bearbetning i Emmaboda AB",
+      "slug": "auto-cnc-bearbetning-i-emmaboda-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Autoreel AB",
+      "slug": "autoreel-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Bearbetningscenter i Västernorrland AB",
+      "slug": "bearbetningscenter-i-västernorrland-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Bengt i Slätteberg AB",
+      "slug": "bengt-i-slätteberg-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Bengtsfors Maskin & Industrimontage AB",
+      "slug": "bengtsfors-maskin-industrimontage-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Bengtssons Tools",
+      "slug": "bengtssons-tools",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Benjaminssons Maskin AB",
+      "slug": "benjaminssons-maskin-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Bergtrack AB",
+      "slug": "bergtrack-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Betab i Skellefteå AB",
+      "slug": "betab-i-skellefteå-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Bingers Mekan AB",
+      "slug": "bingers-mekan-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "BJ Svets & Anläggning AB",
+      "slug": "bj-svets-anläggning-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Björn Verktyg AB",
+      "slug": "björn-verktyg-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Björnell´s Mekaniska AB",
+      "slug": "björnell-s-mekaniska-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Blentarps Svetsmekaniska AB",
+      "slug": "blentarps-svetsmekaniska-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Borensbergs Industriservice AB",
+      "slug": "borensbergs-industriservice-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Bror Tonsjö AB",
+      "slug": "bror-tonsjö-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "BS Elcontrol AB",
+      "slug": "bs-elcontrol-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Buteo Verkstads AB",
+      "slug": "buteo-verkstads-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Byggnadssmide",
+      "slug": "byggnadssmide",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Byggsmide i Örnsköldsvik AB",
+      "slug": "byggsmide-i-örnsköldsvik-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Bäckman Blästermaskiner AB",
+      "slug": "bäckman-blästermaskiner-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Calotec AB",
+      "slug": "calotec-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Cargoservice OÜ",
+      "slug": "cargoservice-o",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Catrelo AB",
+      "slug": "catrelo-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Cedergrens i Klintehamn AB",
+      "slug": "cedergrens-i-klintehamn-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "CELEC AB",
+      "slug": "celec-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Chemiclean AB",
+      "slug": "chemiclean-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "CIFAB",
+      "slug": "cifab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "CLC Systems AB",
+      "slug": "clc-systems-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "CM Svetsteknik i Bollnäs AB",
+      "slug": "cm-svetsteknik-i-bollnäs-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "CNC-Service Kristinehamn AB",
+      "slug": "cnc-service-kristinehamn-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Colly Flowtech AB",
+      "slug": "colly-flowtech-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Svensk Hytt-Comfort AB",
+      "slug": "svensk-hytt-comfort-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Sverigemontage AB",
+      "slug": "sverigemontage-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Svets- & Industriservice i Skaraborg AB",
+      "slug": "svets-industriservice-i-skaraborg-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Svets & Maskinservice Emmaboda AB",
+      "slug": "svets-maskinservice-emmaboda-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Svets & Montage Industripartner SMIP AB",
+      "slug": "svets-montage-industripartner-smip-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Svets och Materialteknik i Askersund AB",
+      "slug": "svets-och-materialteknik-i-askersund-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Svetsbo AB",
+      "slug": "svetsbo-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "SVIZZA AB",
+      "slug": "svizza-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Sydvac",
+      "slug": "sydvac",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Sågcenter i Smålandsstenar AB",
+      "slug": "sågcenter-i-smålandsstenar-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Tankstationsbyggarna Processkontroll GT AB",
+      "slug": "tankstationsbyggarna-processkontroll-gt-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Tappers Allservice AB",
+      "slug": "tappers-allservice-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Team Industriservice Overgaard AB",
+      "slug": "team-industriservice-overgaard-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "TechMea AB",
+      "slug": "techmea-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Tecnovap Scandinavia AB",
+      "slug": "tecnovap-scandinavia-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Teddington AB",
+      "slug": "teddington-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Teknik & Mekanik AB",
+      "slug": "teknik-mekanik-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Teknoservice AB",
+      "slug": "teknoservice-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Test-Service i Göteborg AB",
+      "slug": "test-service-i-göteborg-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Thores Svets & Smide AB",
+      "slug": "thores-svets-smide-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Thünemann Fördertechnik GmbH",
+      "slug": "th-nemann-fördertechnik-gmbh",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Tibro Maskinreparationer AB",
+      "slug": "tibro-maskinreparationer-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Timars Svets och Smide AB",
+      "slug": "timars-svets-och-smide-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Tingsryds Smide AB",
+      "slug": "tingsryds-smide-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Tjust Maskinteknik AB",
+      "slug": "tjust-maskinteknik-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "TMA Service i Anderstorp AB",
+      "slug": "tma-service-i-anderstorp-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "TNC-Akuten AB",
+      "slug": "tnc-akuten-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Tomas Svensson Slipteknik",
+      "slug": "tomas-svensson-slipteknik",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Toni Fuchs Verktyg AB",
+      "slug": "toni-fuchs-verktyg-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Tranemo Elektromekaniska Verkstad AB",
+      "slug": "tranemo-elektromekaniska-verkstad-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Tranfoten AB",
+      "slug": "tranfoten-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Transmissionsservice JT AB",
+      "slug": "transmissionsservice-jt-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Tranås Byggsvets AB",
+      "slug": "tranås-byggsvets-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "TRELCO AB",
+      "slug": "trelco-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Trelleborgs Industri & Byggnadsservice AB",
+      "slug": "trelleborgs-industri-byggnadsservice-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Triton Valsteknik AB",
+      "slug": "triton-valsteknik-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "TRP Teknik AB",
+      "slug": "trp-teknik-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Tryckta i Markaryd AB",
+      "slug": "tryckta-i-markaryd-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "TSPlast Produktion AB",
+      "slug": "tsplast-produktion-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Två-Con Sverige AB",
+      "slug": "två-con-sverige-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Töcksfors Smide AB",
+      "slug": "töcksfors-smide-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "UCB Sweden AB",
+      "slug": "ucb-sweden-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Ulricehamns Fixturteknik AB",
+      "slug": "ulricehamns-fixturteknik-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "AB Nora Finmekaniska",
+      "slug": "ab-nora-finmekaniska",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "AllIsSon Engineering AB",
+      "slug": "allisson-engineering-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Anderstorps Mekaniska Verkstad AB",
+      "slug": "anderstorps-mekaniska-verkstad-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Arentorps Legoindustri AB",
+      "slug": "arentorps-legoindustri-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "ASK Industri AB",
+      "slug": "ask-industri-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "ATORP Automatsvarvning AB",
+      "slug": "atorp-automatsvarvning-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Auran Industries AB",
+      "slug": "auran-industries-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Automatdetaljer i Reftele AB",
+      "slug": "automatdetaljer-i-reftele-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Bosting AB",
+      "slug": "bosting-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Bråbo Mek. Verkstad AB",
+      "slug": "bråbo-mek-verkstad-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Comp Serv AB",
+      "slug": "comp-serv-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "DAMA Installation AB",
+      "slug": "dama-installation-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "E. Olssons Bil- & Maskinverkstad AB",
+      "slug": "e-olssons-bil-maskinverkstad-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Ekets Mekaniska AB",
+      "slug": "ekets-mekaniska-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Eksjöverken AB",
+      "slug": "eksjöverken-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Elektroautomatik i Mälardalen AB",
+      "slug": "elektroautomatik-i-mälardalen-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Elfströms Industrisvets AB",
+      "slug": "elfströms-industrisvets-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Essell-Produkter AB",
+      "slug": "essell-produkter-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Examec Maskinmontage AB",
+      "slug": "examec-maskinmontage-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Finspångs Finmekaniska Verkstad AB",
+      "slug": "finspångs-finmekaniska-verkstad-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "FM-Mattsson Mora Group AB",
+      "slug": "fm-mattsson-mora-group-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Focus Neon AB",
+      "slug": "focus-neon-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Fräs & Svarvteknik i Timrå",
+      "slug": "fräs-svarvteknik-i-timrå",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Galmont AB",
+      "slug": "galmont-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Genuine Swede Stål AB",
+      "slug": "genuine-swede-stål-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Glemminge Maskinteknik AB",
+      "slug": "glemminge-maskinteknik-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Gärsnäsaktiebolaget N. Olsson & C:o",
+      "slug": "gärsnäsaktiebolaget-n-olsson-c-o",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Haga alltjänst",
+      "slug": "haga-alltjänst",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Hahnmek AB",
+      "slug": "hahnmek-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Hallings Metallkomponent AB",
+      "slug": "hallings-metallkomponent-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "HJ Hydraulik Aktiebolag",
+      "slug": "hj-hydraulik-aktiebolag",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Husums Mekaniska AB",
+      "slug": "husums-mekaniska-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Industrirör Väst AB",
+      "slug": "industrirör-väst-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Ing.F:a Erik Dahlin AB",
+      "slug": "ing-f-a-erik-dahlin-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "J.U Allservice&Konsult AB",
+      "slug": "j-u-allservice-konsult-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "JL Sweden AB",
+      "slug": "jl-sweden-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Jme Service",
+      "slug": "jme-service",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Rotage AB",
+      "slug": "rotage-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Råda Plåt & Svets AB",
+      "slug": "råda-plåt-svets-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Sjuntorps Produktionsteknik AB",
+      "slug": "sjuntorps-produktionsteknik-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Stans & Press i Olofström AB",
+      "slug": "stans-press-i-olofström-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Strömbergs Rör & Svets AB",
+      "slug": "strömbergs-rör-svets-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Sundsvalls Industrimekaniska AB",
+      "slug": "sundsvalls-industrimekaniska-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Svedala Mekaniska AB",
+      "slug": "svedala-mekaniska-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Svemac AB",
+      "slug": "svemac-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Svenssons Hydraulikservice AB",
+      "slug": "svenssons-hydraulikservice-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Fermat Sweden AB",
+      "slug": "fermat-sweden-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Svetstek i Smålandsstenar AB",
+      "slug": "svetstek-i-smålandsstenar-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Thage Anderssons Byggnads AB",
+      "slug": "thage-anderssons-byggnads-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Tobbes Svets & Montage AB",
+      "slug": "tobbes-svets-montage-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Tooli Hydraulic Fixture Tools AB",
+      "slug": "tooli-hydraulic-fixture-tools-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Tor Jansson Verktyg AB",
+      "slug": "tor-jansson-verktyg-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Trio Perfekta AB",
+      "slug": "trio-perfekta-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Uhros Verktygs AB",
+      "slug": "uhros-verktygs-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Vads CNC AB",
+      "slug": "vads-cnc-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Valbrants Automationsteknik AB",
+      "slug": "valbrants-automationsteknik-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Vetlanda Maskin & Industriservice",
+      "slug": "vetlanda-maskin-industriservice",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Wingafield Svets & Stålkontroll AB",
+      "slug": "wingafield-svets-stålkontroll-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Vänersborgs Svets & Mekaniska Verkstad AB",
+      "slug": "vänersborgs-svets-mekaniska-verkstad-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Örnsköldsviks Svets och Bearbetningscentra AB",
+      "slug": "örnsköldsviks-svets-och-bearbetningscentra-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Karlskoga Härd & Slip AB",
+      "slug": "karlskoga-härd-slip-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Autorep & mek",
+      "slug": "autorep-mek",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "BAM/ Bodens Anläggning och Mark AB",
+      "slug": "bam-bodens-anläggning-och-mark-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Bodins i Lekeberg AB",
+      "slug": "bodins-i-lekeberg-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Broby Modellindustri AB",
+      "slug": "broby-modellindustri-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Carlsson Industriservice AB",
+      "slug": "carlsson-industriservice-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Svensk Kylindustri AB",
+      "slug": "svensk-kylindustri-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Ullstens Mekaniska Verkstad AB",
+      "slug": "ullstens-mekaniska-verkstad-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Bergslagens Kranlyft AB",
+      "slug": "bergslagens-kranlyft-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Imagine Development & Design AB",
+      "slug": "imagine-development-design-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Industriservice i Braås AB",
+      "slug": "industriservice-i-braås-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Ingemars Mekaniska i Svenljunga AB",
+      "slug": "ingemars-mekaniska-i-svenljunga-ab",
+      "qualityLevel": "partial",
+      "score": 10,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website"
+      ]
+    },
+    {
+      "name": "Bengtssons Maskin AB",
+      "slug": "bengtssons-maskin-ab",
+      "qualityLevel": "minimal",
+      "score": 9,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website",
+        "city"
+      ]
+    },
+    {
+      "name": "CARLSTAD MACHINETOOLS AB",
+      "slug": "carlstad-machinetools-ab",
+      "qualityLevel": "minimal",
+      "score": 9,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "contactEmail",
+        "phone",
+        "website"
+      ]
+    },
+    {
+      "name": "Anker Brdr. Hasle ApS",
+      "slug": "anker-brdr-hasle-aps",
+      "qualityLevel": "minimal",
+      "score": 7,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "phone",
+        "website"
+      ]
+    },
+    {
+      "name": "Momek Services AS",
+      "slug": "momek-services-as",
+      "qualityLevel": "minimal",
+      "score": 7,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "phone",
+        "website"
+      ]
+    },
+    {
+      "name": "AWI Hydraulic Pneumatic AB",
+      "slug": "awi-hydraulic-pneumatic-ab",
+      "qualityLevel": "minimal",
+      "score": 7,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "phone",
+        "website"
+      ]
+    },
+    {
+      "name": "Ehcolo A/S",
+      "slug": "ehcolo-a-s",
+      "qualityLevel": "minimal",
+      "score": 7,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website",
+        "address",
+        "city",
+        "postalCode"
+      ]
+    },
+    {
+      "name": "Tedservice AB",
+      "slug": "tedservice-ab",
+      "qualityLevel": "minimal",
+      "score": 7,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "website",
+        "address",
+        "city",
+        "postalCode"
+      ]
+    },
+    {
+      "name": "F.M.T. Group s.r.o.",
+      "slug": "f-m-t-group-s-r-o",
+      "qualityLevel": "minimal",
+      "score": 4,
+      "hasCompleteContact": false,
+      "missingFields": [
+        "description",
+        "region",
+        "contactEmail",
+        "phone",
+        "website",
+        "address",
+        "city",
+        "postalCode"
+      ]
+    }
+  ]
+}
