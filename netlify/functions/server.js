@@ -1,5 +1,9 @@
 // Netlify serverless function to handle API routes
-import { Pool } from '@neondatabase/serverless';
+import { Pool, neonConfig } from '@neondatabase/serverless';
+import ws from 'ws';
+
+// Configure Neon for serverless environment
+neonConfig.webSocketConstructor = ws;
 
 // Netlify serverless function handler
 export const handler = async (event, context) => {
