@@ -94,7 +94,7 @@ export default function ScrollWall({ quality, companyName, onClaimClick, onDismi
             {/* Stats */}
             <div className="bg-gray-50 rounded-lg p-4 mb-6">
               <div className="flex justify-between text-sm text-gray-600">
-                <span>Komplett data:</span>
+                <span>Komplett information:</span>
                 <span className="font-semibold">{quality.score}/{quality.maxScore} fält</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2 mt-2">

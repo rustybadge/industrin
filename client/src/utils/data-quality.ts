@@ -65,10 +65,10 @@ export function calculateDataQuality(company: Company): DataQualityScore {
 
 export function getDataQualityMessage(quality: DataQualityScore): string {
   const messages = {
-    'excellent': 'Utmärkt data - komplett företagsprofil',
-    'good': 'Bra data - några detaljer saknas',
-    'poor': 'Begränsad data - behöver kompletteras',
-    'very-poor': 'Mycket begränsad data - behöver omfattande komplettering',
+    'excellent': 'Utmärkt information - komplett företagsprofil',
+    'good': 'Bra information - några detaljer saknas',
+    'poor': 'Ofullständig information - behöver kompletteras',
+    'very-poor': 'Mycket begränsad information - behöver omfattande komplettering',
   };
   
   return messages[quality.level];
