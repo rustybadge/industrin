@@ -97,10 +97,10 @@ export default function SmartSearch({ onSearch, placeholder = "Sök företag, or
   const handleAddTag = (suggestion: SearchTag) => {
     // For company suggestions, navigate directly to the company profile
     if (suggestion.type === 'company') {
-      // Find the company by name to get its ID
+      // Find the company by name to get its slug
       const company = companies.find(c => c.name === suggestion.value);
       if (company) {
-        window.location.href = `/company/${company.id}`;
+        window.location.href = `/companies/${company.slug}`;
         return;
       }
     }

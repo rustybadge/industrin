@@ -51,7 +51,59 @@ export const handler = async (event, context) => {
     const pool = new Pool({ connectionString: process.env.DATABASE_URL });
     
     if (path === '/api/companies' && httpMethod === 'GET') {
-      const result = await pool.query('SELECT * FROM companies ORDER BY name');
+      const url = new URL(`https://example.com${path}${event.queryStringParameters ? '?' + new URLSearchParams(event.queryStringParameters).toString() : ''}`);
+      const search = url.searchParams.get('search');
+      const region = url.searchParams.get('region');
+      const categories = url.searchParams.get('categories');
+      const limit = url.searchParams.get('limit');
+      
+      // Build the WHERE clause based on filters
+      let whereConditions = [];
+      let queryParams = [];
+      let paramIndex = 1;
+      
+      if (search) {
+        const searchTerms = search.split(/\s+/);
+        const searchConditions = [];
+        
+        for (const term of searchTerms) {
+          searchConditions.push(`(
+            name ILIKE $${paramIndex} OR
+            description ILIKE $${paramIndex} OR
+            description_sv ILIKE $${paramIndex} OR
+            categories::text ILIKE $${paramIndex} OR
+            city ILIKE $${paramIndex} OR
+            region ILIKE $${paramIndex}
+          )`);
+          queryParams.push(`%${term}%`);
+          paramIndex++;
+        }
+        
+        if (searchConditions.length > 1) {
+          whereConditions.push(`(${searchConditions.join(' AND ')})`);
+        } else {
+          whereConditions.push(searchConditions[0]);
+        }
+      }
+      
+      if (region && region !== 'Alla regioner') {
+        whereConditions.push(`region = $${paramIndex}`);
+        queryParams.push(region);
+        paramIndex++;
+      }
+      
+      if (categories) {
+        const categoryArray = categories.split(',');
+        const categoryConditions = categoryArray.map(() => `categories::text ILIKE $${paramIndex++}`);
+        whereConditions.push(`(${categoryConditions.join(' OR ')})`);
+        categoryArray.forEach(cat => queryParams.push(`%${cat}%`));
+      }
+      
+      const whereClause = whereConditions.length > 0 ? `WHERE ${whereConditions.join(' AND ')}` : '';
+      const limitClause = limit ? `LIMIT ${parseInt(limit)}` : '';
+      
+      const query = `SELECT * FROM companies ${whereClause} ORDER BY name ${limitClause}`;
+      const result = await pool.query(query, queryParams);
       
       // Map database column names to frontend expected format
       const mappedCompanies = result.rows.map(company => ({
