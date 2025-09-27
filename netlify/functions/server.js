@@ -309,6 +309,70 @@ export const handler = async (event, context) => {
         body: JSON.stringify({ message: 'Claim request rejected' }),
       };
     }
+
+    // Change admin password
+    if (path === '/api/admin/change-password' && httpMethod === 'POST') {
+      const authResult = verifyAdminAuth(event);
+      if (authResult.error) {
+        return {
+          statusCode: authResult.statusCode,
+          headers,
+          body: JSON.stringify({ message: authResult.error }),
+        };
+      }
+
+      const { currentPassword, newPassword } = JSON.parse(event.body || '{}');
+
+      if (!currentPassword || !newPassword) {
+        return {
+          statusCode: 400,
+          headers,
+          body: JSON.stringify({ message: 'Current password and new password are required' }),
+        };
+      }
+
+      if (newPassword.length < 8) {
+        return {
+          statusCode: 400,
+          headers,
+          body: JSON.stringify({ message: 'New password must be at least 8 characters long' }),
+        };
+      }
+
+      // Get current user
+      const userResult = await pool.query('SELECT * FROM users WHERE id = $1', [authResult.admin.id]);
+      if (userResult.rows.length === 0) {
+        return {
+          statusCode: 404,
+          headers,
+          body: JSON.stringify({ message: 'User not found' }),
+        };
+      }
+
+      const user = userResult.rows[0];
+
+      // Verify current password
+      const isValidPassword = await bcrypt.compare(currentPassword, user.password);
+      if (!isValidPassword) {
+        return {
+          statusCode: 401,
+          headers,
+          body: JSON.stringify({ message: 'Current password is incorrect' }),
+        };
+      }
+
+      // Hash new password
+      const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+      // Update password
+      await pool.query('UPDATE users SET password = $1 WHERE id = $2', [hashedNewPassword, authResult.admin.id]);
+
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ message: 'Password updated successfully' }),
+      };
+    }
     
     return {
       statusCode: 404,

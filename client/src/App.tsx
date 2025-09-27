@@ -13,6 +13,7 @@ import QuoteRequest from "@/pages/quote-request";
 import Integritetspolicy from "@/pages/integritetspolicy";
 import AdminLogin from "@/pages/admin-login";
 import AdminDashboard from "@/pages/admin-dashboard";
+import AdminSettings from "@/pages/admin-settings";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import { useScrollToTop } from "@/hooks/use-scroll-to-top";
@@ -27,6 +28,7 @@ function Router() {
         {/* Admin routes - no header/footer */}
         <Route path="/admin/login" component={AdminLogin} />
         <Route path="/admin" component={AdminDashboard} />
+        <Route path="/admin/settings" component={AdminSettings} />
         
         {/* Public routes - with header/footer */}
         <Route path="/">

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useLocation } from 'wouter';
 import { useAdminAuth } from '@/contexts/admin-auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -40,6 +41,7 @@ interface DashboardStats {
 
 export default function AdminDashboard() {
   const { admin, logout } = useAdminAuth();
+  const [, navigate] = useLocation();
   const [selectedTab, setSelectedTab] = useState<'overview' | 'claims'>('overview');
 
   // Fetch dashboard stats
@@ -136,7 +138,7 @@ export default function AdminDashboard() {
               </Badge>
             </div>
             <div className="flex items-center space-x-4">
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" onClick={() => navigate('/admin/settings')}>
                 <Settings className="h-4 w-4 mr-2" />
                 Settings
               </Button>
