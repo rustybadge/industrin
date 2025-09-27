@@ -1,41 +1,5 @@
 // Netlify serverless function to handle API routes
-import { Pool, neonConfig } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-serverless';
-import ws from "ws";
-import { pgTable, text, varchar, boolean, timestamp, pgEnum } from 'drizzle-orm/pg-core';
-import { sql } from 'drizzle-orm';
-
-// Configure Neon
-neonConfig.webSocketConstructor = ws;
-
-// Database setup
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-const db = drizzle({ client: pool });
-
-// Company schema (simplified)
-const companies = pgTable("companies", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  name: text("name").notNull(),
-  slug: text("slug").notNull().unique(),
-  logoUrl: text("logo_url"),
-  description: text("description").notNull(),
-  description_sv: text("description_sv"),
-  categories: text("categories").array().notNull().default(sql`'{}'::text[]`),
-  services: text("services").array().default(sql`'{}'::text[]`),
-  serviceområden: text("serviceområden").array().default(sql`'{}'::text[]`),
-  specialties: text("specialties"),
-  location: text("location").notNull(),
-  region: text("region").notNull(),
-  contactEmail: text("contact_email"),
-  phone: text("phone"),
-  website: text("website"),
-  address: text("address"),
-  postalCode: text("postal_code"),
-  city: text("city"),
-  isFeatured: boolean("is_featured").default(false),
-  isVerified: boolean("is_verified").default(false),
-  createdAt: timestamp("created_at").defaultNow(),
-});
+import { Pool } from '@neondatabase/serverless';
 
 // Netlify serverless function handler
 export const handler = async (event, context) => {
@@ -58,24 +22,24 @@ export const handler = async (event, context) => {
       };
     }
     
+    // Database connection
+    const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+    
     if (path === '/api/companies' && httpMethod === 'GET') {
-      const companies_data = await db.select().from(companies);
+      const result = await pool.query('SELECT * FROM companies ORDER BY name');
       
       return {
         statusCode: 200,
         headers,
-        body: JSON.stringify(companies_data),
+        body: JSON.stringify(result.rows),
       };
     }
     
     if (path.startsWith('/api/companies/') && httpMethod === 'GET') {
       const slug = path.split('/').pop();
-      const company = await db.select()
-        .from(companies)
-        .where(sql`${companies.slug} = ${slug}`)
-        .limit(1);
+      const result = await pool.query('SELECT * FROM companies WHERE slug = $1', [slug]);
       
-      if (company.length === 0) {
+      if (result.rows.length === 0) {
         return {
           statusCode: 404,
           headers,
@@ -86,39 +50,29 @@ export const handler = async (event, context) => {
       return {
         statusCode: 200,
         headers,
-        body: JSON.stringify(company[0]),
+        body: JSON.stringify(result.rows[0]),
       };
     }
     
     if (path === '/api/regions' && httpMethod === 'GET') {
-      const regions = await db.select({ region: companies.region })
-        .from(companies)
-        .groupBy(companies.region);
-      
-      const regionList = regions.map(r => r.region).filter(r => r);
+      const result = await pool.query('SELECT DISTINCT region FROM companies WHERE region IS NOT NULL AND region != \'\' ORDER BY region');
+      const regions = result.rows.map(row => row.region);
       
       return {
         statusCode: 200,
         headers,
-        body: JSON.stringify(regionList),
+        body: JSON.stringify(regions),
       };
     }
     
     if (path === '/api/categories' && httpMethod === 'GET') {
-      const categories = await db.select({ categories: companies.categories })
-        .from(companies);
-      
-      const categorySet = new Set();
-      categories.forEach(c => {
-        if (c.categories) {
-          c.categories.forEach(cat => categorySet.add(cat));
-        }
-      });
+      const result = await pool.query('SELECT DISTINCT unnest(categories) as category FROM companies WHERE categories IS NOT NULL ORDER BY category');
+      const categories = result.rows.map(row => row.category);
       
       return {
         statusCode: 200,
         headers,
-        body: JSON.stringify(Array.from(categorySet)),
+        body: JSON.stringify(categories),
       };
     }
     
