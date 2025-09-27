@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-
-
+import ScrollWall from "@/components/ui/scroll-wall";
+import { calculateDataQuality } from "@/utils/data-quality";
 
 import { 
   Mail, 
@@ -87,6 +87,9 @@ export default function CompanyProfile() {
 
   // Use Swedish description if available, otherwise fall back to English
   const displayDescription = company.description_sv || company.description;
+  
+  // Calculate data quality for scroll wall
+  const dataQuality = calculateDataQuality(company);
 
   return (
     <div className="min-h-screen bg-white py-8">
@@ -160,9 +163,20 @@ export default function CompanyProfile() {
               <div>
                 <h2 className="font-bold mb-6 tracking-tight custom-size text-[#161616] text-[38px]" style={{fontSize: '38px'}}>Om företaget</h2>
                 <div className="prose prose-gray max-w-none">
-                  <p className="text-gray-700 leading-7 text-lg whitespace-pre-wrap">
-                    {displayDescription}
-                  </p>
+                  {displayDescription && displayDescription.length >= 50 ? (
+                    <p className="text-gray-700 leading-7 text-lg whitespace-pre-wrap">
+                      {displayDescription}
+                    </p>
+                  ) : (
+                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
+                      <p className="text-gray-500 text-center italic">
+                        Ingen beskrivning tillgänglig för detta företag.
+                      </p>
+                      <p className="text-gray-400 text-sm text-center mt-2">
+                        Är du företagets ägare? Komplettera informationen genom att begära ägarskap.
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -269,49 +283,17 @@ export default function CompanyProfile() {
             </div>
           </div>
 
-          {/* Call-to-action overlay for companies with minimal information */}
-          {(!displayDescription || displayDescription.length < 50) && (
-            <div 
-              className="absolute inset-0 top-64 text-center min-h-96"
-              style={{
-                background: 'linear-gradient(to bottom, transparent 0%, rgba(255,255,255,0.2) 5%, rgba(255,255,255,0.5) 10%, rgba(255,255,255,0.8) 15%, white 20%)'
-              }}
-            >
-              <div className="flex flex-col justify-center h-full max-w-4xl mx-auto px-8 pt-20">
-                <h3 className="text-2xl font-bold text-[#1f2937] mb-4">Äger du detta företag?</h3>
-                <p className="text-gray-600 mb-8 leading-relaxed max-w-2xl mx-auto">
-                  Fyll i korrekt information och börja ta emot förfrågningar från potentiella kunder. 
-                  Komplettera er företagsprofil med detaljerad beskrivning, kontaktuppgifter och specialområden.
-                </p>
-                <div className="flex justify-center pb-8">
-                  <Button 
-                    onClick={() => navigate(`/ansokkontroll/${companySlug || companyId}`)}
-                    className="bg-[#1f2937] hover:bg-[#374151] text-white font-medium px-6 sm:px-8 py-3 sm:py-4 transition-colors shadow-lg w-full sm:w-auto max-w-sm"
-                  >
-                    Begär ägarskap av företaget
-                  </Button>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </div>
-      {/* Footer CTA Banner */}
-      <section className="bg-gray-50 border-t border-gray-200 mt-[50px] mb-[50px]">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
-          <h3 className="text-2xl font-bold mb-4 text-[#161616]">Äger du detta företag?</h3>
-          <p className="text-gray-600 mb-8 leading-relaxed max-w-2xl mx-auto">
-            Utöka din företagsprofil och få fler förfrågningar. Lägg till detaljerad information, 
-            kontaktpersoner, certifieringar, bilder och mycket mer. Ta kontroll över din närvaro på Industrin.se.
-          </p>
-          <Button 
-            onClick={() => navigate(`/ansokkontroll/${companySlug || companyId}`)}
-            className="bg-[#1f2937] hover:bg-[#374151] text-white font-medium px-8 py-4 transition-colors shadow-lg"
-          >
-            Begär ägarskap och utöka profilen
-          </Button>
-        </div>
-      </section>
+      
+      {/* Scroll Wall for companies with poor data quality */}
+      {dataQuality.needsScrollWall && (
+        <ScrollWall 
+          quality={dataQuality}
+          companyName={company.name}
+          onClaimClick={() => navigate(`/ansokkontroll/${companySlug || companyId}`)}
+        />
+      )}
     </div>
   );
 }
