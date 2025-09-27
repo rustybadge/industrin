@@ -109,7 +109,7 @@ export default function CompanyProfile() {
           <div className="flex flex-col md:flex-row md:items-start md:justify-between mb-8">
             <div className="mb-6 md:mb-0">
               <h1 className="font-bold mb-3 tracking-tight text-[42px] text-[#161616]">{company.name}</h1>
-              <p className="text-xl text-gray-600 mb-3 font-medium">{company.location}</p>
+              <p className="text-xl text-gray-600 mb-3 font-medium">{company.city || company.location}</p>
               <div className="flex items-center gap-3">
                 {company.isVerified && (
                   <Badge variant="secondary" className="bg-green-50 text-green-700 border border-green-200 px-3 py-1">

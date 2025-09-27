@@ -40,7 +40,7 @@ export default function CompanyCard({ company }: CompanyCardProps) {
           <div className="flex justify-between items-center">
             <div className="flex items-center text-sm text-gray-500">
               <MapPin className="h-4 w-4 mr-1" />
-              <span>{company.location}</span>
+              <span>{company.city || company.location}</span>
             </div>
             <Button 
               className="bg-primary hover:bg-primary-dark text-white text-sm"
