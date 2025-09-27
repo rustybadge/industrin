@@ -51,6 +51,40 @@ export default function SmartSearch({ onSearch, placeholder = "Sök företag, or
   if (query.length >= 1) {
     const queryLower = query.toLowerCase();
     
+    // City-to-region mapping for smart suggestions
+    const cityToRegionMap = {
+      'göteborg': 'Västra Götalands län',
+      'goteborg': 'Västra Götalands län',
+      'stockholm': 'Stockholms län',
+      'malmö': 'Skåne län',
+      'malmo': 'Skåne län',
+      'uppsala': 'Uppsala län',
+      'linköping': 'Östergötlands län',
+      'örebro': 'Örebro län',
+      'västerås': 'Västmanlands län',
+      'helsingborg': 'Skåne län',
+      'norrköping': 'Östergötlands län',
+      'lund': 'Skåne län',
+      'jönköping': 'Jönköpings län',
+      'umeå': 'Västerbottens län',
+      'gävle': 'Gävleborgs län',
+      'borås': 'Västra Götalands län',
+      'eskilstuna': 'Södermanlands län',
+      'södertälje': 'Stockholms län',
+      'karlstad': 'Värmlands län',
+      'täby': 'Stockholms län',
+      'växjö': 'Kronobergs län',
+      'halmstad': 'Hallands län',
+      'sundsvall': 'Västernorrlands län',
+      'luleå': 'Norrbottens län',
+      'trollhättan': 'Västra Götalands län',
+      'östersund': 'Jämtlands län',
+      'borlänge': 'Dalarnas län',
+      'uddevalla': 'Västra Götalands län',
+      'falun': 'Dalarnas län',
+      'tumba': 'Stockholms län',
+    };
+    
     // Company suggestions
     companies.forEach(company => {
       if (company.name.toLowerCase().includes(queryLower) && 
@@ -64,10 +98,24 @@ export default function SmartSearch({ onSearch, placeholder = "Sök företag, or
       }
     });
 
-    // Region suggestions
+    // Region suggestions (including city-to-region mapping)
     regions.forEach(region => {
       if (region.toLowerCase().includes(queryLower) && 
           !tags.some(tag => tag.type === 'region' && tag.value === region)) {
+        suggestions.push({
+          id: `region-${region}`,
+          label: region,
+          type: 'region',
+          value: region
+        });
+      }
+    });
+    
+    // Add city-to-region suggestions
+    Object.entries(cityToRegionMap).forEach(([city, region]) => {
+      if (city.includes(queryLower) && 
+          !tags.some(tag => tag.type === 'region' && tag.value === region) &&
+          !suggestions.some(s => s.type === 'region' && s.value === region)) {
         suggestions.push({
           id: `region-${region}`,
           label: region,

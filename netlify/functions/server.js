@@ -66,17 +66,46 @@ export const handler = async (event, context) => {
         const searchTerms = search.split(/\s+/);
         const searchConditions = [];
         
+        // Search synonyms mapping
+        const getSearchSynonyms = (term) => {
+          const synonymMap = {
+            'göteborg': ['göteborgs', 'västra götaland', 'goteborg', 'goteborgs'],
+            'goteborg': ['göteborg', 'göteborgs', 'västra götaland'],
+            'stockholm': ['stockholms', 'stockholms län'],
+            'malmö': ['malmös', 'skåne', 'malmo'],
+            'malmo': ['malmö', 'malmös', 'skåne'],
+            'skåne': ['malmö', 'skåne län', 'skane'],
+            'västra': ['västra götaland', 'göteborg', 'vastra'],
+            'vastra': ['västra', 'västra götaland', 'göteborg'],
+            'götaland': ['västra götaland', 'göteborg', 'gotaland'],
+            'gotaland': ['götaland', 'västra götaland', 'göteborg'],
+          };
+          return synonymMap[term.toLowerCase()] || [];
+        };
+        
         for (const term of searchTerms) {
-          searchConditions.push(`(
-            name ILIKE $${paramIndex} OR
-            description ILIKE $${paramIndex} OR
-            description_sv ILIKE $${paramIndex} OR
-            categories::text ILIKE $${paramIndex} OR
-            city ILIKE $${paramIndex} OR
-            region ILIKE $${paramIndex}
-          )`);
-          queryParams.push(`%${term}%`);
-          paramIndex++;
+          const synonyms = getSearchSynonyms(term);
+          const allTerms = [term, ...synonyms];
+          const termConditions = [];
+          
+          for (const searchTerm of allTerms) {
+            termConditions.push(`(
+              name ILIKE $${paramIndex} OR
+              description ILIKE $${paramIndex} OR
+              description_sv ILIKE $${paramIndex} OR
+              categories::text ILIKE $${paramIndex} OR
+              city ILIKE $${paramIndex} OR
+              region ILIKE $${paramIndex}
+            )`);
+            queryParams.push(`%${searchTerm}%`);
+            paramIndex++;
+          }
+          
+          if (termConditions.length > 1) {
+            searchConditions.push(`(${termConditions.join(' OR ')})`);
+          } else {
+            searchConditions.push(termConditions[0]);
+          }
         }
         
         if (searchConditions.length > 1) {
