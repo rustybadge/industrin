@@ -1,15 +1,16 @@
 import { Button } from "@/components/ui/button";
 import { DataQualityScore, getDataQualityMessage, getScrollWallIntensity } from "@/utils/data-quality";
-import { UserCheck, TrendingUp, Info } from "lucide-react";
+import { UserCheck, TrendingUp, Info, X } from "lucide-react";
 
 interface ScrollWallProps {
   quality: DataQualityScore;
   companyName: string;
   onClaimClick: () => void;
+  onDismiss?: () => void;
   intensity?: 'light' | 'medium' | 'heavy';
 }
 
-export default function ScrollWall({ quality, companyName, onClaimClick, intensity }: ScrollWallProps) {
+export default function ScrollWall({ quality, companyName, onClaimClick, onDismiss, intensity }: ScrollWallProps) {
   const scrollIntensity = intensity || getScrollWallIntensity(quality);
   
   const intensityClasses = {
@@ -33,7 +34,7 @@ export default function ScrollWall({ quality, companyName, onClaimClick, intensi
   const currentIntensity = intensityClasses[scrollIntensity];
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-10">
+    <div className="fixed inset-0 pointer-events-auto z-50">
       {/* Scroll Wall Overlay */}
       <div 
         className={`absolute inset-0 ${currentIntensity.overlay} ${currentIntensity.backdrop} ${currentIntensity.opacity} transition-all duration-300`}
@@ -48,9 +49,20 @@ export default function ScrollWall({ quality, companyName, onClaimClick, intensi
         }}
       />
       
-      {/* Call-to-Action Card */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 pointer-events-auto">
-        <div className="bg-white/95 backdrop-blur-md border border-gray-200 rounded-2xl shadow-2xl p-8 max-w-2xl mx-4">
+      {/* Call-to-Action Card - Centered */}
+      <div className="absolute inset-0 flex items-center justify-center p-4">
+        <div className="bg-white/95 backdrop-blur-md border border-gray-200 rounded-2xl shadow-2xl p-8 max-w-2xl w-full mx-4 transform transition-all duration-300 hover:scale-[1.02] relative">
+          {/* Close Button */}
+          {onDismiss && (
+            <button
+              onClick={onDismiss}
+              className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 transition-colors"
+              aria-label="Stäng"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          )}
+          
           <div className="text-center">
             {/* Icon */}
             <div className="flex justify-center mb-4">

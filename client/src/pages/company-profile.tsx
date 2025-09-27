@@ -1,5 +1,6 @@
 import { useParams, Link, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -24,6 +25,7 @@ import {
 export default function CompanyProfile() {
   const params = useParams();
   const [location, navigate] = useLocation();
+  const [scrollWallDismissed, setScrollWallDismissed] = useState(false);
 
   // Check if we have an ID (from /company/:id) or slug (from /companies/:slug)
   const companyId = params.id;
@@ -287,11 +289,12 @@ export default function CompanyProfile() {
       </div>
       
       {/* Scroll Wall for companies with poor data quality */}
-      {dataQuality.needsScrollWall && (
+      {dataQuality.needsScrollWall && !scrollWallDismissed && (
         <ScrollWall 
           quality={dataQuality}
           companyName={company.name}
           onClaimClick={() => navigate(`/ansokkontroll/${companySlug || companyId}`)}
+          onDismiss={() => setScrollWallDismissed(true)}
         />
       )}
     </div>
