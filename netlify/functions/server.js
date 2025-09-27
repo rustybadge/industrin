@@ -53,10 +53,34 @@ export const handler = async (event, context) => {
     if (path === '/api/companies' && httpMethod === 'GET') {
       const result = await pool.query('SELECT * FROM companies ORDER BY name');
       
+      // Map database column names to frontend expected format
+      const mappedCompanies = result.rows.map(company => ({
+        ...company,
+        postalCode: company.postal_code,
+        contactEmail: company.contact_email,
+        isFeatured: company.is_featured,
+        isVerified: company.is_verified,
+        createdAt: company.created_at,
+        logoUrl: company.logo_url,
+        descriptionSv: company.description_sv,
+        serviceområden: company.serviceområden,
+      })).map(company => {
+        // Remove the original snake_case fields
+        delete company.postal_code;
+        delete company.contact_email;
+        delete company.is_featured;
+        delete company.is_verified;
+        delete company.created_at;
+        delete company.logo_url;
+        delete company.description_sv;
+        delete company.serviceområden;
+        return company;
+      });
+      
       return {
         statusCode: 200,
         headers,
-        body: JSON.stringify(result.rows),
+        body: JSON.stringify(mappedCompanies),
       };
     }
     
@@ -72,10 +96,34 @@ export const handler = async (event, context) => {
         };
       }
       
+      // Map database column names to frontend expected format
+      const company = result.rows[0];
+      const mappedCompany = {
+        ...company,
+        postalCode: company.postal_code,
+        contactEmail: company.contact_email,
+        isFeatured: company.is_featured,
+        isVerified: company.is_verified,
+        createdAt: company.created_at,
+        logoUrl: company.logo_url,
+        descriptionSv: company.description_sv,
+        serviceområden: company.serviceområden,
+      };
+      
+      // Remove the original snake_case fields
+      delete mappedCompany.postal_code;
+      delete mappedCompany.contact_email;
+      delete mappedCompany.is_featured;
+      delete mappedCompany.is_verified;
+      delete mappedCompany.created_at;
+      delete mappedCompany.logo_url;
+      delete mappedCompany.description_sv;
+      delete mappedCompany.serviceområden;
+      
       return {
         statusCode: 200,
         headers,
-        body: JSON.stringify(result.rows[0]),
+        body: JSON.stringify(mappedCompany),
       };
     }
     
