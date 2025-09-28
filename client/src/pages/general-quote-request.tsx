@@ -118,8 +118,9 @@ export default function GeneralQuoteRequest() {
   if (isSubmitted) {
     return (
       <div className="min-h-screen bg-gray-50 py-8">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Card className="border-0 shadow-lg">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-2xl mx-auto">
+            <Card className="border-0 shadow-lg">
             <CardContent className="p-8 text-center">
               <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
               <h1 className="text-2xl font-bold text-gray-900 mb-4">
@@ -150,6 +151,7 @@ export default function GeneralQuoteRequest() {
               </div>
             </CardContent>
           </Card>
+          </div>
         </div>
       </div>
     );
@@ -157,7 +159,7 @@ export default function GeneralQuoteRequest() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
           <button
@@ -175,7 +177,7 @@ export default function GeneralQuoteRequest() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {/* Main Form */}
           <div className="lg:col-span-2">
             <Card className="border-0 shadow-lg">
