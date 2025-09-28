@@ -121,7 +121,7 @@ export default function Companies() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="font-bold text-[40px] leading-[44px] mt-2 mb-2 text-[#161616]" style={{ letterSpacing: '-1.6px' }}>Företagskatalog</h1>
-          <p className="text-lg text-gray-600">Sök och filtrera bland Sveriges industriföretag</p>
+          <p className="text-lg text-gray-600">Sök och filtrera bland företag som kan hjälpa dig med reparation, underhåll och service</p>
         </div>
 
         {/* Smart Search */}
