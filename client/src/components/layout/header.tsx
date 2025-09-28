@@ -48,8 +48,8 @@ export default function Header() {
                 Kategorier
               </a>
               <Link href="/begar-offert">
-                <Button className="bg-primary hover:bg-primary-dark text-white">
-                  Få hjälp NU
+                <Button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold">
+                  FÅ HJÄLP NU
                 </Button>
               </Link>
             </div>
@@ -84,8 +84,8 @@ export default function Header() {
                 Kategorier
               </a>
               <Link href="/begar-offert">
-                <Button className="w-full mt-2 bg-primary hover:bg-primary-dark text-white">
-                  Få hjälp NU
+                <Button className="w-full mt-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold">
+                  FÅ HJÄLP NU
                 </Button>
               </Link>
             </div>
