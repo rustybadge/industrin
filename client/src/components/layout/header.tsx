@@ -47,9 +47,11 @@ export default function Header() {
               <a href="#" className="text-secondary hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
                 Kategorier
               </a>
-              <Button className="bg-primary hover:bg-primary-dark text-white">
-                Registrera företag
-              </Button>
+              <Link href="/begar-offert">
+                <Button className="bg-primary hover:bg-primary-dark text-white">
+                  Få hjälp NU
+                </Button>
+              </Link>
             </div>
           </nav>
           
@@ -81,9 +83,11 @@ export default function Header() {
               <a href="#" className="block px-3 py-2 rounded-md text-base font-medium text-secondary hover:text-primary">
                 Kategorier
               </a>
-              <Button className="w-full mt-2 bg-primary hover:bg-primary-dark text-white">
-                Registrera företag
-              </Button>
+              <Link href="/begar-offert">
+                <Button className="w-full mt-2 bg-primary hover:bg-primary-dark text-white">
+                  Få hjälp NU
+                </Button>
+              </Link>
             </div>
           </div>
         )}
