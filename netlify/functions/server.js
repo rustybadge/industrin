@@ -307,8 +307,8 @@ export const handler = async (event, context) => {
         const result = await pool.query(`
           INSERT INTO general_quote_requests (
             description, service_type, urgency, name, email, phone, 
-            company_name, preferred_contact, submitted_at
-          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())
+            company_name, preferred_contact, files, submitted_at
+          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW())
           RETURNING *
         `, [
           data.description,
@@ -318,7 +318,8 @@ export const handler = async (event, context) => {
           data.email,
           data.phone || null,
           data.company || null,
-          data.preferredContact || 'email'
+          data.preferredContact || 'email',
+          data.files ? JSON.stringify(data.files) : null
         ]);
 
         console.log(`General quote request submitted:`, result.rows[0]);

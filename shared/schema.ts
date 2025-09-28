@@ -79,6 +79,20 @@ export const quoteRequests = pgTable("quote_requests", {
   submittedAt: timestamp("submitted_at").defaultNow(),
 });
 
+export const generalQuoteRequests = pgTable("general_quote_requests", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  description: text("description").notNull(),
+  serviceType: text("service_type").notNull(),
+  urgency: text("urgency").notNull(),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  phone: text("phone"),
+  companyName: text("company_name"),
+  preferredContact: text("preferred_contact").notNull(),
+  files: json("files"), // Store file data as JSON
+  submittedAt: timestamp("submitted_at").defaultNow().notNull(),
+});
+
 // Relations
 export const companiesRelations = relations(companies, ({ many }) => ({
   claimRequests: many(claimRequests),

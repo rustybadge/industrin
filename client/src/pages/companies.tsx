@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
+import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api";
 import SmartSearch, { type SearchTag } from "@/components/search/smart-search";
 import SortOptions from "@/components/search/sort-options";
@@ -9,7 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import type { Company } from "@shared/schema";
 
 export default function Companies() {
-  const [location] = useLocation();
+  const [location, navigate] = useLocation();
   const urlParams = new URLSearchParams(location.split('?')[1] || '');
   
   const [searchQuery, setSearchQuery] = useState(urlParams.get('search') || '');

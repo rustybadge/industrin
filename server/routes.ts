@@ -9,6 +9,20 @@ import jwt from "jsonwebtoken";
 // JWT secret - in production, use environment variable
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
+// Extend Request interface to include admin property
+declare global {
+  namespace Express {
+    interface Request {
+      admin?: {
+        id: string;
+        username: string;
+        role: string;
+        isSuperAdmin: boolean;
+      };
+    }
+  }
+}
+
 // Middleware to verify admin authentication
 const verifyAdminAuth = (req: any, res: any, next: any) => {
   const token = req.headers.authorization?.replace('Bearer ', '');
@@ -350,7 +364,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { id } = req.params;
       const { reviewNotes } = req.body;
 
-      await storage.updateClaimRequestStatus(id, 'approved', req.admin.id, reviewNotes);
+      await storage.updateClaimRequestStatus(id, 'approved', req.admin!.id, reviewNotes);
       
       res.json({ message: 'Claim request approved' });
     } catch (error) {
@@ -365,7 +379,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { id } = req.params;
       const { reviewNotes } = req.body;
 
-      await storage.updateClaimRequestStatus(id, 'rejected', req.admin.id, reviewNotes);
+      await storage.updateClaimRequestStatus(id, 'rejected', req.admin!.id, reviewNotes);
       
       res.json({ message: 'Claim request rejected' });
     } catch (error) {
@@ -388,7 +402,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Get current user
-      const user = await storage.getUser(req.admin.id);
+      const user = await storage.getUser(req.admin!.id);
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
@@ -403,7 +417,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const hashedNewPassword = await bcrypt.hash(newPassword, 10);
 
       // Update password
-      await storage.updateUserPassword(req.admin.id, hashedNewPassword);
+      await storage.updateUserPassword(req.admin!.id, hashedNewPassword);
 
       res.json({ message: 'Password updated successfully' });
     } catch (error) {

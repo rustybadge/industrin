@@ -42,6 +42,16 @@ const generalQuoteFormSchema = z.object({
 
 type GeneralQuoteFormData = z.infer<typeof generalQuoteFormSchema>;
 
+// Helper function to convert file to base64
+const fileToBase64 = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = error => reject(error);
+  });
+};
+
 export default function GeneralQuoteRequest() {
   const [location, navigate] = useLocation();
   const { toast } = useToast();
@@ -64,23 +74,25 @@ export default function GeneralQuoteRequest() {
 
   const createGeneralQuoteMutation = useMutation({
     mutationFn: async (data: GeneralQuoteFormData) => {
-      const formData = new FormData();
-      
-      // Add form fields
-      Object.entries(data).forEach(([key, value]) => {
-        if (key !== 'files' && value) {
-          formData.append(key, value);
-        }
-      });
-      
-      // Add files
-      uploadedFiles.forEach((file, index) => {
-        formData.append(`file_${index}`, file);
-      });
+      // Convert files to base64 for storage
+      const fileData = await Promise.all(
+        uploadedFiles.map(async (file) => ({
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          data: await fileToBase64(file)
+        }))
+      );
 
       const response = await fetch('/api/general-quote-requests', {
         method: 'POST',
-        body: formData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...data,
+          files: fileData
+        }),
       });
 
       if (!response.ok) throw new Error('Failed to submit quote request');
