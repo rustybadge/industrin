@@ -288,6 +288,18 @@ export default function AdminDashboard() {
                                 <p className="text-gray-700 bg-gray-50 p-2 rounded mt-1">{claim.message}</p>
                               </div>
                             )}
+                            {claim.serviceCategories && claim.serviceCategories.length > 0 && (
+                              <div className="mt-2">
+                                <p><strong>Service Categories:</strong></p>
+                                <div className="flex flex-wrap gap-1 mt-1">
+                                  {claim.serviceCategories.map((category, index) => (
+                                    <Badge key={index} variant="secondary" className="text-xs">
+                                      {category}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </div>
                         <div className="flex space-x-2 ml-4">

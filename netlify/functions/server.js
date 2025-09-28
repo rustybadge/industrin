@@ -362,15 +362,16 @@ export const handler = async (event, context) => {
         // Insert claim request
         const result = await pool.query(`
           INSERT INTO claim_requests (
-            company_id, name, email, phone, message, submitted_at
-          ) VALUES ($1, $2, $3, $4, $5, NOW())
+            company_id, name, email, phone, message, service_categories, submitted_at
+          ) VALUES ($1, $2, $3, $4, $5, $6, NOW())
           RETURNING *
         `, [
           companyId,
           data.name,
           data.email,
           data.phone || null,
-          data.message || null
+          data.message || null,
+          data.serviceCategories ? JSON.stringify(data.serviceCategories) : null
         ]);
 
         console.log(`Claim request submitted for ${company.name}:`, result.rows[0]);

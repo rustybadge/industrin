@@ -206,6 +206,19 @@ export default function CompanyProfile() {
                 </div>
               </div>
 
+              {/* Service Categories Section - will be populated when companies claim their profiles */}
+              <div>
+                <h3 className="text-xl font-bold mb-5 text-[#161616]" style={{letterSpacing: '-0.01em'}}>Tjänster & Specialiseringar</h3>
+                <div className="flex flex-wrap gap-3">
+                  <Badge 
+                    variant="outline" 
+                    className="bg-gray-50 text-gray-500 border border-gray-200 px-5 py-2 rounded-full font-medium text-sm"
+                  >
+                    Kontakta företaget för detaljerade tjänster
+                  </Badge>
+                </div>
+              </div>
+
               {company.isVerified && (
                 <div>
                   <h3 className="text-xl font-bold text-[#1f2937] mb-5 tracking-tight">Certifieringar</h3>

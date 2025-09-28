@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, boolean, timestamp, pgEnum } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, boolean, timestamp, pgEnum, integer, json } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -39,6 +39,21 @@ export const companies = pgTable("companies", {
 
 export const claimRequestStatusEnum = pgEnum('claim_request_status', ['pending', 'approved', 'rejected']);
 
+export const serviceCategories = pgTable("service_categories", {
+  id: varchar("id").primaryKey(),
+  name: text("name").notNull(),
+  parentId: varchar("parent_id").references(() => serviceCategories.id),
+  sortOrder: integer("sort_order").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const companyServices = pgTable("company_services", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  companyId: varchar("company_id").notNull().references(() => companies.id, { onDelete: "cascade" }),
+  serviceCategoryId: varchar("service_category_id").notNull().references(() => serviceCategories.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const claimRequests = pgTable("claim_requests", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   companyId: varchar("company_id").notNull().references(() => companies.id),
@@ -46,6 +61,7 @@ export const claimRequests = pgTable("claim_requests", {
   email: text("email").notNull(),
   phone: text("phone"),
   message: text("message").notNull(),
+  serviceCategories: json("service_categories"), // Store selected service categories as JSON
   status: claimRequestStatusEnum("status").default('pending'),
   submittedAt: timestamp("submitted_at").defaultNow(),
   reviewedAt: timestamp("reviewed_at"),
@@ -98,6 +114,27 @@ export const companiesRelations = relations(companies, ({ many }) => ({
   claimRequests: many(claimRequests),
   quoteRequests: many(quoteRequests),
   companyUsers: many(companyUsers),
+  companyServices: many(companyServices),
+}));
+
+export const serviceCategoriesRelations = relations(serviceCategories, ({ one, many }) => ({
+  parent: one(serviceCategories, {
+    fields: [serviceCategories.parentId],
+    references: [serviceCategories.id],
+  }),
+  children: many(serviceCategories),
+  companyServices: many(companyServices),
+}));
+
+export const companyServicesRelations = relations(companyServices, ({ one }) => ({
+  company: one(companies, {
+    fields: [companyServices.companyId],
+    references: [companies.id],
+  }),
+  serviceCategory: one(serviceCategories, {
+    fields: [companyServices.serviceCategoryId],
+    references: [serviceCategories.id],
+  }),
 }));
 
 export const claimRequestsRelations = relations(claimRequests, ({ one }) => ({
@@ -176,3 +213,6 @@ export type CompanyUser = typeof companyUsers.$inferSelect;
 
 export type InsertQuoteRequest = z.infer<typeof insertQuoteRequestSchema>;
 export type QuoteRequest = typeof quoteRequests.$inferSelect;
+
+export type ServiceCategory = typeof serviceCategories.$inferSelect;
+export type CompanyService = typeof companyServices.$inferSelect;

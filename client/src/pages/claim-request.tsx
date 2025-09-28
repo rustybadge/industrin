@@ -6,6 +6,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, Info, CheckCircle } from 'lucide-react';
 import { z } from 'zod';
 
+import { SERVICE_CATEGORIES } from '@/data/service-categories';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -29,6 +31,7 @@ const claimFormSchema = z.object({
   email: z.string().email('Ange en giltig e-postadress'),
   phone: z.string().optional(),
   message: z.string().optional(),
+  serviceCategories: z.array(z.string()).optional(),
   consent: z.boolean().refine(val => val === true, {
     message: 'Du måste godkänna användarvillkoren'
   })
@@ -62,6 +65,7 @@ export default function ClaimRequest() {
       email: '',
       phone: '',
       message: '',
+      serviceCategories: [],
       consent: false
     }
   });
@@ -285,6 +289,54 @@ export default function ClaimRequest() {
                             {...field} 
                             className="h-10 text-sm border-gray-300 focus:border-[#1f2937] focus:ring-[#1f2937]"
                           />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* Service Categories Section */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-900">Vilka tjänster erbjuder ni?</h3>
+                  <p className="text-sm text-gray-600">
+                    Välj alla tjänster som ni erbjuder. Detta hjälper kunder att hitta er.
+                  </p>
+                  
+                  <FormField
+                    control={form.control}
+                    name="serviceCategories"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <div className="space-y-4">
+                            {Object.entries(SERVICE_CATEGORIES).map(([key, category]) => (
+                              <div key={key} className="border rounded-lg p-4">
+                                <h4 className="font-medium mb-3 text-blue-600">{category.name}</h4>
+                                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                                  {category.subcategories.map(subcategory => (
+                                    <label key={subcategory} className="flex items-center space-x-2 cursor-pointer">
+                                      <input 
+                                        type="checkbox" 
+                                        value={subcategory}
+                                        checked={field.value?.includes(subcategory) || false}
+                                        onChange={(e) => {
+                                          const currentValues = field.value || [];
+                                          if (e.target.checked) {
+                                            field.onChange([...currentValues, subcategory]);
+                                          } else {
+                                            field.onChange(currentValues.filter(v => v !== subcategory));
+                                          }
+                                        }}
+                                        className="rounded border-gray-300 text-[#1f2937] focus:ring-[#1f2937]"
+                                      />
+                                      <span className="text-sm">{subcategory}</span>
+                                    </label>
+                                  ))}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
