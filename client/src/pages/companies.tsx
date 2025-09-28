@@ -125,7 +125,16 @@ export default function Companies() {
           <p className="text-lg text-gray-600">Sök och filtrera bland företag som kan hjälpa dig med reparation, underhåll och service</p>
         </div>
 
-        {/* Category Quote Banner */}
+        {/* Smart Search */}
+        <div className="mb-8">
+          <SmartSearch 
+            onSearch={handleSmartSearch}
+            initialQuery={searchQuery}
+            placeholder="Sök företag, ort eller specialområde..."
+          />
+        </div>
+
+        {/* Category Quote Banner - moved below search */}
         <div className="bg-blue-600 text-white p-6 rounded-lg mb-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <div className="mb-4 md:mb-0">
@@ -139,15 +148,6 @@ export default function Companies() {
               Skapa förfrågan nu
             </Button>
           </div>
-        </div>
-
-        {/* Smart Search */}
-        <div className="mb-8">
-          <SmartSearch 
-            onSearch={handleSmartSearch}
-            initialQuery={searchQuery}
-            placeholder="Sök företag, ort eller specialområde..."
-          />
         </div>
 
         {/* Results Header with Sort */}
