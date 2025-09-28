@@ -285,6 +285,59 @@ export const handler = async (event, context) => {
       }
     }
 
+    // ===== GENERAL QUOTE REQUESTS =====
+    
+    // Create general quote request (multiple companies)
+    if (path === '/api/general-quote-requests' && httpMethod === 'POST') {
+      try {
+        // Parse multipart form data
+        const contentType = event.headers['content-type'] || '';
+        let data = {};
+        let files = [];
+        
+        if (contentType.includes('multipart/form-data')) {
+          // For now, we'll handle this as JSON with file references
+          // In production, you'd want to use a proper multipart parser
+          data = JSON.parse(event.body || '{}');
+        } else {
+          data = JSON.parse(event.body || '{}');
+        }
+        
+        // Insert general quote request
+        const result = await pool.query(`
+          INSERT INTO general_quote_requests (
+            description, service_type, urgency, name, email, phone, 
+            company_name, preferred_contact, submitted_at
+          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())
+          RETURNING *
+        `, [
+          data.description,
+          data.serviceType,
+          data.urgency,
+          data.name,
+          data.email,
+          data.phone || null,
+          data.company || null,
+          data.preferredContact || 'email'
+        ]);
+
+        console.log(`General quote request submitted:`, result.rows[0]);
+        
+        return {
+          statusCode: 201,
+          headers,
+          body: JSON.stringify(result.rows[0]),
+        };
+      } catch (error) {
+        console.error('Error creating general quote request:', error);
+        return {
+          statusCode: 500,
+          headers,
+          body: JSON.stringify({ message: 'Failed to create general quote request' }),
+        };
+      }
+    }
+
     // ===== CLAIM REQUESTS =====
     
     // Create claim request for specific company

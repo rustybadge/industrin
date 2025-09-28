@@ -14,6 +14,7 @@ import Integritetspolicy from "@/pages/integritetspolicy";
 import AdminLogin from "@/pages/admin-login";
 import AdminDashboard from "@/pages/admin-dashboard";
 import AdminSettings from "@/pages/admin-settings";
+import GeneralQuoteRequest from "@/pages/general-quote-request";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import { useScrollToTop } from "@/hooks/use-scroll-to-top";
@@ -46,6 +47,16 @@ function Router() {
             <Header />
             <main className="flex-1">
               <Companies />
+            </main>
+            <Footer />
+          </div>
+        </Route>
+        
+        <Route path="/begar-offert">
+          <div className="min-h-screen flex flex-col">
+            <Header />
+            <main className="flex-1">
+              <GeneralQuoteRequest />
             </main>
             <Footer />
           </div>

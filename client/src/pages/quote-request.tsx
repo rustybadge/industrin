@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useParams, Link, useLocation } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -11,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { AlertCircle, Clock, Phone, Mail, ArrowLeft } from "lucide-react";
+import { AlertCircle, Clock, Phone, Mail, ArrowLeft, Upload } from "lucide-react";
 
 const quoteFormSchema = z.object({
   name: z.string().min(1, "Namn är obligatoriskt"),
@@ -31,6 +32,7 @@ export default function QuoteRequest() {
   const [location, navigate] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
 
   const companySlug = params.slug;
   
@@ -192,6 +194,49 @@ export default function QuoteRequest() {
                       </FormItem>
                     )}
                   />
+                </div>
+
+                {/* File Upload Section */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-900">Bifoga filer (valfritt)</label>
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                    <Upload className="h-6 w-6 text-gray-400 mx-auto mb-2" />
+                    <p className="text-sm text-gray-600 mb-2">
+                      Ritningar, dokument, bilder m.m.
+                    </p>
+                    <input
+                      type="file"
+                      multiple
+                      onChange={(e) => {
+                        const files = Array.from(e.target.files || []);
+                        setUploadedFiles(prev => [...prev, ...files]);
+                      }}
+                      className="hidden"
+                      id="file-upload"
+                    />
+                    <label
+                      htmlFor="file-upload"
+                      className="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer"
+                    >
+                      Välj filer
+                    </label>
+                  </div>
+                  {uploadedFiles.length > 0 && (
+                    <div className="space-y-2">
+                      {uploadedFiles.map((file, index) => (
+                        <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                          <span className="text-sm text-gray-700">{file.name}</span>
+                          <button
+                            type="button"
+                            onClick={() => setUploadedFiles(prev => prev.filter((_, i) => i !== index))}
+                            className="text-red-500 hover:text-red-700 text-sm"
+                          >
+                            Ta bort
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* Contact Information Section */}

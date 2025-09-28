@@ -124,6 +124,22 @@ export default function Companies() {
           <p className="text-lg text-gray-600">Sök och filtrera bland företag som kan hjälpa dig med reparation, underhåll och service</p>
         </div>
 
+        {/* Category Quote Banner */}
+        <div className="bg-blue-600 text-white p-6 rounded-lg mb-8">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+            <div className="mb-4 md:mb-0">
+              <h3 className="text-xl font-bold mb-2">Begär offert på reparation & service</h3>
+              <p className="text-blue-100">Få offerter från flera företag samtidigt - helt kostnadsfritt!</p>
+            </div>
+            <Button 
+              className="bg-white text-blue-600 hover:bg-gray-100 font-medium px-6 py-2"
+              onClick={() => navigate('/begar-offert')}
+            >
+              Skapa förfrågan nu
+            </Button>
+          </div>
+        </div>
+
         {/* Smart Search */}
         <div className="mb-8">
           <SmartSearch 
