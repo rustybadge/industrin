@@ -118,7 +118,7 @@ export default function Companies() {
 
   return (
     <section className="py-8 bg-background min-h-screen">
-      <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
           <h1 className="font-bold text-[40px] leading-[44px] mt-2 mb-2 text-[#161616]" style={{ letterSpacing: '-1.6px' }}>Företagskatalog</h1>

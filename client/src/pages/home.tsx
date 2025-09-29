@@ -63,7 +63,7 @@ export default function Home() {
     <div>
       {/* Hero Section */}
       <section className="py-24 lg:py-32 bg-white">
-        <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
             <h1 className="mobile-hero-h1 font-light leading-tight mb-8 text-[#161616]">
               Eftermarknad. Reservdelar.<br />
@@ -74,7 +74,7 @@ export default function Home() {
             
             {/* Clean CTA */}
             <Link href="/companies">
-              <Button className="inline-flex items-center bg-gray-900 hover:bg-gray-800 text-white font-medium px-8 py-4 transition-colors group">
+              <Button className="inline-flex items-center bg-gray-900 hover:bg-gray-800 text-white font-medium px-8 transition-colors group text-lg" style={{ height: '56px' }}>
                 Hitta hjälp nu
                 <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Button>
@@ -84,7 +84,7 @@ export default function Home() {
       </section>
       {/* Company Directory Section */}
       <section className="py-16 bg-background">
-        <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-12">
             <h3 className="text-3xl font-bold mb-4 text-[#161616]">Hitta rätt serviceföretag direkt</h3>
             <p className="text-lg text-gray-600">Sök eller filtrera efter tjänst och region för att snabbt hitta den hjälp du behöver.</p>

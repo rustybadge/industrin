@@ -130,7 +130,7 @@ export default function GeneralQuoteRequest() {
   if (isSubmitted) {
     return (
       <div className="min-h-screen bg-gray-50 py-8">
-        <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl mx-auto">
             <Card className="border-0 shadow-lg">
             <CardContent className="p-8 text-center">

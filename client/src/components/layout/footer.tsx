@@ -6,7 +6,7 @@ import logoImage from "@/assets/images/logo.png";
 export default function Footer() {
   return (
     <footer className="bg-white border-t border-gray-200 py-12">
-      <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Logo and Tagline Section */}
         <div className="flex items-center justify-between py-12 mb-16 border-b border-gray-200">
           <img 

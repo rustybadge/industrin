@@ -40,7 +40,7 @@ export default function CompanyProfile() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-white py-8">
-        <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-8">
             <div className="flex items-start justify-between mb-8">
               <div className="flex items-start">
@@ -75,7 +75,7 @@ export default function CompanyProfile() {
   if (error || !company) {
     return (
       <div className="min-h-screen bg-white py-8">
-        <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
           <Card className="border border-gray-200 shadow-sm">
             <CardContent className="pt-16 pb-16 text-center">
               <h1 className="text-3xl font-bold text-[#1f2937] mb-4 tracking-tight">Företag hittades inte</h1>
