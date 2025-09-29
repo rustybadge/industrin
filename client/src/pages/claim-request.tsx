@@ -114,7 +114,7 @@ export default function ClaimRequest() {
   if (isLoadingCompany) {
     return (
       <div className="min-h-screen bg-white py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
           <div className="mb-6">
             <Button 

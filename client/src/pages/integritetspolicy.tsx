@@ -1,7 +1,7 @@
 export default function Integritetspolicy() {
   return (
     <div className="min-h-screen bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <h1 className="custom-size text-5xl font-bold mb-8 text-[#161616]">Integritetspolicy</h1>
         
         <div className="max-w-none text-gray-700">

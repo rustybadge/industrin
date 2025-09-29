@@ -63,7 +63,7 @@ export default function Home() {
     <div>
       {/* Hero Section */}
       <section className="py-24 lg:py-32 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
             <h1 className="mobile-hero-h1 font-light leading-tight mb-8 text-[#161616]">
               Eftermarknad. Reservdelar.<br />
@@ -84,7 +84,7 @@ export default function Home() {
       </section>
       {/* Company Directory Section */}
       <section className="py-16 bg-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-12">
             <h3 className="text-3xl font-bold mb-4 text-[#161616]">Hitta rätt serviceföretag direkt</h3>
             <p className="text-lg text-gray-600">Sök eller filtrera efter tjänst och region för att snabbt hitta den hjälp du behöver.</p>
