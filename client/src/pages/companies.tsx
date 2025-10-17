@@ -32,7 +32,7 @@ export default function Companies() {
 
   const { data: allCompanies = [], isLoading } = useQuery({
     queryKey: ['/api/companies', filters],
-    queryFn: () => api.companies.getAll(filters),
+    queryFn: () => api.companies.getAll({ ...filters, limit: 500 }),
   });
 
   // Sort companies based on selected option
