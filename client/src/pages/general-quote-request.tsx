@@ -129,7 +129,7 @@ export default function GeneralQuoteRequest() {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen bg-gray-50 py-8">
+      <div className="min-h-screen bg-background py-8">
         <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl mx-auto">
             <Card className="border-0 shadow-lg">
@@ -170,7 +170,7 @@ export default function GeneralQuoteRequest() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-background py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
@@ -287,7 +287,7 @@ export default function GeneralQuoteRequest() {
                         />
                         <label
                           htmlFor="file-upload"
-                          className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer"
+                          className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-background cursor-pointer"
                         >
                           Välj filer
                         </label>
@@ -295,7 +295,7 @@ export default function GeneralQuoteRequest() {
                       {uploadedFiles.length > 0 && (
                         <div className="space-y-2">
                           {uploadedFiles.map((file, index) => (
-                            <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                            <div key={index} className="flex items-center justify-between bg-background p-2 rounded">
                               <span className="text-sm text-gray-700">{file.name}</span>
                               <button
                                 type="button"

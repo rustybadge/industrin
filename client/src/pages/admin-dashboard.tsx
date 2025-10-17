@@ -126,7 +126,7 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -285,7 +285,7 @@ export default function AdminDashboard() {
                             {claim.message && (
                               <div className="mt-2">
                                 <p><strong>Message:</strong></p>
-                                <p className="text-gray-700 bg-gray-50 p-2 rounded mt-1">{claim.message}</p>
+                                <p className="text-gray-700 bg-background p-2 rounded mt-1">{claim.message}</p>
                               </div>
                             )}
                             {claim.serviceCategories && claim.serviceCategories.length > 0 && (
