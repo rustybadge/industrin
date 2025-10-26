@@ -200,7 +200,7 @@ export default function SmartSearch({ onSearch, placeholder = "Sök företag, or
     <div className="relative w-full max-w-2xl">
       {/* Search Input Container */}
       <div className="relative">
-        <div className="flex items-center border border-gray-300 rounded-lg bg-white">
+        <div className="flex items-center border border-gray-300 rounded-none bg-white">
           <Search className="h-4 w-4 text-gray-400 ml-3" />
           
           {/* Tags Display */}
@@ -248,7 +248,7 @@ export default function SmartSearch({ onSearch, placeholder = "Sök företag, or
 
         {/* Suggestions Dropdown */}
         {showSuggestions && limitedSuggestions.length > 0 && (
-          <div className="absolute top-full left-0 right-0 z-50 bg-white border border-gray-200 rounded-lg shadow-lg mt-1 max-h-60 overflow-y-auto">
+          <div className="absolute top-full left-0 right-0 z-50 bg-white border border-gray-200 rounded-none shadow-lg mt-1 max-h-60 overflow-y-auto">
             {limitedSuggestions.map((suggestion) => (
               <button
                 key={suggestion.id}

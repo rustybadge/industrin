@@ -139,7 +139,7 @@ export default function Home() {
           {companies.length > 0 && (
             <div className="text-center mt-8">
               <Link href="/companies">
-                <Button className="bg-primary hover:bg-primary-dark text-white px-8 py-3 group">
+                <Button className="bg-primary hover:bg-primary-dark text-white px-8 group" style={{ height: '56px' }}>
                   Se alla {companies.length > 5 ? 'fler' : ''} företag
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>

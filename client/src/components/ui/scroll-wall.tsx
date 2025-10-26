@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { DataQualityScore, getDataQualityMessage, getScrollWallIntensity } from "@/utils/data-quality";
-import { UserCheck, TrendingUp, Info, X } from "lucide-react";
+import { X } from "lucide-react";
 
 interface ScrollWallProps {
   quality: DataQualityScore;
@@ -51,75 +51,61 @@ export default function ScrollWall({ quality, companyName, onClaimClick, onDismi
       
       {/* Call-to-Action Card - Centered */}
       <div className="absolute inset-0 flex items-center justify-center p-4">
-        <div className="bg-white/95 backdrop-blur-md border border-gray-200 rounded-2xl shadow-2xl p-8 max-w-2xl w-full mx-4 transform transition-all duration-300 hover:scale-[1.02] relative">
+        <div className="bg-white border-2 border-gray-300 max-w-xl w-full mx-4 p-8 relative">
           {/* Close Button */}
           {onDismiss && (
             <button
               onClick={onDismiss}
-              className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 transition-colors"
+              className="absolute top-4 right-4 p-1 text-gray-400 hover:text-gray-900 transition-colors"
               aria-label="Stäng"
             >
               <X className="h-5 w-5" />
             </button>
           )}
           
-          <div className="text-center">
-            {/* Icon */}
-            <div className="flex justify-center mb-4">
-              <div className="bg-blue-50 p-4 rounded-full">
-                <UserCheck className="h-8 w-8 text-blue-600" />
-              </div>
-            </div>
-            
+          <div className="text-left">
             {/* Heading */}
-            <h3 className="text-2xl font-bold text-gray-900 mb-3">
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
               Äger du {companyName}?
             </h3>
             
             {/* Quality Status */}
-            <div className="flex items-center justify-center mb-4">
-              <Info className="h-4 w-4 text-amber-500 mr-2" />
-              <span className="text-sm text-amber-700 font-medium">
-                {getDataQualityMessage(quality)}
-              </span>
-            </div>
-            
-            {/* Description */}
-            <p className="text-gray-600 mb-6 leading-relaxed">
-              Komplettera er företagsprofil med detaljerad beskrivning, kontaktuppgifter och 
-              specialområden. Ta kontroll över er närvaro på Industrin.se och börja ta emot 
-              förfrågningar från potentiella kunder.
+            <p className="text-sm text-gray-600 mb-4">
+              Denna profil är ofullständig och skulle kunna förbättras med mer information.
             </p>
             
             {/* Stats */}
-            <div className="bg-gray-50 rounded-lg p-4 mb-6">
-              <div className="flex justify-between text-sm text-gray-600">
+            <div className="bg-gray-50 p-3 mb-6">
+              <div className="flex justify-between text-xs text-gray-600 mb-1">
                 <span>Komplett information:</span>
-                <span className="font-semibold">{quality.score}/{quality.maxScore} fält</span>
+                <span className="font-medium">{quality.score}/{quality.maxScore} fält</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+              <div className="w-full bg-gray-200 h-1">
                 <div 
-                  className="bg-blue-600 h-2 rounded-full transition-all duration-500"
+                  className="bg-gray-900 h-1 transition-all duration-500"
                   style={{ width: `${quality.percentage}%` }}
                 />
               </div>
             </div>
             
             {/* Action Button */}
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <div className="flex flex-col sm:flex-row gap-3">
               <Button 
                 onClick={onClaimClick}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3 rounded-lg shadow-lg transition-all duration-200 hover:shadow-xl"
+                className="bg-gray-900 hover:bg-gray-800 text-white font-medium px-6 py-2.5 transition-colors"
               >
-                <TrendingUp className="h-4 w-4 mr-2" />
-                Begär ägarskap och utöka profilen
+                Begär ägarskap
               </Button>
+              {onDismiss && (
+                <Button
+                  onClick={onDismiss}
+                  variant="outline"
+                  className="border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-gray-900 font-medium px-6 py-2.5"
+                >
+                  Inte nu
+                </Button>
+              )}
             </div>
-            
-            {/* Subtle hint */}
-            <p className="text-xs text-gray-400 mt-4">
-              Klicka för att komplettera er företagsinformation
-            </p>
           </div>
         </div>
       </div>
