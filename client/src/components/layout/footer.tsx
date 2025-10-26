@@ -14,7 +14,7 @@ export default function Footer() {
             alt="Industrin.net Logo" 
             className="h-8 w-auto"
           />
-          <span className="text-gray-900 font-medium" style={{ fontSize: '24px' }}>Keep Sweden running.</span>
+          <span className="text-gray-900 font-medium" style={{ fontSize: '24px' }}>Keep Industry Moving.</span>
         </div>
 
         {/* Main Footer Content - Two Column Layout */}
