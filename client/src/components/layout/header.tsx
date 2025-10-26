@@ -25,22 +25,10 @@ export default function Header() {
           </div>
           
           <nav className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-4">
-              <Link href="/companies">
-                <span className={`px-3 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer ${
-                  location.startsWith("/companies") 
-                    ? "text-primary" 
-                    : "text-secondary hover:text-primary"
-                }`}>
-                  Företag
-                </span>
-              </Link>
-              <a href="#" className="text-secondary hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                Kategorier
-              </a>
+            <div className="ml-10 flex items-center">
               <Link href="/begar-offert">
                 <Button className="bg-gray-900 hover:bg-gray-800 text-white font-semibold">
-                  FÅ SERVICE NU
+                  SÖK SERVICE NU
                 </Button>
               </Link>
             </div>
@@ -61,17 +49,9 @@ export default function Header() {
         {isMobileMenuOpen && (
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t">
-              <Link href="/companies">
-                <span className="block px-3 py-2 rounded-md text-base font-medium text-secondary hover:text-primary cursor-pointer">
-                  Företag
-                </span>
-              </Link>
-              <a href="#" className="block px-3 py-2 rounded-md text-base font-medium text-secondary hover:text-primary">
-                Kategorier
-              </a>
               <Link href="/begar-offert">
                 <Button className="w-full mt-2 bg-gray-900 hover:bg-gray-800 text-white font-semibold">
-                  FÅ SERVICE NU
+                  FÅ HJÄLP NU
                 </Button>
               </Link>
             </div>
