@@ -86,7 +86,7 @@ export default function QuoteRequest() {
   if (isLoading || !company) {
     return (
       <div className="min-h-screen bg-white py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
             <div className="animate-pulse">
               <div className="h-8 bg-gray-200 rounded w-1/3 mb-6"></div>
@@ -107,7 +107,7 @@ export default function QuoteRequest() {
 
   return (
     <div className="min-h-screen bg-white py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl">
           {/* Back Button */}
           <div className="mb-6">

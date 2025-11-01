@@ -202,7 +202,7 @@ export default function ClaimRequest() {
 
   return (
     <div className="min-h-screen bg-background py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl">
           {/* Back Button */}
           <div className="mb-6">

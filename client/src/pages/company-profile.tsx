@@ -95,7 +95,7 @@ export default function CompanyProfile() {
 
   return (
     <div className="min-h-screen bg-white py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Back Button */}
         <div className="mb-6">
           <Link href="/companies">
@@ -242,25 +242,35 @@ export default function CompanyProfile() {
                   <h3 className="text-xl font-bold mb-6 tracking-tight text-[#161616]">Kontaktinformation</h3>
                   <div className="space-y-3">
                     <div className="group py-2 border-b border-gray-100">
-                      <a 
-                        href={`mailto:${company.contactEmail}`}
-                        className="text-gray-700 hover:text-[#1f2937] transition-colors font-medium break-all"
-                      >
-                        {company.contactEmail}
-                      </a>
+                      {company.contactEmail ? (
+                        <a 
+                          href={`mailto:${company.contactEmail}`}
+                          className="text-gray-700 hover:text-[#1f2937] transition-colors font-medium break-all"
+                        >
+                          {company.contactEmail}
+                        </a>
+                      ) : (
+                        <span className="text-gray-500 font-medium">
+                          E-postadress saknas
+                        </span>
+                      )}
                     </div>
-                    {company.phone && (
-                      <div className="group py-2 border-b border-gray-100">
+                    <div className="group py-2 border-b border-gray-100">
+                      {company.phone ? (
                         <a 
                           href={`tel:${company.phone}`}
                           className="text-gray-700 hover:text-[#1f2937] transition-colors font-medium"
                         >
                           {company.phone}
                         </a>
-                      </div>
-                    )}
-                    {company.website && (
-                      <div className="group py-2 border-b border-gray-100">
+                      ) : (
+                        <span className="text-gray-500 font-medium">
+                          Telefonnummer saknas
+                        </span>
+                      )}
+                    </div>
+                    <div className="group py-2 border-b border-gray-100">
+                      {company.website ? (
                         <a 
                           href={`https://${company.website}`} 
                           target="_blank" 
@@ -269,18 +279,26 @@ export default function CompanyProfile() {
                         >
                           {company.website}
                         </a>
-                      </div>
-                    )}
-                    {(company.address || company.city) && (
-                      <div className="group py-2">
+                      ) : (
+                        <span className="text-gray-500 font-medium">
+                          Webbplats saknas
+                        </span>
+                      )}
+                    </div>
+                    <div className="group py-2">
+                      {(company.address || (company.postalCode && company.city)) ? (
                         <div className="text-gray-700 font-medium">
                           {company.address && <div>{company.address}</div>}
                           {company.postalCode && company.city && (
                             <div>{company.postalCode} {company.city}</div>
                           )}
                         </div>
-                      </div>
-                    )}
+                      ) : (
+                        <span className="text-gray-500 font-medium">
+                          Postadress saknas
+                        </span>
+                      )}
+                    </div>
                   </div>
                   
                   {/* Subtle claim company link */}
