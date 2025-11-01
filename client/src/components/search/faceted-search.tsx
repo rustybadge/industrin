@@ -71,7 +71,7 @@ export default function FacetedSearch({
                 <button
                   key={region}
                   onClick={() => onRegionToggle(region)}
-                  className={`w-full flex items-center justify-between p-2 rounded-md transition-colors ${
+                  className={`w-full flex items-center justify-between p-2 rounded-none transition-colors ${
                     isSelected 
                       ? 'bg-blue-50 border border-blue-200 text-blue-900' 
                       : 'hover:bg-gray-50 border border-transparent'

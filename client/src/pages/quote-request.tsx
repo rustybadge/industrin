@@ -216,7 +216,7 @@ export default function QuoteRequest() {
                     />
                     <label
                       htmlFor="file-upload"
-                      className="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer"
+                      className="inline-flex items-center px-3 py-2 border border-gray-300 rounded-none text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer"
                     >
                       Välj filer
                     </label>
