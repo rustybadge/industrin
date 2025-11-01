@@ -28,7 +28,7 @@ export default function Header() {
             <div className="ml-10 flex items-center">
               <Link href="/begar-offert">
                 <Button className="bg-gray-900 hover:bg-gray-800 text-white font-semibold">
-                  SÖK SERVICE NU
+                  Hitta Service
                 </Button>
               </Link>
             </div>
@@ -51,7 +51,7 @@ export default function Header() {
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t">
               <Link href="/begar-offert">
                 <Button className="w-full mt-2 bg-gray-900 hover:bg-gray-800 text-white font-semibold">
-                  FÅ HJÄLP NU
+                  Hitta Service
                 </Button>
               </Link>
             </div>

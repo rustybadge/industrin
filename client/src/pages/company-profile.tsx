@@ -152,10 +152,10 @@ export default function CompanyProfile() {
             <Button 
               variant="outline"
               onClick={() => navigate(`/ansokkontroll/${companySlug || companyId}`)}
-              className="bg-white border-2 border-gray-300 text-gray-700 hover:border-[#1f2937] hover:text-[#1f2937] font-semibold py-3 px-6 transition-colors flex items-center justify-center h-12"
+              className="bg-white border-2 border-[#3E70DF] text-[#3E70DF] hover:bg-[#3E70DF] hover:text-white font-semibold py-3 px-6 transition-colors flex items-center justify-center h-12"
             >
               <UserCheck className="mr-3 h-5 w-5" />
-              Äger du detta företag?
+              Äger du detta företag? Uppdatera din profil
             </Button>
           </div>
 

@@ -225,12 +225,35 @@ export default function ClaimRequest() {
             </CardHeader>
           
             <CardContent className="px-0">
-              <div className="mb-6 p-4 bg-blue-50 border border-blue-100 rounded-lg">
-              <p className="text-blue-800 flex items-start leading-relaxed text-sm">
-                <Info className="h-4 w-4 mr-2 mt-0.5 flex-shrink-0" />
-                Genom att ansöka om kontroll kan du uppdatera företagsinformation och svara på förfrågningar.
-              </p>
-            </div>
+              <div className="mb-6 space-y-4">
+                <div className="p-4 bg-blue-50 border border-blue-100 rounded-lg">
+                  <p className="text-blue-800 flex items-start leading-relaxed text-sm font-medium">
+                    <Info className="h-4 w-4 mr-2 mt-0.5 flex-shrink-0" />
+                    Genom att ansöka om kontroll kan du uppdatera företagsinformation och svara på förfrågningar.
+                  </p>
+                </div>
+                <div className="p-5 bg-gradient-to-br from-[#FBF7E4] to-[#F9F5E1] border border-[#E8E4D0] rounded-lg">
+                  <h4 className="font-semibold text-gray-900 mb-3 text-base">Vad får du när du ansöker?</h4>
+                  <ul className="space-y-2 text-sm text-gray-700">
+                    <li className="flex items-start">
+                      <CheckCircle className="h-4 w-4 mr-2 mt-0.5 text-green-600 flex-shrink-0" />
+                      <span><strong>Uppdatera din företagsprofil</strong> - Lägg till komplett information, bilder och länkar</span>
+                    </li>
+                    <li className="flex items-start">
+                      <CheckCircle className="h-4 w-4 mr-2 mt-0.5 text-green-600 flex-shrink-0" />
+                      <span><strong>Ta emot förfrågningar</strong> - Få kontakt direkt från potentiella kunder som söker dina tjänster</span>
+                    </li>
+                    <li className="flex items-start">
+                      <CheckCircle className="h-4 w-4 mr-2 mt-0.5 text-green-600 flex-shrink-0" />
+                      <span><strong>Förbättrad synlighet</strong> - Företag med kompletta profiler får högre ranking i sökningar</span>
+                    </li>
+                    <li className="flex items-start">
+                      <CheckCircle className="h-4 w-4 mr-2 mt-0.5 text-green-600 flex-shrink-0" />
+                      <span><strong>Hantera dina tjänster</strong> - Välj och uppdatera vilka serviceområden ni erbjuder</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
 
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
