@@ -1,12 +1,10 @@
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
-import { useState } from "react";
+import { FileText } from "lucide-react";
 import IndustrinLogo from "@/components/ui/industrin-logo";
 
 export default function Header() {
   const [location] = useLocation();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
     <header className="shadow-sm sticky top-0 z-50 bg-white">
@@ -35,28 +33,17 @@ export default function Header() {
           </nav>
           
           <div className="md:hidden">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              <Menu className="h-5 w-5" />
-            </Button>
+            <Link href="/begar-offert">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="bg-gray-900 hover:bg-gray-800 text-white"
+              >
+                <FileText className="h-5 w-5" />
+              </Button>
+            </Link>
           </div>
         </div>
-        
-        {/* Mobile menu */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t">
-              <Link href="/begar-offert">
-                <Button className="w-full mt-2 bg-gray-900 hover:bg-gray-800 text-white font-semibold">
-                  Hitta Service
-                </Button>
-              </Link>
-            </div>
-          </div>
-        )}
       </div>
     </header>
   );
