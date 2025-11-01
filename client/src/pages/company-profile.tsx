@@ -117,15 +117,15 @@ export default function CompanyProfile() {
               <p className="text-xl text-gray-600 mb-3 font-medium">{company.city || company.location}</p>
               <div className="flex items-center gap-3">
                 {company.isVerified && (
-                  <Badge variant="secondary" className="bg-green-50 text-green-700 border border-green-200 px-3 py-1">
+                  <Badge variant="secondary" className="bg-[#B2BFF4] text-[#3D3D3C] border border-[#A7A7A6] px-3 py-1">
                     <Shield className="h-3 w-3 mr-1" />
                     Verifierat företag
                   </Badge>
                 )}
                 {company.isFeatured && (
-                  <Badge variant="secondary" className="bg-blue-50 text-blue-700 border border-blue-200 px-3 py-1">
+                  <Badge variant="secondary" className="bg-[#DACF90] text-[#3D3D3C] border border-[#A7A7A6] px-3 py-1">
                     <Star className="h-3 w-3 mr-1" />
-                    Premium
+                    Utmärkt
                   </Badge>
                 )}
               </div>

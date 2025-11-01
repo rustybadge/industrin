@@ -21,12 +21,12 @@ export default function CompanyCard({ company }: CompanyCardProps) {
             <h4 className="font-medium hover:text-primary transition-colors text-[#161616] mb-2">{company.name}</h4>
             <div className="flex gap-2">
               {company.isFeatured && (
-                <Badge variant="secondary" className="bg-accent/10 text-accent">
+                <Badge variant="secondary" className="bg-[#DACF90] text-[#3D3D3C] border border-[#A7A7A6]">
                   Utmärkt
                 </Badge>
               )}
               {company.isVerified && (
-                <Badge variant="secondary" className="bg-green-100 text-green-800">
+                <Badge variant="secondary" className="bg-[#B2BFF4] text-[#3D3D3C] border border-[#A7A7A6]">
                   Verifierat
                 </Badge>
               )}
