@@ -1,7 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { FileText } from "lucide-react";
 import IndustrinLogo from "@/components/ui/industrin-logo";
+import OffertIcon from "@/components/ui/offert-icon";
 
 export default function Header() {
   const [location] = useLocation();
@@ -37,9 +37,9 @@ export default function Header() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="bg-gray-900 hover:bg-gray-800 text-white"
+                className="text-[#111827] hover:text-[#111827] [&_svg]:!h-[25px] [&_svg]:!w-[25px]"
               >
-                <FileText className="h-5 w-5" />
+                <OffertIcon className="h-[25px] w-[25px]" />
               </Button>
             </Link>
           </div>
