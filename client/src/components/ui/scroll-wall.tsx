@@ -90,12 +90,6 @@ export default function ScrollWall({ quality, companyName, onClaimClick, onDismi
             
             {/* Action Button */}
             <div className="flex flex-col sm:flex-row gap-3">
-              <Button 
-                onClick={onClaimClick}
-                className="bg-gray-900 hover:bg-gray-800 text-white font-medium px-6 py-2.5 transition-colors"
-              >
-                Begär ägarskap
-              </Button>
               {onDismiss && (
                 <Button
                   onClick={onDismiss}
@@ -105,6 +99,12 @@ export default function ScrollWall({ quality, companyName, onClaimClick, onDismi
                   Inte nu
                 </Button>
               )}
+              <Button 
+                onClick={onClaimClick}
+                className="bg-gray-900 hover:bg-gray-800 text-white font-medium px-6 py-2.5 transition-colors"
+              >
+                Begär ägarskap
+              </Button>
             </div>
           </div>
         </div>

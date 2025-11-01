@@ -10,8 +10,6 @@ import ScrollWall from "@/components/ui/scroll-wall";
 import { calculateDataQuality } from "@/utils/data-quality";
 
 import { 
-  Mail, 
-  Phone, 
   Globe, 
   MapPin, 
   Star, 
@@ -21,6 +19,8 @@ import {
   Building,
   ArrowLeft
 } from "lucide-react";
+import EmailIcon from "@/components/ui/email-icon";
+import PhoneIcon from "@/components/ui/phone-icon";
 
 export default function CompanyProfile() {
   const params = useParams();
@@ -138,15 +138,15 @@ export default function CompanyProfile() {
               onClick={() => navigate(`/companies/${companySlug}/quote`)}
               className="bg-[#1f2937] hover:bg-[#374151] text-white font-semibold py-3 px-6 transition-colors flex items-center justify-center h-12"
             >
-              <Mail className="mr-3 h-5 w-5" />
+              <EmailIcon className="mr-3 h-5 w-5" />
               Begär offert
             </Button>
             <Button 
               variant="outline"
-              className="bg-white border-2 border-[#1f2937] text-[#1f2937] hover:bg-[#1f2937] hover:text-white font-semibold py-3 px-6 transition-colors flex items-center justify-center h-12"
+              className="bg-white border-2 border-[#1f2937] text-[#1f2937] hover:bg-[#1f2937] hover:text-[#F5F5F5] font-semibold py-3 px-6 transition-colors flex items-center justify-center h-12 group"
               disabled={!company.phone}
             >
-              <Phone className="mr-3 h-5 w-5" />
+              <PhoneIcon className="mr-3 h-5 w-5 text-[#111827] group-hover:text-[#F5F5F5]" />
               Ring direkt
             </Button>
             <Button 
