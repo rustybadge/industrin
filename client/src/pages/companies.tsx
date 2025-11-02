@@ -135,14 +135,14 @@ export default function Companies() {
         </div>
 
         {/* Category Quote Banner - moved below search */}
-        <div className="bg-[#3E70DF] text-white p-6 rounded-lg mb-8">
+        <div className="bg-[#B1A87F] text-white p-6 rounded-lg mb-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <div className="mb-4 md:mb-0">
               <h3 className="text-xl font-bold mb-2 !text-white">Begär offert på reparation & service</h3>
-              <p className="text-white">Få offerter från flera företag samtidigt - helt kostnadsfritt!</p>
+              <p className="text-white">Få offerter från flera företag samtidigt. Helt kostnadsfritt.</p>
             </div>
             <Button 
-              className="bg-white text-blue-600 hover:bg-gray-100 font-medium px-6 py-2"
+              className="bg-[#645F40] text-white hover:bg-[#746F50] font-medium px-6 py-2"
               onClick={() => navigate('/begar-offert')}
             >
               Skapa förfrågan nu

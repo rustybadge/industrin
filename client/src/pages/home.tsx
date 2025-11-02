@@ -87,7 +87,7 @@ export default function Home() {
         <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-12">
             <h3 className="text-3xl font-bold mb-4 text-[#161616]">Hitta rätt serviceföretag direkt</h3>
-            <p className="text-lg text-gray-600">Sök eller filtrera efter tjänst och region för att snabbt hitta den hjälp du behöver.</p>
+            <p className="text-lg text-gray-600">Sök efter tjänst och region för att snabbt hitta den hjälp du behöver.</p>
           </div>
 
           <div className="max-w-2xl mb-8">
@@ -140,7 +140,7 @@ export default function Home() {
             <div className="text-center mt-8">
               <Link href="/companies">
                 <Button className="bg-primary hover:bg-primary-dark text-white px-8 group" style={{ height: '56px' }}>
-                  Se alla {companies.length > 5 ? 'fler' : ''} företag
+                  Se alla företag
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>

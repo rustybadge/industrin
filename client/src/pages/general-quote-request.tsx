@@ -132,7 +132,7 @@ export default function GeneralQuoteRequest() {
       <div className="min-h-screen bg-background py-8">
         <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl mx-auto">
-            <Card className="border-0 shadow-lg">
+            <Card className="border border-gray-200 !rounded-none shadow-none">
             <CardContent className="p-8 text-center">
               <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
               <h1 className="text-2xl font-bold text-gray-900 mb-4">
@@ -185,14 +185,14 @@ export default function GeneralQuoteRequest() {
             Begär offert på reparation & service
           </h1>
           <p className="text-lg text-gray-600">
-            Kostnadsfri tjänst, fri support!
+            Få offerter från flera företag samtidigt. Helt kostnadsfritt.
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Form */}
           <div className="lg:col-span-2">
-            <Card className="border-0 shadow-lg">
+            <Card className="border border-gray-200 !rounded-none shadow-none">
               <CardHeader>
                 <CardTitle className="text-xl">Beskriv vad du behöver hjälp med</CardTitle>
               </CardHeader>
@@ -273,7 +273,7 @@ export default function GeneralQuoteRequest() {
                     {/* File Upload */}
                     <div className="space-y-2">
                       <label className="text-sm font-medium">Bifoga filer (valfritt)</label>
-                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                      <div className="border-2 border-dashed border-gray-300 !rounded-none p-6 text-center">
                         <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
                         <p className="text-sm text-gray-600 mb-2">
                           Ritningar, dokument, bilder m.m.
@@ -295,7 +295,7 @@ export default function GeneralQuoteRequest() {
                       {uploadedFiles.length > 0 && (
                         <div className="space-y-2">
                           {uploadedFiles.map((file, index) => (
-                            <div key={index} className="flex items-center justify-between bg-background p-2 rounded">
+                            <div key={index} className="flex items-center justify-between bg-background p-2 !rounded-none">
                               <span className="text-sm text-gray-700">{file.name}</span>
                               <button
                                 type="button"
@@ -423,13 +423,13 @@ export default function GeneralQuoteRequest() {
 
           {/* Sidebar */}
           <div className="lg:col-span-1">
-            <Card className="border-0 shadow-lg">
+            <Card className="border border-gray-200 !rounded-none shadow-none">
               <CardHeader>
                 <CardTitle className="text-lg">Hur fungerar det?</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-start space-x-3">
-                  <div className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-medium">
+                  <div className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 !rounded-none flex items-center justify-center text-sm font-medium">
                     1
                   </div>
                   <div>
@@ -439,7 +439,7 @@ export default function GeneralQuoteRequest() {
                 </div>
                 
                 <div className="flex items-start space-x-3">
-                  <div className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-medium">
+                  <div className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 !rounded-none flex items-center justify-center text-sm font-medium">
                     2
                   </div>
                   <div>
@@ -449,7 +449,7 @@ export default function GeneralQuoteRequest() {
                 </div>
                 
                 <div className="flex items-start space-x-3">
-                  <div className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-medium">
+                  <div className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 !rounded-none flex items-center justify-center text-sm font-medium">
                     3
                   </div>
                   <div>
@@ -458,7 +458,7 @@ export default function GeneralQuoteRequest() {
                   </div>
                 </div>
 
-                <div className="bg-blue-50 p-4 rounded-lg">
+                <div className="bg-blue-50 p-4 !rounded-none">
                   <div className="flex items-start space-x-2">
                     <Info className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
                     <div>

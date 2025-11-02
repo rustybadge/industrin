@@ -237,7 +237,7 @@ export default function CompanyProfile() {
             </div>
 
             <div className="space-y-6">
-              <Card className="border border-gray-200 shadow-sm">
+              <Card className="border border-gray-200 shadow-sm rounded-none">
                 <CardContent className="p-7">
                   <h3 className="text-xl font-bold mb-6 tracking-tight text-[#161616]">Kontaktinformation</h3>
                   <div className="space-y-3">
