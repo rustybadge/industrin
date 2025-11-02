@@ -135,7 +135,7 @@ export default function Companies() {
         </div>
 
         {/* Category Quote Banner - moved below search */}
-        <div className="bg-[#B1A87F] text-white p-6 rounded-lg mb-8">
+        <div className="bg-[#B1A87F] text-white p-6 !rounded-none mb-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <div className="mb-4 md:mb-0">
               <h3 className="text-xl font-bold mb-2 !text-white">Begär offert på reparation & service</h3>
