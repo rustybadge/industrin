@@ -308,7 +308,7 @@ export default function AdminDashboard() {
                               <Button
                                 size="sm"
                                 onClick={() => handleApproveClaim(claim.id)}
-                                className="bg-green-600 hover:bg-green-700"
+                                className="bg-gray-900 hover:bg-black"
                               >
                                 <CheckCircle className="h-4 w-4 mr-1" />
                                 Approve

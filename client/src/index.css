@@ -5,6 +5,55 @@
 @tailwind components;
 @tailwind utilities;
 
+/* PP Neue Montreal font faces */
+@font-face {
+  font-family: 'PP Neue Montreal';
+  src: url('./assets/fonts/ppneuemontreal-book.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'PP Neue Montreal';
+  src: url('./assets/fonts/ppneuemontreal-medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'PP Neue Montreal';
+  src: url('./assets/fonts/ppneuemontreal-bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'PP Neue Montreal';
+  src: url('./assets/fonts/ppneuemontreal-thin.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'PP Neue Montreal';
+  src: url('./assets/fonts/ppneuemontreal-italic.otf') format('opentype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'PP Neue Montreal';
+  src: url('./assets/fonts/ppneuemontreal-semibolditalic.otf') format('opentype');
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
+
 :root {
   --background: #ffffff;
   --foreground: hsl(20, 14.3%, 4.1%);
@@ -16,16 +65,45 @@
   --card-foreground: hsl(20, 14.3%, 4.1%);
   --border: hsl(20, 5.9%, 90%);
   --input: hsl(20, 5.9%, 90%);
-  --primary: #1f2937;
-  --primary-dark: #374151;
-  --primary-foreground: hsl(211, 100%, 99%);
-  --secondary: hsl(210, 5%, 26%);
-  --secondary-foreground: hsl(24, 9.8%, 10%);
-  --accent: hsl(25, 95%, 53%);
-  --accent-foreground: hsl(60, 9.1%, 97.8%);
+  
+  /* Primary Black/Grey Palette for Buttons */
+  --primary: #171717;
+  --primary-tint-1: #404040;
+  --primary-tint-2: #6B6B6B;
+  --primary-tint-3: #9E9E9E;
+  --primary-tint-4: #D0D0D0;
+  --primary-shade-1: #0A0A0A;
+  --primary-shade-2: #000000;
+  --primary-shade-3: #000000;
+  --primary-dark: #000000;
+  --primary-darker: #000000;
+  --primary-light: #404040;
+  --primary-lighter: #9E9E9E;
+  --primary-lightest: #D0D0D0;
+  --primary-foreground: #ffffff;
+  
+  /* Secondary Blue Palette */
+  --secondary: #3467FF;
+  --secondary-tint-1: #598FFF;
+  --secondary-tint-2: #8EB6FF;
+  --secondary-tint-3: #BCD2FF;
+  --secondary-tint-4: #D9E5FF;
+  --secondary-shade-1: #141A57;
+  --secondary-shade-2: #1728B6;
+  --secondary-shade-3: #1B43F5;
+  --secondary-dark: #1B43F5;
+  --secondary-darker: #141A57;
+  --secondary-light: #8EB6FF;
+  --secondary-lighter: #BCD2FF;
+  --secondary-lightest: #D9E5FF;
+  --secondary-foreground: #ffffff;
+  
+  /* Accent colors */
+  --accent: #3467FF;
+  --accent-foreground: #ffffff;
   --destructive: hsl(0, 84.2%, 60.2%);
   --destructive-foreground: hsl(60, 9.1%, 97.8%);
-  --ring: hsl(20, 14.3%, 4.1%);
+  --ring: #171717;
   --radius: 0.5rem;
 }
 
@@ -62,18 +140,18 @@
     @apply font-sans antialiased bg-background text-foreground;
   }
 
-  /* Headers with Inter Tight font */
+  /* Headers with PP Neue Montreal (fall back to Inter Tight / system sans) */
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Inter Tight', sans-serif !important;
+    font-family: 'PP Neue Montreal', 'Inter Tight', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
     font-weight: 500 !important;
-    color: #161616 !important;
+    color: #171717 !important;
   }
 
   h1:not(.custom-size):not(.mobile-hero-h1) {
     font-weight: 500 !important;
     font-size: 40px !important;
     line-height: 44px !important;
-    letter-spacing: -1.6px !important;
+    letter-spacing: -0.4px !important; /* -1% of 40px */
   }
 
   /* Mobile-specific hero typography - ONLY affects mobile screens */
@@ -81,12 +159,13 @@
     font-size: 54px !important;
     line-height: 58px !important;
     font-weight: 700 !important; /* Bold weight for homepage hero */
+    letter-spacing: -0.54px !important; /* -1% of 54px */
   }
   
   .mobile-hero-h2 {
     font-size: 32px !important;
     line-height: 36px !important;
-    letter-spacing: -0.32px !important;
+    letter-spacing: -0.32px !important; /* -1% of 32px */
     font-weight: 500 !important;
   }
 
@@ -96,11 +175,12 @@
       font-size: 96px !important; /* Original md:text-7xl */
       line-height: 100px !important; /* Desktop line height */
       font-weight: 700 !important; /* Bold weight for homepage hero */
+      letter-spacing: -0.96px !important; /* -1% of 96px */
     }
     .mobile-hero-h2 {
       font-size: 38px !important;
       line-height: 42px !important;
-      letter-spacing: -0.32px !important;
+      letter-spacing: -0.38px !important; /* -1% of 38px */
     }
   }
 
@@ -109,6 +189,7 @@
       font-size: 128px !important; /* Original lg:text-8xl */
       line-height: 100px !important; /* Desktop line height */
       font-weight: 700 !important; /* Bold weight for homepage hero */
+      letter-spacing: -1.28px !important; /* -1% of 128px */
     }
   }
 
@@ -116,21 +197,21 @@
     font-weight: 500 !important;
     font-size: 48px !important;
     line-height: 52px !important;
-    letter-spacing: -1px !important;
+    letter-spacing: -0.48px !important; /* -1% of 48px */
   }
 
   h3:not(.custom-size) {
     font-weight: 500 !important;
     font-size: 32px !important;
     line-height: 36px !important;
-    letter-spacing: -1.2px !important;
+    letter-spacing: -0.32px !important; /* -1% of 32px */
   }
 
   h4 {
     font-weight: 500 !important;
     font-size: 22px !important;
     line-height: 26px !important;
-    letter-spacing: -0.5px !important;
+    letter-spacing: -0.22px !important; /* -1% of 22px */
   }
 
   /* Add custom utility classes for industrial design */

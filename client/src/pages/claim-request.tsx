@@ -153,7 +153,7 @@ export default function ClaimRequest() {
               <p className="text-gray-600 mb-6">Det företag du söker efter finns inte eller har flyttats.</p>
               <Button 
                 onClick={() => navigate('/companies')}
-                className="bg-[#1f2937] hover:bg-[#374151] text-white px-6 py-2 text-sm"
+                className="bg-primary hover:bg-primary-dark text-white px-6 py-2 text-sm"
               >
                 Tillbaka till företag
               </Button>
@@ -189,7 +189,7 @@ export default function ClaimRequest() {
               </p>
               <Button 
                 onClick={() => navigate(`/companies/${companySlug || ''}`)}
-                className="bg-[#1f2937] hover:bg-[#374151] text-white px-6 py-2 text-sm"
+                className="bg-primary hover:bg-primary-dark text-white px-6 py-2 text-sm"
               >
                 Tillbaka till företagsprofil
               </Button>
@@ -218,7 +218,7 @@ export default function ClaimRequest() {
 
           <Card className="border-0 shadow-none">
             <CardHeader className="px-0 pt-0">
-              <CardTitle className="text-2xl font-bold text-[#1f2937]">
+              <CardTitle className="text-2xl font-bold text-primary">
                 Äger du detta företag?
               </CardTitle>
               <p className="text-gray-600">Ansök om kontroll över {company?.name}</p>
@@ -272,7 +272,7 @@ export default function ClaimRequest() {
                           <Input 
                             placeholder="Ditt för- och efternamn" 
                             {...field} 
-                            className="h-10 text-sm border-gray-300 focus:border-[#1f2937] focus:ring-[#1f2937]"
+                            className="h-10 text-sm border-gray-300 focus:border-primary focus:ring-primary"
                           />
                         </FormControl>
                         <FormMessage />
@@ -291,7 +291,7 @@ export default function ClaimRequest() {
                             type="email" 
                             placeholder="din@foretag.se" 
                             {...field} 
-                            className="h-10 text-sm border-gray-300 focus:border-[#1f2937] focus:ring-[#1f2937]"
+                            className="h-10 text-sm border-gray-300 focus:border-primary focus:ring-primary"
                           />
                         </FormControl>
                         <FormMessage />
@@ -310,7 +310,7 @@ export default function ClaimRequest() {
                             type="tel" 
                             placeholder="070-123 45 67" 
                             {...field} 
-                            className="h-10 text-sm border-gray-300 focus:border-[#1f2937] focus:ring-[#1f2937]"
+                            className="h-10 text-sm border-gray-300 focus:border-primary focus:ring-primary"
                           />
                         </FormControl>
                         <FormMessage />
@@ -351,7 +351,7 @@ export default function ClaimRequest() {
                                             field.onChange(currentValues.filter(v => v !== subcategory));
                                           }
                                         }}
-                                        className="rounded border-gray-300 text-[#1f2937] focus:ring-[#1f2937]"
+                                        className="rounded border-gray-300 text-primary focus:ring-primary"
                                       />
                                       <span className="text-sm">{subcategory}</span>
                                     </label>
@@ -376,7 +376,7 @@ export default function ClaimRequest() {
                       <FormControl>
                         <Textarea 
                           placeholder="T.ex. Ägare, VD, Ansvarig för marknadsföring..."
-                          className="min-h-[80px] text-sm border-gray-300 focus:border-[#1f2937] focus:ring-[#1f2937] resize-none"
+                          className="min-h-[80px] text-sm border-gray-300 focus:border-primary focus:ring-primary resize-none"
                           {...field} 
                         />
                       </FormControl>
@@ -400,7 +400,7 @@ export default function ClaimRequest() {
                       <div className="space-y-1 leading-none">
                         <FormLabel className="text-sm font-medium text-gray-900 leading-relaxed cursor-pointer">
                           Jag bekräftar att jag är behörig att representera detta företag och godkänner{" "}
-                          <a href="#" className="text-[#1f2937] hover:underline font-medium">
+                          <a href="#" className="text-primary hover:underline font-medium">
                             användarvillkoren
                           </a>
                           .
@@ -423,7 +423,7 @@ export default function ClaimRequest() {
                   </Button>
                   <Button 
                     type="submit" 
-                    className="flex-1 h-10 text-sm bg-[#1f2937] hover:bg-[#374151] text-white font-medium"
+                    className="flex-1 h-10 text-sm bg-primary hover:bg-primary-dark text-white font-medium"
                     disabled={createClaimMutation.isPending}
                   >
                     {createClaimMutation.isPending ? "Skickar..." : "Skicka ansökan"}

@@ -1,8 +1,7 @@
 import { Link } from "wouter";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { MapPin, Building } from "lucide-react";
+import { MapPin } from "lucide-react";
 import type { Company } from "@shared/schema";
 
 interface CompanyCardProps {
@@ -15,18 +14,18 @@ export default function CompanyCard({ company }: CompanyCardProps) {
   
   return (
     <Link href={`/companies/${company.slug}`}>
-      <Card className="border border-gray-200 rounded-none cursor-pointer hover:border-gray-300 transition-colors h-full">
+      <Card className="border-0 rounded-none cursor-pointer hover:border-gray-300 transition-colors h-full bg-[#FAFAFA]">
         <CardContent className="p-6 h-full flex flex-col">
           <div className="mb-4">
-            <h4 className="font-medium hover:text-primary transition-colors text-[#161616] mb-2">{company.name}</h4>
+            <h4 className="font-medium hover:text-primary transition-colors text-[#171717] mb-2">{company.name}</h4>
             <div className="flex gap-2">
               {company.isFeatured && (
-                <Badge variant="secondary" className="bg-[#FFE0DD] text-[#3D3D3C] border border-[#CECECD]">
+                <Badge variant="secondary" className="bg-[#D0FBE5] text-gray-900 border border-gray-300">
                   Utmärkt
                 </Badge>
               )}
               {company.isVerified && (
-                <Badge variant="secondary" className="bg-[#EBEDD6] text-[#3D3D3C] border border-[#CECECD]">
+                <Badge variant="secondary" className="bg-[#D9E5FF] text-gray-900 border border-gray-300">
                   Verifierat
                 </Badge>
               )}
@@ -39,17 +38,9 @@ export default function CompanyCard({ company }: CompanyCardProps) {
             </p>
           </div>
 
-          <div className="flex justify-between items-center mt-auto">
-            <div className="flex items-center text-sm text-gray-500">
-              <MapPin className="h-4 w-4 mr-1" />
-              <span>{company.city || company.location}</span>
-            </div>
-            <Button 
-              className="bg-primary hover:bg-primary-dark text-white text-sm"
-              onClick={(e) => e.stopPropagation()}
-            >
-              Visa profil
-            </Button>
+          <div className="flex items-center text-sm text-gray-500 mt-auto">
+            <MapPin className="h-4 w-4 mr-1" />
+            <span>{company.city || company.location}</span>
           </div>
         </CardContent>
       </Card>

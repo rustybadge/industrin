@@ -65,16 +65,15 @@ export default function Home() {
       <section className="py-24 lg:py-32 bg-white">
         <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
-            <h1 className="mobile-hero-h1 font-light leading-tight mb-8 text-[#161616]">
-              Eftermarknad. Reservdelar.<br />
-              <span className="text-gray-600">Reparationer.</span>
-            </h1>
+            <p className="font-medium mb-1 text-[#0A0A0A]" style={{ fontFamily: 'PP Neue Montreal, Inter Tight, sans-serif', fontSize: '42px', lineHeight: '1.1', fontWeight: 500, letterSpacing: '-0.01em' }}>
+              Eftermarknad. Reservdelar. Reparationer.
+            </p>
             
-            <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-2xl font-light">Vi samlar Sveriges bästa serviceföretag för reparation, underhåll och reservdelar. Hitta rätt partner snabbt – nära dig och redo att agera.</p>
+            <p className="font-medium mb-12 text-[#A3A3A3]" style={{ fontFamily: 'PP Neue Montreal, Inter Tight, sans-serif', fontSize: '42px', lineHeight: '1.1', maxWidth: '900px', fontWeight: 500, letterSpacing: '-0.01em' }}>Vi samlar Sveriges bästa serviceföretag för reparation och underhåll. Hitta rätt partner snabbt, nära dig och redo att agera.</p>
             
             {/* Clean CTA */}
             <Link href="/companies">
-              <Button className="inline-flex items-center bg-gray-900 hover:bg-gray-800 text-white font-medium px-8 transition-colors group text-lg" style={{ height: '56px' }}>
+              <Button className="inline-flex items-center bg-primary hover:bg-primary-dark text-white font-medium px-8 transition-colors group text-lg" style={{ height: '56px' }}>
                 Hitta hjälp nu
                 <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Button>
@@ -86,7 +85,7 @@ export default function Home() {
       <section className="py-16 bg-background">
         <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-12">
-            <h3 className="text-3xl font-bold mb-4 text-[#161616]">Hitta rätt serviceföretag direkt</h3>
+            <h3 className="text-3xl font-bold mb-4 text-[#171717]">Hitta rätt serviceföretag direkt</h3>
             <p className="text-lg text-gray-600">Sök efter tjänst och region för att snabbt hitta den hjälp du behöver.</p>
           </div>
 

@@ -124,7 +124,7 @@ export default function QuoteRequest() {
 
           <Card className="border-0 shadow-none">
             <CardHeader className="px-0 pt-0">
-              <CardTitle className="text-2xl font-bold text-[#1f2937]">
+              <CardTitle className="text-2xl font-bold text-primary">
                 Skicka förfrågan till {company.name}
               </CardTitle>
               <p className="text-gray-600">Kostnadsfri tjänst, fri support!</p>
@@ -353,7 +353,7 @@ export default function QuoteRequest() {
                   </Button>
                   <Button 
                     type="submit" 
-                    className="flex-1 bg-[#1f2937] hover:bg-[#374151] text-white"
+                    className="flex-1 bg-primary hover:bg-primary-dark text-white"
                     disabled={createQuoteMutation.isPending}
                   >
                     {createQuoteMutation.isPending ? "Skickar..." : "Skicka förfrågan"}

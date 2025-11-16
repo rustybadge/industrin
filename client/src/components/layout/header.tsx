@@ -25,7 +25,7 @@ export default function Header() {
           <nav className="hidden md:block">
             <div className="ml-10 flex items-center">
               <Link href="/begar-offert">
-                <Button className="bg-gray-900 hover:bg-gray-800 text-white font-semibold">
+                <Button className="bg-primary hover:bg-primary-dark text-white font-semibold">
                   Hitta Service
                 </Button>
               </Link>
@@ -37,7 +37,7 @@ export default function Header() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-[#111827] hover:text-[#111827] [&_svg]:!h-[25px] [&_svg]:!w-[25px]"
+                className="text-[#111827] hover:text-[#111827] hover:bg-[#BCD2FF] [&_svg]:!h-[25px] [&_svg]:!w-[25px]"
               >
                 <OffertIcon className="h-[25px] w-[25px]" />
               </Button>

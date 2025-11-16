@@ -121,7 +121,7 @@ export default function Companies() {
       <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="font-bold text-[40px] leading-[44px] mt-2 mb-2 text-[#161616]" style={{ letterSpacing: '-1.6px' }}>Företagskatalog</h1>
+          <h1 className="font-bold text-[40px] leading-[44px] mt-2 mb-2 text-[#171717]" style={{ letterSpacing: '-1.6px' }}>Företagskatalog</h1>
           <p className="text-lg text-gray-600">Sök och filtrera bland företag som kan hjälpa dig med reparation, underhåll och service</p>
         </div>
 
@@ -135,14 +135,14 @@ export default function Companies() {
         </div>
 
         {/* Category Quote Banner - moved below search */}
-        <div className="bg-[#99A638] text-white p-6 !rounded-none mb-8">
+        <div className="bg-[#BCD2FF] text-white p-6 !rounded-none mb-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <div className="mb-4 md:mb-0">
-              <h3 className="text-xl font-bold mb-2 !text-white">Begär offert på reparation & service</h3>
-              <p className="text-white">Få offerter från flera företag samtidigt. Helt kostnadsfritt.</p>
+              <h3 className="text-xl font-bold mb-2 text-[#0A0A0A]">Begär offert på reparation & service</h3>
+              <p className="text-[#0A0A0A]">Få offerter från flera företag samtidigt. Helt kostnadsfritt.</p>
             </div>
-            <Button 
-              className="bg-[#454545] text-white hover:bg-[#353535] font-medium px-6 py-2"
+              <Button 
+              className="bg-[#3467FF] hover:bg-[#1B43F5] text-white font-medium px-6 py-2"
               onClick={() => navigate('/begar-offert')}
             >
               Skapa förfrågan nu

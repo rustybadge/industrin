@@ -409,7 +409,7 @@ export default function GeneralQuoteRequest() {
                       </Button>
                       <Button 
                         type="submit" 
-                        className="flex-1 h-10 text-sm bg-[#1f2937] hover:bg-[#374151] text-white font-medium"
+                        className="flex-1 h-10 text-sm bg-primary hover:bg-primary-dark text-white font-medium"
                         disabled={createGeneralQuoteMutation.isPending}
                       >
                         {createGeneralQuoteMutation.isPending ? "Skickar..." : "Skicka förfrågan"}

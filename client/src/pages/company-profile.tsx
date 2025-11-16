@@ -19,8 +19,6 @@ import {
   Building,
   ArrowLeft
 } from "lucide-react";
-import EmailIcon from "@/components/ui/email-icon";
-import PhoneIcon from "@/components/ui/phone-icon";
 
 export default function CompanyProfile() {
   const params = useParams();
@@ -78,7 +76,7 @@ export default function CompanyProfile() {
         <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
           <Card className="border border-gray-200 shadow-sm">
             <CardContent className="pt-16 pb-16 text-center">
-              <h1 className="text-3xl font-bold text-[#1f2937] mb-4 tracking-tight">Företag hittades inte</h1>
+              <h1 className="text-3xl font-bold text-primary mb-4 tracking-tight">Företag hittades inte</h1>
               <p className="text-gray-600 text-lg">Det företag du letar efter finns inte eller har flyttats.</p>
             </CardContent>
           </Card>
@@ -113,17 +111,17 @@ export default function CompanyProfile() {
           {/* Company Profile Header */}
           <div className="flex flex-col md:flex-row md:items-start md:justify-between mb-8">
             <div className="mb-6 md:mb-0">
-              <h1 className="font-bold mb-3 tracking-tight text-[42px] text-[#161616]">{company.name}</h1>
+              <h1 className="font-bold mb-3 tracking-tight text-[42px] text-[#171717]">{company.name}</h1>
               <p className="text-xl text-gray-600 mb-3 font-medium">{company.city || company.location}</p>
               <div className="flex items-center gap-3">
                 {company.isVerified && (
-                  <Badge variant="secondary" className="bg-[#EBEDD6] text-[#3D3D3C] border border-[#CECECD] px-3 py-1">
+                  <Badge variant="secondary" className="bg-[#D9E5FF] text-gray-900 border border-gray-300 px-3 py-1">
                     <Shield className="h-3 w-3 mr-1" />
                     Verifierat företag
                   </Badge>
                 )}
                 {company.isFeatured && (
-                  <Badge variant="secondary" className="bg-[#FFE0DD] text-[#3D3D3C] border border-[#CECECD] px-3 py-1">
+                  <Badge variant="secondary" className="bg-[#D0FBE5] text-gray-900 border border-gray-300 px-3 py-1">
                     <Star className="h-3 w-3 mr-1" />
                     Utmärkt
                   </Badge>
@@ -133,29 +131,19 @@ export default function CompanyProfile() {
           </div>
 
           {/* Company Actions */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-10">
             <Button 
               onClick={() => navigate(`/companies/${companySlug}/quote`)}
-              className="bg-[#1f2937] hover:bg-[#374151] text-white font-semibold py-3 px-6 transition-colors flex items-center justify-center h-12"
+              className="bg-primary hover:bg-primary-dark text-white font-semibold px-6 py-3 h-12 text-sm"
             >
-              <EmailIcon className="mr-3 h-5 w-5" />
               Begär offert
             </Button>
             <Button 
               variant="outline"
-              className="bg-white border-2 border-[#1f2937] text-[#1f2937] hover:bg-[#1f2937] hover:text-[#F5F5F5] font-semibold py-3 px-6 transition-colors flex items-center justify-center h-12 group"
+              className="bg-white border-2 border-primary text-primary hover:bg-primary hover:text-white font-semibold px-6 py-3 h-12 text-sm"
               disabled={!company.phone}
             >
-              <PhoneIcon className="mr-3 h-5 w-5 text-[#111827] group-hover:text-[#F5F5F5]" />
               Ring direkt
-            </Button>
-            <Button 
-              variant="outline"
-              onClick={() => navigate(`/ansokkontroll/${companySlug || companyId}`)}
-              className="bg-[#F2B441] border-2 border-[#F2B441] text-white hover:bg-[#E0A630] hover:border-[#E0A630] font-semibold py-3 px-6 transition-colors flex items-center justify-center h-12"
-            >
-              <UserCheck className="mr-3 h-5 w-5" />
-              Äger du detta företag? Uppdatera din profil
             </Button>
           </div>
 
@@ -163,8 +151,8 @@ export default function CompanyProfile() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
             <div className="lg:col-span-2 space-y-8">
               <div>
-                <h2 className="font-bold mb-6 tracking-tight custom-size text-[#161616] text-[38px]" style={{fontSize: '38px'}}>Om företaget</h2>
-                <div className="prose prose-gray max-w-none">
+                <h2 className="font-bold mb-6 tracking-tight custom-size text-[#171717] text-[38px]" style={{fontSize: '38px'}}>Om företaget</h2>
+                <div className="prose prose-gray max-w-none lg:max-w-3xl">
                   {displayDescription && displayDescription.length >= 50 ? (
                     <p className="text-gray-700 leading-7 text-lg whitespace-pre-wrap">
                       {displayDescription}
@@ -183,14 +171,14 @@ export default function CompanyProfile() {
               </div>
 
               <div>
-                <h3 className="text-xl font-bold mb-5 text-[#161616]" style={{letterSpacing: '-0.01em'}}>Serviceområden</h3>
+                <h3 className="text-xl font-bold mb-5 text-[#171717]" style={{letterSpacing: '-0.01em'}}>Serviceområden</h3>
                 <div className="flex flex-wrap gap-3">
                   {company.serviceområden && company.serviceområden.length > 0 ? (
                     company.serviceområden.map((serviceområde) => (
                       <Badge 
                         key={serviceområde} 
                         variant="outline" 
-                        className="bg-blue-50 text-blue-700 border border-blue-200 px-5 py-2 rounded-full font-medium text-sm hover:bg-blue-100 transition-colors"
+                        className="bg-[var(--secondary-lightest)] text-[var(--secondary-darker)] border border-[var(--secondary-lighter)] px-5 py-2 rounded-full font-medium text-sm hover:bg-[var(--secondary-lighter)] transition-colors"
                       >
                         {serviceområde}
                       </Badge>
@@ -208,7 +196,7 @@ export default function CompanyProfile() {
 
               {/* Service Categories Section - will be populated when companies claim their profiles */}
               <div>
-                <h3 className="text-xl font-bold mb-5 text-[#161616]" style={{letterSpacing: '-0.01em'}}>Tjänster & Specialiseringar</h3>
+                <h3 className="text-xl font-bold mb-5 text-[#171717]" style={{letterSpacing: '-0.01em'}}>Tjänster & Specialiseringar</h3>
                 <div className="flex flex-wrap gap-3">
                   <Badge 
                     variant="outline" 
@@ -221,31 +209,46 @@ export default function CompanyProfile() {
 
               {company.isVerified && (
                 <div>
-                  <h3 className="text-xl font-bold text-[#1f2937] mb-5 tracking-tight">Certifieringar</h3>
+                  <h3 className="text-xl font-bold text-primary mb-5 tracking-tight">Certifieringar</h3>
                   <div className="flex flex-wrap gap-4">
-                    <div className="flex items-center bg-green-50 border border-green-200 px-5 py-3 rounded-xl">
-                      <Tag className="h-5 w-5 text-green-600 mr-3" />
-                      <span className="text-green-800 font-semibold">ISO 9001:2015</span>
+                    <div className="flex items-center bg-[var(--primary-lightest)] border border-[var(--primary-lighter)] px-5 py-3 rounded-xl">
+                      <Tag className="h-5 w-5 text-primary mr-3" />
+                      <span className="text-[var(--primary-darker)] font-semibold">ISO 9001:2015</span>
                     </div>
-                    <div className="flex items-center bg-blue-50 border border-blue-200 px-5 py-3 rounded-xl">
-                      <Shield className="h-5 w-5 text-blue-600 mr-3" />
-                      <span className="text-blue-800 font-semibold">Kvalitetscertifierat</span>
+                    <div className="flex items-center bg-[var(--secondary-lightest)] border border-[var(--secondary-lighter)] px-5 py-3 rounded-xl">
+                      <Shield className="h-5 w-5 text-secondary mr-3" />
+                      <span className="text-[var(--secondary-darker)] font-semibold">Kvalitetscertifierat</span>
                     </div>
                   </div>
                 </div>
               )}
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-3">
+              {/* Claim / update profile prompt above contact card */}
+              <div className="flex items-center text-sm mb-3">
+                <span className="text-[#171717] mr-2">Äger du detta företag?</span>
+                <button
+                  type="button"
+                  onClick={() => navigate(`/ansokkontroll/${companySlug || companyId}`)}
+                  className="inline-flex items-center text-[#3467FF] hover:text-[#1B43F5] font-medium"
+                >
+                  <span className="mr-1 inline-flex h-5 w-5 items-center justify-center rounded-full border border-[#3467FF]">
+                    <UserCheck className="h-3 w-3" />
+                  </span>
+                  Uppdatera din profil
+                </button>
+              </div>
+
               <Card className="border border-gray-200 shadow-sm rounded-none">
                 <CardContent className="p-7">
-                  <h3 className="text-xl font-bold mb-6 tracking-tight text-[#161616]">Kontaktinformation</h3>
+                  <h3 className="text-xl font-bold mb-6 tracking-tight text-[#171717]">Kontaktinformation</h3>
                   <div className="space-y-3">
                     <div className="group py-2 border-b border-gray-100">
                       {company.contactEmail ? (
                         <a 
                           href={`mailto:${company.contactEmail}`}
-                          className="text-gray-700 hover:text-[#1f2937] transition-colors font-medium break-all"
+                          className="text-gray-700 hover:text-primary transition-colors font-medium break-all"
                         >
                           {company.contactEmail}
                         </a>
@@ -259,7 +262,7 @@ export default function CompanyProfile() {
                       {company.phone ? (
                         <a 
                           href={`tel:${company.phone}`}
-                          className="text-gray-700 hover:text-[#1f2937] transition-colors font-medium"
+                          className="text-gray-700 hover:text-primary transition-colors font-medium"
                         >
                           {company.phone}
                         </a>
@@ -275,7 +278,7 @@ export default function CompanyProfile() {
                           href={`https://${company.website}`} 
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className="text-[#1f2937] hover:underline font-medium break-all"
+                          className="text-primary hover:underline font-medium break-all"
                         >
                           {company.website}
                         </a>
@@ -301,16 +304,6 @@ export default function CompanyProfile() {
                     </div>
                   </div>
                   
-                  {/* Subtle claim company link */}
-                  <div className="mt-6 pt-4 border-t border-gray-100">
-                    <button
-                      onClick={() => navigate(`/ansokkontroll/${companySlug || companyId}`)}
-                      className="text-sm text-gray-500 hover:text-[#1f2937] transition-colors group text-left"
-                    >
-                      Fel eller saknad info? Klicka här för att uppdatera
-                      <span className="ml-1 transition-transform group-hover:translate-x-1">→</span>
-                    </button>
-                  </div>
                 </CardContent>
               </Card>
             </div>
