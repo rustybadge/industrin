@@ -102,9 +102,9 @@ export default function Home() {
             <p className="font-medium mb-12 text-[#A3A3A3]" style={{ fontFamily: 'PP Neue Montreal, Inter Tight, sans-serif', fontSize: '42px', lineHeight: '1.1', maxWidth: '900px', fontWeight: 500, letterSpacing: '-0.01em' }}>Vi samlar Sveriges bästa serviceföretag. Hitta rätt partner snabbt, nära dig och redo att agera.</p>
             
             {/* Clean CTA */}
-            <Link href="/companies">
+            <Link href="/begar-offert">
               <Button className="inline-flex items-center bg-primary hover:bg-primary-dark text-white font-medium px-8 transition-colors group text-lg" style={{ height: '56px' }}>
-                Hitta hjälp nu
+                Hitta Service
                 <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>

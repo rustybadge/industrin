@@ -271,14 +271,13 @@
     -webkit-line-clamp: 3;
   }
 
-  /* Remove all focus outlines from input fields */
+  /* Simplify focus styling on input fields: remove default outline but keep borders visible */
   input:focus,
   input:focus-visible,
   input:active {
     outline: none !important;
     outline-offset: 0 !important;
     box-shadow: none !important;
-    border: none !important;
   }
 
   /* Mobile-specific h2 font size override */

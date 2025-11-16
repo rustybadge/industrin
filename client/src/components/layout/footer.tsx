@@ -21,41 +21,51 @@ export default function Footer() {
         <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-8">
           {/* Left Side - Three Columns of Links */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:flex-1 lg:max-w-4xl">
-            {/* Features Column */}
+            {/* Get Support Column */}
             <div>
-              <h4 className="font-bold text-gray-900 mb-4">Features</h4>
+              <h4 className="font-bold text-gray-900 mb-4">Hitta service</h4>
               <ul className="space-y-2 text-gray-600">
-                <li><a href="/companies" className="hover:text-gray-900 transition-colors">Overview</a></li>
                 <li><a href="/begar-offert" className="hover:text-gray-900 transition-colors">Begär offert</a></li>
-                <li><a href="/companies" className="hover:text-gray-900 transition-colors">Hitta företag</a></li>
-                <li><a href="#" className="hover:text-gray-900 transition-colors">Kategorier</a></li>
-                <li><a href="#" className="hover:text-gray-900 transition-colors">Regionsökning</a></li>
-                <li><a href="#" className="hover:text-gray-900 transition-colors">Priser</a></li>
-                <li><a href="#" className="hover:text-gray-900 transition-colors">API</a></li>
-                <li><a href="#" className="hover:text-gray-900 transition-colors">Ladda ner</a></li>
+                <li><a href="/companies" className="hover:text-gray-900 transition-colors">Hitta företag A–Ö</a></li>
               </ul>
             </div>
 
-            {/* Resources Column */}
+            {/* Provide Support Column */}
             <div>
-              <h4 className="font-bold text-gray-900 mb-4">Resources</h4>
+              <h4 className="font-bold text-gray-900 mb-4">Bli leverantör</h4>
               <ul className="space-y-2 text-gray-600">
-                <li><a href="#" className="hover:text-gray-900 transition-colors">GitHub</a></li>
-                <li><a href="#" className="hover:text-gray-900 transition-colors">Support</a></li>
-                <li><a href="/integritetspolicy" className="hover:text-gray-900 transition-colors">Privacy policy</a></li>
-                <li><a href="#" className="hover:text-gray-900 transition-colors">Terms and Conditions</a></li>
-                <li><a href="#" className="hover:text-gray-900 transition-colors">Branding</a></li>
+                <li>
+                  <a href="#" className="hover:text-gray-900 transition-colors">
+                    Registrera företag gratis
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-gray-900 transition-colors">
+                    Erbjud era tjänster
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-gray-900 transition-colors">
+                    Gör anspråk på ert företag
+                  </a>
+                </li>
               </ul>
             </div>
 
-            {/* Company Column */}
+            {/* About Us Column */}
             <div>
-              <h4 className="font-bold text-gray-900 mb-4">Company</h4>
+              <h4 className="font-bold text-gray-900 mb-4">Om oss</h4>
               <ul className="space-y-2 text-gray-600">
-                <li><a href="#" className="hover:text-gray-900 transition-colors">Story</a></li>
-                <li><a href="#" className="hover:text-gray-900 transition-colors">Updates</a></li>
-                <li><a href="#" className="hover:text-gray-900 transition-colors">Open startup</a></li>
-                <li><a href="#" className="hover:text-gray-900 transition-colors">OSS friends</a></li>
+                <li>
+                  <a href="#" className="hover:text-gray-900 transition-colors">
+                    Kontakta oss
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-gray-900 transition-colors">
+                    Om Industrin.net
+                  </a>
+                </li>
               </ul>
             </div>
           </div>
@@ -96,8 +106,13 @@ export default function Footer() {
         </div>
 
         {/* Bottom Copyright */}
-        <div className="border-t border-gray-200 pt-8 mt-8 text-center text-gray-500">
-          <p>&copy; 2024 Industrin.net. Alla rättigheter förbehållna.</p>
+        <div className="border-t border-gray-200 pt-8 mt-8 text-center text-gray-500 text-sm">
+          <p className="space-x-4">
+            <span>&copy; Industrin.net. Alla rättigheter förbehållna.</span>
+            <a href="#" className="hover:text-gray-700">Terms &amp; Conditions</a>
+            <a href="/integritetspolicy" className="hover:text-gray-700">Privacy Policy</a>
+            <a href="#" className="hover:text-gray-700">Cookies</a>
+          </p>
         </div>
       </div>
     </footer>

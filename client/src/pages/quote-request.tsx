@@ -124,10 +124,13 @@ export default function QuoteRequest() {
 
           <Card className="border-0 shadow-none">
             <CardHeader className="px-0 pt-0">
-              <CardTitle className="text-2xl font-bold text-primary">
+              {/* Main page heading – match company profile / claim heading style */}
+              <h1 className="font-bold mb-3 tracking-tight text-[42px] text-[#171717]">
                 Skicka förfrågan till {company.name}
-              </CardTitle>
-              <p className="text-gray-600">Kostnadsfri tjänst, fri support!</p>
+              </h1>
+              <p className="text-gray-600 mb-6">
+                Detta är en kostnadsfri tjänst. Din förfrågan skickas direkt till {company.name}, som återkommer till dig om de har möjlighet att hjälpa dig.
+              </p>
             </CardHeader>
           
             <CardContent className="px-0">
@@ -135,7 +138,7 @@ export default function QuoteRequest() {
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 
                 {/* Service Description Section */}
-                <div className="space-y-4">
+                <div className="space-y-4 mt-8">
                   <h3 className="text-lg font-semibold text-gray-900">Beskriv vad du behöver hjälp med</h3>
                   
 
