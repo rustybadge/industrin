@@ -99,7 +99,7 @@ export default function Home() {
               Eftermarknad. Reservdelar. Reparationer.
             </p>
             
-            <p className="font-medium mb-12 text-[#A3A3A3]" style={{ fontFamily: 'PP Neue Montreal, Inter Tight, sans-serif', fontSize: '42px', lineHeight: '1.1', maxWidth: '900px', fontWeight: 500, letterSpacing: '-0.01em' }}>Vi samlar Sveriges bästa serviceföretag för reparation och underhåll. Hitta rätt partner snabbt, nära dig och redo att agera.</p>
+            <p className="font-medium mb-12 text-[#A3A3A3]" style={{ fontFamily: 'PP Neue Montreal, Inter Tight, sans-serif', fontSize: '42px', lineHeight: '1.1', maxWidth: '900px', fontWeight: 500, letterSpacing: '-0.01em' }}>Vi samlar Sveriges bästa serviceföretag. Hitta rätt partner snabbt, nära dig och redo att agera.</p>
             
             {/* Clean CTA */}
             <Link href="/companies">
@@ -116,7 +116,7 @@ export default function Home() {
         <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-12">
             <h3 className="text-3xl font-bold mb-4 text-[#171717]">
-              Sök och filtrera bland företag som kan hjälpa dig med reparation, underhåll och service.
+              Sök bland företag som kan hjälpa dig med reparation, underhåll och service.
             </h3>
           </div>
 

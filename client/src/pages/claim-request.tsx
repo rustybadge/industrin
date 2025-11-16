@@ -218,9 +218,10 @@ export default function ClaimRequest() {
 
           <Card className="border-0 shadow-none">
             <CardHeader className="px-0 pt-0">
-              <CardTitle className="text-2xl font-bold text-primary">
+              {/* Main page heading – match company profile H1 exactly */}
+              <h1 className="font-bold mb-3 tracking-tight text-[42px] text-[#171717]">
                 Äger du detta företag?
-              </CardTitle>
+              </h1>
               <p className="text-gray-600">Ansök om kontroll över {company?.name}</p>
             </CardHeader>
           
@@ -260,7 +261,7 @@ export default function ClaimRequest() {
                 
                 {/* Contact Information Section */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-gray-900">Kontaktinformation</h3>
+                  <h3 className="text-xl font-bold mb-5 text-[#171717]" style={{ letterSpacing: '-0.01em' }}>Kontaktinformation</h3>
                   
                   <FormField
                     control={form.control}
@@ -321,7 +322,7 @@ export default function ClaimRequest() {
 
                 {/* Service Categories Section */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-gray-900">Vilka tjänster erbjuder ni?</h3>
+                  <h3 className="text-xl font-bold mb-5 text-[#171717]" style={{ letterSpacing: '-0.01em' }}>Vilka tjänster erbjuder ni?</h3>
                   <p className="text-sm text-gray-600">
                     Välj alla tjänster som ni erbjuder. Detta hjälper kunder att hitta er.
                   </p>
