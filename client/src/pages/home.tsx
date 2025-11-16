@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Search, ArrowRight } from "lucide-react";
 import { api } from "@/lib/api";
 import SmartSearch, { type SearchTag } from "@/components/search/smart-search";
+import SortOptions from "@/components/search/sort-options";
 import CompanyCard from "@/components/company/company-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Company } from "@shared/schema";
@@ -13,6 +14,7 @@ import type { Company } from "@shared/schema";
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchTags, setSearchTags] = useState<SearchTag[]>([]);
+  const [sortBy, setSortBy] = useState("name-asc");
   
   // Build filters from search state
   const filters = {
@@ -23,40 +25,68 @@ export default function Home() {
 
   // Get companies for homepage with filters
   const { data: allCompanies = [], isLoading } = useQuery({
-    queryKey: ['/api/companies', { ...filters, limit: 6 }],
-    queryFn: () => api.companies.getAll({ ...filters, limit: 6 }),
+    queryKey: ['/api/companies', { ...filters, limit: 500 }],
+    queryFn: () => api.companies.getAll({ ...filters, limit: 500 }),
   });
 
-  // Sort companies with description priority, then alphabetically (A-Ö default)
+  // Sort companies, prioritizing Utmärkt/Verifierat, then using selected sort option
   const companies = [...allCompanies].sort((a, b) => {
-    // Helper function to get description priority (higher number = better description)
+    // Helper: higher number = better description
     const getDescriptionPriority = (company: Company) => {
       if (!company.description || company.description.length === 0) return 0;
       if (company.description.length < 50) return 1;
       if (company.description.length < 150) return 2;
-      return 3; // 150+ characters = highest priority
+      return 3;
     };
 
-    // First prioritize by description quality, then alphabetical
-    const aPriority = getDescriptionPriority(a);
-    const bPriority = getDescriptionPriority(b);
-    if (aPriority !== bPriority) {
-      return bPriority - aPriority; // Higher priority first
+    // Helper: prioritize featured/verified companies
+    const getBadgePriority = (company: Company) => {
+      let score = 0;
+      if ((company as any).isFeatured) score += 2; // Utmärkt
+      if ((company as any).isVerified) score += 1; // Verifierat
+      return score;
+    };
+
+    const aBadge = getBadgePriority(a);
+    const bBadge = getBadgePriority(b);
+    if (aBadge !== bBadge) {
+      return bBadge - aBadge; // Companies with badges first
     }
-    return a.name.localeCompare(b.name, 'sv');
+
+    switch (sortBy) {
+      case "name-asc": {
+        const aPriority = getDescriptionPriority(a);
+        const bPriority = getDescriptionPriority(b);
+        if (aPriority !== bPriority) {
+          return bPriority - aPriority;
+        }
+        return a.name.localeCompare(b.name, "sv");
+      }
+      case "name-desc": {
+        const aPriorityDesc = getDescriptionPriority(a);
+        const bPriorityDesc = getDescriptionPriority(b);
+        if (aPriorityDesc !== bPriorityDesc) {
+          return bPriorityDesc - aPriorityDesc;
+        }
+        return b.name.localeCompare(a.name, "sv");
+      }
+      case "relevance": {
+        if (!searchQuery) return 0;
+        const aRelevant = a.name.toLowerCase().includes(searchQuery.toLowerCase()) ? 1 : 0;
+        const bRelevant = b.name.toLowerCase().includes(searchQuery.toLowerCase()) ? 1 : 0;
+        return bRelevant - aRelevant;
+      }
+      case "newest":
+        return b.id.localeCompare(a.id);
+      default:
+        return 0;
+    }
   });
 
   // Handle smart search
   const handleSmartSearch = (query: string, tags: SearchTag[]) => {
     setSearchQuery(query);
     setSearchTags(tags);
-  };
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      window.location.href = `/companies?search=${encodeURIComponent(searchQuery)}`;
-    }
   };
 
   return (
@@ -85,8 +115,9 @@ export default function Home() {
       <section className="py-16 bg-background">
         <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-12">
-            <h3 className="text-3xl font-bold mb-4 text-[#171717]">Hitta rätt serviceföretag direkt</h3>
-            <p className="text-lg text-gray-600">Sök efter tjänst och region för att snabbt hitta den hjälp du behöver.</p>
+            <h3 className="text-3xl font-bold mb-4 text-[#171717]">
+              Sök och filtrera bland företag som kan hjälpa dig med reparation, underhåll och service.
+            </h3>
           </div>
 
           <div className="max-w-2xl mb-8">
@@ -94,6 +125,18 @@ export default function Home() {
               onSearch={handleSmartSearch}
               placeholder="Sök företag, ort eller specialområde..."
             />
+          </div>
+
+          {/* Results header + sort dropdown (same behaviour as companies page) */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
+            <div>
+              {searchQuery && (
+                <p className="text-sm text-gray-500 mt-1">
+                  Sökning: "{searchQuery}"
+                </p>
+              )}
+            </div>
+            <SortOptions value={sortBy} onChange={setSortBy} />
           </div>
 
           {isLoading ? (

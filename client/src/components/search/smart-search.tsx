@@ -240,7 +240,7 @@ export default function SmartSearch({ onSearch, placeholder = "Sök företag, or
                 setTimeout(() => setShowSuggestions(false), 200);
               }}
               onKeyDown={handleKeyDown}
-              placeholder={tags.length === 0 ? 'Exempel: "CNC-bearbetning", "Lyftutrustning", "Hydraulik"' : ""}
+              placeholder={tags.length === 0 ? 'Exempel: "CNC-bearbetning", "Lyftutrustning", "Hydraulik", "Halmstad"' : ""}
               className="border-0 shadow-none focus:ring-0 focus:outline-none focus-visible:outline-none bg-transparent flex-1 min-w-[200px] p-0"
             />
           </div>
