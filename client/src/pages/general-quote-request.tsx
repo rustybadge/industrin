@@ -175,11 +175,11 @@ export default function GeneralQuoteRequest() {
         {/* Header */}
         <div className="mb-8">
           <button
-            onClick={() => navigate('/companies')}
+            onClick={() => window.history.back()}
             className="flex items-center text-gray-600 hover:text-gray-900 mb-4"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Tillbaka till företagslista
+            Tillbaka
           </button>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Begär offert på reparation & service

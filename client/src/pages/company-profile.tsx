@@ -96,15 +96,14 @@ export default function CompanyProfile() {
       <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Back Button */}
         <div className="mb-6">
-          <Link href="/companies">
-            <Button 
-              variant="ghost" 
-              className="text-black hover:text-gray-700 hover:bg-transparent transition-colors flex items-center gap-2 px-3 py-2 group pl-[4px] pr-[4px]"
-            >
-              <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-              Tillbaka till företagslista
-            </Button>
-          </Link>
+          <Button 
+            variant="ghost" 
+            className="text-black hover:text-gray-700 hover:bg-transparent transition-colors flex items-center gap-2 px-3 py-2 group pl-[4px] pr-[4px]"
+            onClick={() => window.history.back()}
+          >
+            <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+            Tillbaka
+          </Button>
         </div>
         
         <div className="relative">
