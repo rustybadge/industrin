@@ -68,7 +68,7 @@ export function CompanyAuthProvider({ children }: { children: ReactNode }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, accessToken }),
+        body: JSON.stringify({ email: email.trim(), accessToken: accessToken.trim() }),
       });
 
       if (response.ok) {
@@ -76,10 +76,13 @@ export function CompanyAuthProvider({ children }: { children: ReactNode }) {
         localStorage.setItem('company_token', token);
         setCompanyUser(companyUser);
         return true;
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Login failed:', response.status, errorData);
+        return false;
       }
-      return false;
     } catch (error) {
-      console.error('Login failed:', error);
+      console.error('Login network error:', error);
       return false;
     }
   };

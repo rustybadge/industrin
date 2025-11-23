@@ -731,6 +731,300 @@ export const handler = async (event, context) => {
       };
     }
 
+    // ===== COMPANY USER ROUTES =====
+
+    // Company user login
+    if (path === '/api/company/login' && httpMethod === 'POST') {
+      const { email, accessToken } = JSON.parse(event.body || '{}');
+
+      if (!email || !accessToken) {
+        return {
+          statusCode: 400,
+          headers,
+          body: JSON.stringify({ message: 'Email and access token are required' }),
+        };
+      }
+
+      // Get company user by email (case-insensitive)
+      const userResult = await pool.query('SELECT * FROM company_users WHERE LOWER(email) = LOWER($1)', [email.trim()]);
+      
+      if (userResult.rows.length === 0) {
+        return {
+          statusCode: 401,
+          headers,
+          body: JSON.stringify({ message: 'Invalid credentials' }),
+        };
+      }
+
+      const companyUser = userResult.rows[0];
+
+      // Verify access token matches (trim whitespace)
+      const trimmedToken = accessToken.trim();
+      if (companyUser.access_token !== trimmedToken) {
+        console.log('Token mismatch:', {
+          stored: companyUser.access_token?.substring(0, 10) + '...',
+          provided: trimmedToken.substring(0, 10) + '...',
+          lengths: { stored: companyUser.access_token?.length, provided: trimmedToken.length }
+        });
+        return {
+          statusCode: 401,
+          headers,
+          body: JSON.stringify({ message: 'Invalid credentials' }),
+        };
+      }
+
+      // Check if account is active
+      if (!companyUser.is_active) {
+        return {
+          statusCode: 403,
+          headers,
+          body: JSON.stringify({ message: 'Account is inactive' }),
+        };
+      }
+
+      // Get company details
+      const companyResult = await pool.query('SELECT * FROM companies WHERE id = $1', [companyUser.company_id]);
+      
+      if (companyResult.rows.length === 0) {
+        return {
+          statusCode: 404,
+          headers,
+          body: JSON.stringify({ message: 'Company not found' }),
+        };
+      }
+
+      const company = companyResult.rows[0];
+
+      // Generate JWT token
+      const token = jwt.sign(
+        {
+          id: companyUser.id,
+          companyId: companyUser.company_id,
+          email: companyUser.email,
+          role: companyUser.role
+        },
+        JWT_SECRET,
+        { expiresIn: '30d' }
+      );
+
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({
+          companyUser: {
+            id: companyUser.id,
+            companyId: companyUser.company_id,
+            email: companyUser.email,
+            name: companyUser.name,
+            role: companyUser.role,
+            company: {
+              id: company.id,
+              name: company.name,
+              slug: company.slug,
+            },
+          },
+          token,
+        }),
+      };
+    }
+
+    // Verify company token
+    if (path === '/api/company/verify' && httpMethod === 'GET') {
+      const token = event.headers.authorization?.replace('Bearer ', '');
+
+      if (!token) {
+        return {
+          statusCode: 401,
+          headers,
+          body: JSON.stringify({ message: 'No token provided' }),
+        };
+      }
+
+      try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        const userResult = await pool.query('SELECT * FROM company_users WHERE email = $1', [decoded.email]);
+        
+        if (userResult.rows.length === 0 || !userResult.rows[0].is_active) {
+          return {
+            statusCode: 401,
+            headers,
+            body: JSON.stringify({ message: 'Invalid or inactive token' }),
+          };
+        }
+
+        const companyUser = userResult.rows[0];
+        const companyResult = await pool.query('SELECT * FROM companies WHERE id = $1', [companyUser.company_id]);
+        
+        if (companyResult.rows.length === 0) {
+          return {
+            statusCode: 404,
+            headers,
+            body: JSON.stringify({ message: 'Company not found' }),
+          };
+        }
+
+        const company = companyResult.rows[0];
+
+        return {
+          statusCode: 200,
+          headers,
+          body: JSON.stringify({
+            id: companyUser.id,
+            companyId: companyUser.company_id,
+            email: companyUser.email,
+            name: companyUser.name,
+            role: companyUser.role,
+            company: {
+              id: company.id,
+              name: company.name,
+              slug: company.slug,
+            },
+          }),
+        };
+      } catch (error) {
+        return {
+          statusCode: 401,
+          headers,
+          body: JSON.stringify({ message: 'Invalid token' }),
+        };
+      }
+    }
+
+    // Get company profile (requires auth)
+    if (path === '/api/company/profile' && httpMethod === 'GET') {
+      const token = event.headers.authorization?.replace('Bearer ', '');
+
+      if (!token) {
+        return {
+          statusCode: 401,
+          headers,
+          body: JSON.stringify({ message: 'No token provided' }),
+        };
+      }
+
+      try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        const companyResult = await pool.query('SELECT * FROM companies WHERE id = $1', [decoded.companyId]);
+        
+        if (companyResult.rows.length === 0) {
+          return {
+            statusCode: 404,
+            headers,
+            body: JSON.stringify({ message: 'Company not found' }),
+          };
+        }
+
+        const company = companyResult.rows[0];
+        // Map database columns to frontend format
+        const mappedCompany = {
+          ...company,
+          postalCode: company.postal_code,
+          contactEmail: company.contact_email,
+          isFeatured: company.is_featured,
+          isVerified: company.is_verified,
+          createdAt: company.created_at,
+          logoUrl: company.logo_url,
+          descriptionSv: company.description_sv,
+        };
+
+        delete mappedCompany.postal_code;
+        delete mappedCompany.contact_email;
+        delete mappedCompany.is_featured;
+        delete mappedCompany.is_verified;
+        delete mappedCompany.created_at;
+        delete mappedCompany.logo_url;
+        delete mappedCompany.description_sv;
+
+        return {
+          statusCode: 200,
+          headers,
+          body: JSON.stringify(mappedCompany),
+        };
+      } catch (error) {
+        return {
+          statusCode: 401,
+          headers,
+          body: JSON.stringify({ message: 'Invalid token' }),
+        };
+      }
+    }
+
+    // Update company profile (requires auth)
+    if (path === '/api/company/profile' && httpMethod === 'PUT') {
+      const token = event.headers.authorization?.replace('Bearer ', '');
+
+      if (!token) {
+        return {
+          statusCode: 401,
+          headers,
+          body: JSON.stringify({ message: 'No token provided' }),
+        };
+      }
+
+      try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        const updateData = JSON.parse(event.body || '{}');
+
+        // Map frontend fields to database columns
+        const dbUpdateData = {};
+        if (updateData.name !== undefined) dbUpdateData.name = updateData.name;
+        if (updateData.description !== undefined) dbUpdateData.description = updateData.description;
+        if (updateData.descriptionSv !== undefined) dbUpdateData.description_sv = updateData.descriptionSv;
+        if (updateData.contactEmail !== undefined) dbUpdateData.contact_email = updateData.contactEmail;
+        if (updateData.phone !== undefined) dbUpdateData.phone = updateData.phone;
+        if (updateData.website !== undefined) dbUpdateData.website = updateData.website;
+        if (updateData.address !== undefined) dbUpdateData.address = updateData.address;
+        if (updateData.postalCode !== undefined) dbUpdateData.postal_code = updateData.postalCode;
+        if (updateData.city !== undefined) dbUpdateData.city = updateData.city;
+        if (updateData.location !== undefined) dbUpdateData.location = updateData.location;
+        if (updateData.region !== undefined) dbUpdateData.region = updateData.region;
+
+        const setClause = Object.keys(dbUpdateData).map((key, index) => `${key} = $${index + 2}`).join(', ');
+        const values = [decoded.companyId, ...Object.values(dbUpdateData)];
+
+        await pool.query(
+          `UPDATE companies SET ${setClause} WHERE id = $1`,
+          values
+        );
+
+        const companyResult = await pool.query('SELECT * FROM companies WHERE id = $1', [decoded.companyId]);
+        const company = companyResult.rows[0];
+
+        // Map back to frontend format
+        const mappedCompany = {
+          ...company,
+          postalCode: company.postal_code,
+          contactEmail: company.contact_email,
+          isFeatured: company.is_featured,
+          isVerified: company.is_verified,
+          createdAt: company.created_at,
+          logoUrl: company.logo_url,
+          descriptionSv: company.description_sv,
+        };
+
+        delete mappedCompany.postal_code;
+        delete mappedCompany.contact_email;
+        delete mappedCompany.is_featured;
+        delete mappedCompany.is_verified;
+        delete mappedCompany.created_at;
+        delete mappedCompany.logo_url;
+        delete mappedCompany.description_sv;
+
+        return {
+          statusCode: 200,
+          headers,
+          body: JSON.stringify(mappedCompany),
+        };
+      } catch (error) {
+        console.error('Update company profile error:', error);
+        return {
+          statusCode: 401,
+          headers,
+          body: JSON.stringify({ message: 'Invalid token or update failed' }),
+        };
+      }
+    }
+
     // Change admin password
     if (path === '/api/admin/change-password' && httpMethod === 'POST') {
       const authResult = verifyAdminAuth(event);

@@ -19,15 +19,20 @@ export default function CompanyLogin() {
     setError('');
     setIsLoading(true);
 
-    const success = await login(email, accessToken);
-    
-    if (success) {
-      navigate('/company/dashboard');
-    } else {
-      setError('Invalid email or access token. Please check your credentials.');
+    try {
+      const success = await login(email.trim(), accessToken.trim());
+      
+      if (success) {
+        navigate('/company/dashboard');
+      } else {
+        setError('Invalid email or access token. Please check your credentials.');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      setError('An error occurred during login. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
-    
-    setIsLoading(false);
   };
 
   return (
