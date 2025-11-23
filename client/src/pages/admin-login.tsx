@@ -155,20 +155,6 @@ export default function AdminLogin() {
           </CardContent>
         </Card>
 
-        {/* Default Credentials Info */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h3 className="text-sm font-medium text-blue-800 mb-2">
-            Default Admin Credentials:
-          </h3>
-          <div className="text-sm text-blue-700">
-            <p><strong>Username:</strong> admin</p>
-            <p><strong>Password:</strong> admin123</p>
-          </div>
-          <p className="text-xs text-blue-600 mt-2">
-            ⚠️ Change this password immediately after first login
-          </p>
-        </div>
-
         {/* Back to Site */}
         <div className="text-center">
           <Button
