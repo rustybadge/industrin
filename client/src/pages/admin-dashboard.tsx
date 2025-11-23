@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useLocation } from 'wouter';
 import { useAdminAuth } from '@/contexts/admin-auth';
@@ -42,12 +42,36 @@ interface DashboardStats {
 }
 
 export default function AdminDashboard() {
-  const { admin, logout } = useAdminAuth();
+  const { admin, logout, isLoading: authLoading } = useAdminAuth();
   const [, navigate] = useLocation();
   const [selectedTab, setSelectedTab] = useState<'overview' | 'claims'>('overview');
 
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!authLoading && !admin) {
+      navigate('/admin/login');
+    }
+  }, [admin, authLoading, navigate]);
+
   // Get token from localStorage
   const adminToken = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : null;
+
+  // Show loading state while checking authentication
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render if not authenticated (will redirect)
+  if (!admin) {
+    return null;
+  }
 
   // Fetch dashboard stats
   const { data: stats, isLoading: statsLoading, error: statsError } = useQuery<DashboardStats>({
