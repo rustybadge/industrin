@@ -78,14 +78,24 @@ export default function AdminDashboard() {
   // Get token from localStorage
   const adminToken = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : null;
 
-  // Redirect to login if not authenticated
+  // Redirect to login if not authenticated (but only if we're sure)
   useEffect(() => {
-    if (!authLoading && !admin) {
-      // Small delay to ensure state is stable
+    // Only redirect if:
+    // 1. Not loading
+    // 2. No admin
+    // 3. No token in localStorage (meaning it was removed due to invalid token)
+    const token = localStorage.getItem('admin_token');
+    
+    if (!authLoading && !admin && !token) {
+      // Token was removed, definitely redirect
+      console.log('No admin and no token, redirecting to login');
       const timer = setTimeout(() => {
         navigate('/admin/login');
       }, 100);
       return () => clearTimeout(timer);
+    } else if (!authLoading && !admin && token) {
+      // We have a token but no admin - might be verifying, don't redirect yet
+      console.log('Token exists but no admin - might be verifying, waiting...');
     }
   }, [admin, authLoading, navigate]);
 
@@ -101,19 +111,56 @@ export default function AdminDashboard() {
     );
   }
 
-  // Show redirecting message if not authenticated (instead of blank page)
+  // Show message if not authenticated but token exists (might be verifying)
+  const token = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : null;
+  
   if (!admin) {
+    // If we have a token, we might still be verifying - show loading
+    if (token && authLoading) {
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-background">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Verifying authentication...</p>
+          </div>
+        </div>
+      );
+    }
+    
+    // No token or verification failed - show redirect message with retry option
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center">
+        <div className="text-center max-w-md">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Redirecting to login...</p>
-          <Button 
-            onClick={() => navigate('/admin/login')} 
-            className="mt-4"
-          >
-            Go to Login
-          </Button>
+          <p className="text-gray-600 mb-2">
+            {token ? 'Authentication verification failed.' : 'No authentication token found.'}
+          </p>
+          <p className="text-sm text-gray-500 mb-4">
+            {token ? 'Your session may have expired or there was a network error.' : 'Please log in to continue.'}
+          </p>
+          <div className="flex gap-2 justify-center">
+            {token && (
+              <Button 
+                variant="outline"
+                onClick={() => {
+                  // Force re-verification by reloading
+                  window.location.reload();
+                }} 
+              >
+                Retry
+              </Button>
+            )}
+            <Button 
+              onClick={() => {
+                if (token) {
+                  localStorage.removeItem('admin_token');
+                }
+                navigate('/admin/login');
+              }} 
+            >
+              Go to Login
+            </Button>
+          </div>
         </div>
       </div>
     );

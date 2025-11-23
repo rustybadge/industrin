@@ -13,6 +13,7 @@ interface AdminAuthContextType {
   login: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
   isLoading: boolean;
+  refreshAuth: () => Promise<void>;
 }
 
 const AdminAuthContext = createContext<AdminAuthContextType | undefined>(undefined);
@@ -22,18 +23,7 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [, navigate] = useLocation();
 
-  useEffect(() => {
-    // Check if admin is logged in on app start
-    const token = localStorage.getItem('admin_token');
-    if (token) {
-      // Verify token is still valid
-      verifyAdminToken(token);
-    } else {
-      setIsLoading(false);
-    }
-  }, []);
-
-  const verifyAdminToken = async (token: string) => {
+  const verifyAdminToken = async (token: string, retryCount = 0) => {
     try {
       const response = await fetch('/api/admin/verify', {
         headers: {
@@ -43,20 +33,42 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
 
       if (response.ok) {
         const adminData = await response.json();
+        console.log('Token verified successfully:', adminData);
         setAdmin(adminData);
-      } else {
-        // Token is invalid or expired
-        console.log('Token verification failed, removing token');
+        setIsLoading(false);
+      } else if (response.status === 401) {
+        // Token is invalid or expired - definitely remove it
+        console.log('Token verification failed (401), removing token');
         localStorage.removeItem('admin_token');
         setAdmin(null);
+        setIsLoading(false);
+      } else {
+        // Other error (500, etc.) - retry once
+        console.warn('Token verification failed with status:', response.status);
+        if (retryCount < 1) {
+          console.log('Retrying token verification...');
+          setTimeout(() => verifyAdminToken(token, retryCount + 1), 1000);
+        } else {
+          // After retry, if still failing, keep token but don't set admin
+          // This prevents redirect loop
+          console.error('Token verification failed after retry');
+          setAdmin(null);
+          setIsLoading(false);
+        }
       }
     } catch (error) {
-      console.error('Token verification error:', error);
-      // On network error, keep the token but clear admin state
-      // This allows retry without forcing re-login
-      setAdmin(null);
-    } finally {
-      setIsLoading(false);
+      console.error('Token verification network error:', error);
+      // On network error, retry once
+      if (retryCount < 1) {
+        console.log('Retrying token verification after network error...');
+        setTimeout(() => verifyAdminToken(token, retryCount + 1), 1000);
+      } else {
+        // After retry, if still failing, keep token but don't set admin
+        // This prevents redirect loop - user can manually refresh
+        console.error('Token verification failed after retry');
+        setAdmin(null);
+        setIsLoading(false);
+      }
     }
   };
 
@@ -89,8 +101,28 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
     navigate('/admin/login');
   };
 
+  useEffect(() => {
+    // Check if admin is logged in on app start
+    const token = localStorage.getItem('admin_token');
+    if (token) {
+      // Verify token is still valid
+      verifyAdminToken(token);
+    } else {
+      setIsLoading(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const refreshAuth = async () => {
+    const token = localStorage.getItem('admin_token');
+    if (token) {
+      setIsLoading(true);
+      await verifyAdminToken(token);
+    }
+  };
+
   return (
-    <AdminAuthContext.Provider value={{ admin, login, logout, isLoading }}>
+    <AdminAuthContext.Provider value={{ admin, login, logout, isLoading, refreshAuth }}>
       {children}
     </AdminAuthContext.Provider>
   );
@@ -134,3 +166,4 @@ export function withAdminAuth<T extends object>(Component: React.ComponentType<T
     return <Component {...props} />;
   };
 }
+
