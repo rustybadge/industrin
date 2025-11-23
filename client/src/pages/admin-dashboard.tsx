@@ -83,12 +83,23 @@ export default function AdminDashboard() {
       });
 
       if (response.ok) {
+        const data = await response.json();
         refetchClaims();
-        // TODO: Show success toast
+        
+        // Show access token to admin
+        if (data.accessToken) {
+          const message = `Claim approved! Access token for company login:\n\n${data.accessToken}\n\nShare this with the company owner.`;
+          alert(message);
+          // Copy to clipboard
+          navigator.clipboard.writeText(data.accessToken);
+        }
+      } else {
+        const errorData = await response.json();
+        alert(`Failed to approve claim: ${errorData.message || 'Unknown error'}`);
       }
     } catch (error) {
       console.error('Failed to approve claim:', error);
-      // TODO: Show error toast
+      alert('Failed to approve claim. Please try again.');
     }
   };
 

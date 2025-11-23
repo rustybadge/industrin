@@ -4,6 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AdminAuthProvider } from "@/contexts/admin-auth";
+import { CompanyAuthProvider } from "@/contexts/company-auth";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import Companies from "@/pages/companies";
@@ -15,6 +16,8 @@ import AdminLogin from "@/pages/admin-login";
 import AdminDashboard from "@/pages/admin-dashboard";
 import AdminSettings from "@/pages/admin-settings";
 import GeneralQuoteRequest from "@/pages/general-quote-request";
+import CompanyLogin from "@/pages/company-login";
+import CompanyDashboard from "@/pages/company-dashboard";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import { useScrollToTop } from "@/hooks/use-scroll-to-top";
@@ -30,6 +33,10 @@ function Router() {
         <Route path="/admin/login" component={AdminLogin} />
         <Route path="/admin" component={AdminDashboard} />
         <Route path="/admin/settings" component={AdminSettings} />
+        
+        {/* Company admin routes - no header/footer */}
+        <Route path="/company/login" component={CompanyLogin} />
+        <Route path="/company/dashboard" component={CompanyDashboard} />
         
         {/* Public routes - with header/footer */}
         <Route path="/">
@@ -131,8 +138,10 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <AdminAuthProvider>
-          <Router />
-          <Toaster />
+          <CompanyAuthProvider>
+            <Router />
+            <Toaster />
+          </CompanyAuthProvider>
         </AdminAuthProvider>
       </TooltipProvider>
     </QueryClientProvider>

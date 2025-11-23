@@ -1,9 +1,10 @@
 import { 
-  users, companies, claimRequests, quoteRequests,
+  users, companies, claimRequests, quoteRequests, companyUsers,
   type User, type InsertUser,
   type Company, type InsertCompany,
   type ClaimRequest, type InsertClaimRequest,
-  type QuoteRequest, type InsertQuoteRequest
+  type QuoteRequest, type InsertQuoteRequest,
+  type CompanyUser, type InsertCompanyUser
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, ilike, inArray, desc, sql } from "drizzle-orm";
@@ -34,9 +35,17 @@ export interface IStorage {
 
   // Claim Requests
   createClaimRequest(claimRequest: InsertClaimRequest): Promise<ClaimRequest>;
+  getClaimRequestById(id: string): Promise<ClaimRequest | undefined>;
   getClaimRequestsByCompany(companyId: string): Promise<ClaimRequest[]>;
   getAllClaimRequests(): Promise<ClaimRequest[]>;
   updateClaimRequestStatus(id: string, status: 'approved' | 'rejected', reviewedBy: string, reviewNotes?: string): Promise<void>;
+
+  // Company Users
+  createCompanyUser(companyUser: InsertCompanyUser): Promise<CompanyUser>;
+  getCompanyUserByEmail(email: string): Promise<CompanyUser | undefined>;
+  getCompanyUserByToken(accessToken: string): Promise<CompanyUser | undefined>;
+  getCompanyUsersByCompany(companyId: string): Promise<CompanyUser[]>;
+  updateCompanyUser(id: string, updateData: Partial<InsertCompanyUser>): Promise<CompanyUser | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -282,6 +291,11 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(claimRequests.submittedAt));
   }
 
+  async getClaimRequestById(id: string): Promise<ClaimRequest | undefined> {
+    const [claimRequest] = await db.select().from(claimRequests).where(eq(claimRequests.id, id));
+    return claimRequest || undefined;
+  }
+
   async updateClaimRequestStatus(
     id: string, 
     status: 'approved' | 'rejected', 
@@ -297,6 +311,41 @@ export class DatabaseStorage implements IStorage {
         reviewNotes,
       })
       .where(eq(claimRequests.id, id));
+  }
+
+  async createCompanyUser(insertCompanyUser: InsertCompanyUser): Promise<CompanyUser> {
+    const [companyUser] = await db
+      .insert(companyUsers)
+      .values(insertCompanyUser)
+      .returning();
+    return companyUser;
+  }
+
+  async getCompanyUserByEmail(email: string): Promise<CompanyUser | undefined> {
+    const [companyUser] = await db.select().from(companyUsers).where(eq(companyUsers.email, email));
+    return companyUser || undefined;
+  }
+
+  async getCompanyUserByToken(accessToken: string): Promise<CompanyUser | undefined> {
+    const [companyUser] = await db.select().from(companyUsers).where(eq(companyUsers.accessToken, accessToken));
+    return companyUser || undefined;
+  }
+
+  async getCompanyUsersByCompany(companyId: string): Promise<CompanyUser[]> {
+    return await db
+      .select()
+      .from(companyUsers)
+      .where(eq(companyUsers.companyId, companyId))
+      .orderBy(desc(companyUsers.createdAt));
+  }
+
+  async updateCompanyUser(id: string, updateData: Partial<InsertCompanyUser>): Promise<CompanyUser | undefined> {
+    const [companyUser] = await db
+      .update(companyUsers)
+      .set(updateData)
+      .where(eq(companyUsers.id, id))
+      .returning();
+    return companyUser || undefined;
   }
 }
 

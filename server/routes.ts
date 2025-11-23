@@ -5,6 +5,7 @@ import { insertQuoteRequestSchema, insertClaimRequestSchema, insertCompanySchema
 import { z } from "zod";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { nanoid } from "nanoid";
 
 // JWT secret - in production, use environment variable
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
@@ -351,7 +352,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/admin/claim-requests", verifyAdminAuth, async (req, res) => {
     try {
       const claimRequests = await storage.getAllClaimRequests();
-      res.json(claimRequests);
+      
+      // Enrich with company information
+      const enrichedClaims = await Promise.all(
+        claimRequests.map(async (claim) => {
+          const company = await storage.getCompanyById(claim.companyId);
+          return {
+            ...claim,
+            company: company ? {
+              id: company.id,
+              name: company.name,
+              slug: company.slug,
+            } : null,
+          };
+        })
+      );
+      
+      res.json(enrichedClaims);
     } catch (error) {
       console.error("Error fetching claim requests:", error);
       res.status(500).json({ message: "Failed to fetch claim requests" });
@@ -364,9 +381,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { id } = req.params;
       const { reviewNotes } = req.body;
 
+      // Get the claim request
+      const claimRequest = await storage.getClaimRequestById(id);
+      if (!claimRequest) {
+        return res.status(404).json({ message: 'Claim request not found' });
+      }
+
+      // Check if company user already exists for this email
+      const existingUser = await storage.getCompanyUserByEmail(claimRequest.email);
+      if (existingUser) {
+        return res.status(400).json({ message: 'A company user account already exists for this email' });
+      }
+
+      // Generate secure access token
+      const accessToken = nanoid(32);
+
+      // Create company user account
+      await storage.createCompanyUser({
+        companyId: claimRequest.companyId,
+        email: claimRequest.email,
+        name: claimRequest.name,
+        role: 'owner', // First user is always owner
+        accessToken,
+        approvedBy: req.admin!.id,
+        isActive: true,
+      });
+
+      // Update claim request status
       await storage.updateClaimRequestStatus(id, 'approved', req.admin!.id, reviewNotes);
       
-      res.json({ message: 'Claim request approved' });
+      res.json({ 
+        message: 'Claim request approved and company user account created',
+        accessToken // Include token in response for admin to share with company
+      });
     } catch (error) {
       console.error("Error approving claim request:", error);
       res.status(500).json({ message: "Failed to approve claim request" });
@@ -385,6 +432,149 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error rejecting claim request:", error);
       res.status(500).json({ message: "Failed to reject claim request" });
+    }
+  });
+
+  // ===== COMPANY ADMIN ROUTES =====
+
+  // Company admin login
+  app.post("/api/company/login", async (req, res) => {
+    try {
+      const { email, accessToken } = req.body;
+
+      if (!email || !accessToken) {
+        return res.status(400).json({ message: 'Email and access token are required' });
+      }
+
+      // Get company user by email and token
+      const companyUser = await storage.getCompanyUserByEmail(email);
+      if (!companyUser || companyUser.accessToken !== accessToken) {
+        return res.status(401).json({ message: 'Invalid credentials' });
+      }
+
+      if (!companyUser.isActive) {
+        return res.status(403).json({ message: 'Account is inactive' });
+      }
+
+      // Get company details
+      const company = await storage.getCompanyById(companyUser.companyId);
+      if (!company) {
+        return res.status(404).json({ message: 'Company not found' });
+      }
+
+      // Generate JWT token for company user
+      const token = jwt.sign(
+        { 
+          id: companyUser.id, 
+          companyId: companyUser.companyId,
+          email: companyUser.email,
+          role: companyUser.role
+        },
+        JWT_SECRET,
+        { expiresIn: '30d' }
+      );
+
+      res.json({
+        companyUser: {
+          id: companyUser.id,
+          companyId: companyUser.companyId,
+          email: companyUser.email,
+          name: companyUser.name,
+          role: companyUser.role,
+          company: {
+            id: company.id,
+            name: company.name,
+            slug: company.slug,
+          },
+        },
+        token,
+      });
+    } catch (error) {
+      console.error("Company login error:", error);
+      res.status(500).json({ message: "Login failed" });
+    }
+  });
+
+  // Verify company token
+  app.get("/api/company/verify", async (req: any, res) => {
+    try {
+      const token = req.headers.authorization?.replace('Bearer ', '');
+      
+      if (!token) {
+        return res.status(401).json({ message: 'No token provided' });
+      }
+
+      const decoded = jwt.verify(token, JWT_SECRET) as any;
+      const companyUser = await storage.getCompanyUserByEmail(decoded.email);
+      
+      if (!companyUser || !companyUser.isActive) {
+        return res.status(401).json({ message: 'Invalid or inactive token' });
+      }
+
+      const company = await storage.getCompanyById(companyUser.companyId);
+      if (!company) {
+        return res.status(404).json({ message: 'Company not found' });
+      }
+
+      res.json({
+        id: companyUser.id,
+        companyId: companyUser.companyId,
+        email: companyUser.email,
+        name: companyUser.name,
+        role: companyUser.role,
+        company: {
+          id: company.id,
+          name: company.name,
+          slug: company.slug,
+        },
+      });
+    } catch (error) {
+      res.status(401).json({ message: 'Invalid token' });
+    }
+  });
+
+  // Middleware to verify company authentication
+  const verifyCompanyAuth = (req: any, res: any, next: any) => {
+    const token = req.headers.authorization?.replace('Bearer ', '');
+    
+    if (!token) {
+      return res.status(401).json({ message: 'No token provided' });
+    }
+
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET) as any;
+      req.companyUser = decoded;
+      next();
+    } catch (error) {
+      res.status(401).json({ message: 'Invalid token' });
+    }
+  };
+
+  // Get company profile (for company admin)
+  app.get("/api/company/profile", verifyCompanyAuth, async (req: any, res) => {
+    try {
+      const company = await storage.getCompanyById(req.companyUser.companyId);
+      if (!company) {
+        return res.status(404).json({ message: 'Company not found' });
+      }
+      res.json(company);
+    } catch (error) {
+      console.error("Error fetching company profile:", error);
+      res.status(500).json({ message: "Failed to fetch company profile" });
+    }
+  });
+
+  // Update company profile (for company admin)
+  app.put("/api/company/profile", verifyCompanyAuth, async (req: any, res) => {
+    try {
+      const company = await storage.updateCompany(req.companyUser.companyId, req.body);
+      if (!company) {
+        return res.status(404).json({ message: 'Company not found' });
+      }
+      res.json(company);
+    } catch (error) {
+      console.error("Error updating company profile:", error);
+      res.status(500).json({ message: "Failed to update company profile" });
     }
   });
 
