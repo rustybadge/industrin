@@ -23,13 +23,15 @@ interface ClaimRequest {
   name: string;
   email: string;
   phone?: string;
-  message: string;
+  message?: string;
+  serviceCategories?: string[];
   status: 'pending' | 'approved' | 'rejected';
   submittedAt: string;
   company: {
+    id: string;
     name: string;
     slug: string;
-  };
+  } | null;
 }
 
 interface DashboardStats {
@@ -59,7 +61,7 @@ export default function AdminDashboard() {
   });
 
   // Fetch claim requests
-  const { data: claimRequests, isLoading: claimsLoading, refetch: refetchClaims } = useQuery<ClaimRequest[]>({
+  const { data: claimRequests, isLoading: claimsLoading, error: claimsError, refetch: refetchClaims } = useQuery<ClaimRequest[]>({
     queryKey: ['/api/admin/claim-requests'],
     queryFn: async () => {
       const response = await fetch('/api/admin/claim-requests', {
@@ -67,8 +69,14 @@ export default function AdminDashboard() {
           'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
         }
       });
-      if (!response.ok) throw new Error('Failed to fetch claim requests');
-      return response.json();
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Failed to fetch claim requests:', response.status, errorText);
+        throw new Error(`Failed to fetch claim requests: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log('Claim requests fetched:', data);
+      return data;
     },
   });
 
@@ -272,10 +280,19 @@ export default function AdminDashboard() {
           <div className="space-y-6">
             <h2 className="text-2xl font-bold text-gray-900">Claim Requests</h2>
             
-            {claimsLoading ? (
+            {claimsError ? (
+              <div className="text-center py-8">
+                <p className="text-red-600 mb-4">Error loading claim requests: {claimsError.message}</p>
+                <Button onClick={() => refetchClaims()}>Retry</Button>
+              </div>
+            ) : claimsLoading ? (
               <div className="text-center py-8">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
                 <p className="text-gray-600">Loading claim requests...</p>
+              </div>
+            ) : claimRequests && claimRequests.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-gray-600">No claim requests found.</p>
               </div>
             ) : (
               <div className="space-y-4">
@@ -285,7 +302,9 @@ export default function AdminDashboard() {
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <div className="flex items-center space-x-3 mb-2">
-                            <h3 className="text-lg font-semibold">{claim.company.name}</h3>
+                            <h3 className="text-lg font-semibold">
+                              {claim.company?.name || `Company ID: ${claim.companyId}`}
+                            </h3>
                             {getStatusBadge(claim.status)}
                           </div>
                           <div className="text-sm text-gray-600 space-y-1">
