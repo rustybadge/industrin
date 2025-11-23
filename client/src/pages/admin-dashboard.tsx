@@ -334,11 +334,63 @@ export default function AdminDashboard() {
 
       if (response.ok) {
         refetchClaims();
-        // TODO: Show success toast
+        toast({
+          title: "Claim rejected",
+          description: "The claim request has been rejected."
+        });
+      } else {
+        const errorData = await response.json();
+        toast({
+          title: "Failed to reject claim",
+          description: errorData.message || 'Unknown error',
+          variant: "destructive"
+        });
       }
     } catch (error) {
       console.error('Failed to reject claim:', error);
-      // TODO: Show error toast
+      toast({
+        title: "Error",
+        description: 'Failed to reject claim. Please try again.',
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleResetClaim = async (claimId: string) => {
+    if (!confirm('Are you sure you want to reset this claim to pending? This will allow you to approve it again.')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/admin/claim-requests/${claimId}/reset`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('admin_token')}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        refetchClaims();
+        toast({
+          title: "Claim reset",
+          description: "The claim has been reset to pending. You can now approve it again."
+        });
+      } else {
+        const errorData = await response.json();
+        toast({
+          title: "Failed to reset claim",
+          description: errorData.message || 'Unknown error',
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error('Failed to reset claim:', error);
+      toast({
+        title: "Error",
+        description: 'Failed to reset claim. Please try again.',
+        variant: "destructive"
+      });
     }
   };
 
@@ -671,10 +723,32 @@ export default function AdminDashboard() {
                               </Button>
                             </>
                           )}
+                          {claim.status === 'approved' && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleResetClaim(claim.id)}
+                              className="border-orange-300 text-orange-600 hover:bg-orange-50"
+                            >
+                              <Clock className="h-4 w-4 mr-1" />
+                              Reset to Pending
+                            </Button>
+                          )}
+                          {claim.status === 'rejected' && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleResetClaim(claim.id)}
+                              className="border-blue-300 text-blue-600 hover:bg-blue-50"
+                            >
+                              <Clock className="h-4 w-4 mr-1" />
+                              Reset to Pending
+                            </Button>
+                          )}
                           <Button
                             size="sm"
                             variant="ghost"
-                            onClick={() => window.open(`/companies/${claim.company.slug}`, '_blank')}
+                            onClick={() => window.open(`/companies/${claim.company?.slug}`, '_blank')}
                           >
                             View Company
                           </Button>

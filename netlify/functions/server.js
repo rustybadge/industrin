@@ -637,6 +637,32 @@ export const handler = async (event, context) => {
       };
     }
 
+    // Reset claim request to pending
+    if (path.startsWith('/api/admin/claim-requests/') && path.endsWith('/reset') && httpMethod === 'POST') {
+      const authResult = verifyAdminAuth(event);
+      if (authResult.error) {
+        return {
+          statusCode: authResult.statusCode,
+          headers,
+          body: JSON.stringify({ message: authResult.error }),
+        };
+      }
+
+      const claimId = path.split('/')[4];
+      const { reviewNotes } = JSON.parse(event.body || '{}');
+
+      await pool.query(
+        'UPDATE claim_requests SET status = $1, reviewed_at = NULL, reviewed_by = NULL, review_notes = $2 WHERE id = $3',
+        ['pending', reviewNotes, claimId]
+      );
+
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ message: 'Claim request reset to pending' }),
+      };
+    }
+
     // Revoke company user access
     if (path.startsWith('/api/admin/company-users/') && path.endsWith('/revoke') && httpMethod === 'POST') {
       const authResult = verifyAdminAuth(event);

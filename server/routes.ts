@@ -442,6 +442,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Reset claim request to pending (undo approval/rejection)
+  app.post("/api/admin/claim-requests/:id/reset", verifyAdminAuth, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { reviewNotes } = req.body;
+
+      await storage.updateClaimRequestStatus(id, 'pending', req.admin!.id, reviewNotes);
+      
+      res.json({ message: 'Claim request reset to pending' });
+    } catch (error) {
+      console.error("Error resetting claim request:", error);
+      res.status(500).json({ message: "Failed to reset claim request" });
+    }
+  });
+
   // Revoke company user access (deactivate)
   app.post("/api/admin/company-users/:id/revoke", verifyAdminAuth, async (req, res) => {
     try {

@@ -38,7 +38,7 @@ export interface IStorage {
   getClaimRequestById(id: string): Promise<ClaimRequest | undefined>;
   getClaimRequestsByCompany(companyId: string): Promise<ClaimRequest[]>;
   getAllClaimRequests(): Promise<ClaimRequest[]>;
-  updateClaimRequestStatus(id: string, status: 'approved' | 'rejected', reviewedBy: string, reviewNotes?: string): Promise<void>;
+  updateClaimRequestStatus(id: string, status: 'approved' | 'rejected' | 'pending', reviewedBy: string, reviewNotes?: string): Promise<void>;
 
   // Company Users
   createCompanyUser(companyUser: InsertCompanyUser): Promise<CompanyUser>;
@@ -298,7 +298,7 @@ export class DatabaseStorage implements IStorage {
 
   async updateClaimRequestStatus(
     id: string, 
-    status: 'approved' | 'rejected', 
+    status: 'approved' | 'rejected' | 'pending', 
     reviewedBy: string, 
     reviewNotes?: string
   ): Promise<void> {
@@ -306,8 +306,8 @@ export class DatabaseStorage implements IStorage {
       .update(claimRequests)
       .set({
         status,
-        reviewedAt: new Date(),
-        reviewedBy,
+        reviewedAt: status === 'pending' ? null : new Date(),
+        reviewedBy: status === 'pending' ? null : reviewedBy,
         reviewNotes,
       })
       .where(eq(claimRequests.id, id));
