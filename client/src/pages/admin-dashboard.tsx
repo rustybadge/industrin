@@ -1,10 +1,17 @@
 import { useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useLocation } from 'wouter';
 import { useAdminAuth } from '@/contexts/admin-auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { 
   Users, 
   Building, 
@@ -14,8 +21,12 @@ import {
   Clock,
   LogOut,
   Settings,
-  TrendingUp
+  TrendingUp,
+  Copy,
+  Ban,
+  UserCheck
 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 interface ClaimRequest {
   id: string;
@@ -41,10 +52,28 @@ interface DashboardStats {
   rejectedClaims: number;
 }
 
+interface CompanyUser {
+  id: string;
+  companyId: string;
+  email: string;
+  name: string;
+  role: string;
+  isActive: boolean;
+  createdAt: string;
+}
+
 export default function AdminDashboard() {
   const { admin, logout, isLoading: authLoading } = useAdminAuth();
   const [, navigate] = useLocation();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
   const [selectedTab, setSelectedTab] = useState<'overview' | 'claims'>('overview');
+  const [accessTokenDialog, setAccessTokenDialog] = useState<{ open: boolean; token: string; companyName: string }>({
+    open: false,
+    token: '',
+    companyName: ''
+  });
+  const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(null);
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -119,7 +148,23 @@ export default function AdminDashboard() {
     enabled: !!admin && !!adminToken, // Only fetch when admin is authenticated
   });
 
-  const handleApproveClaim = async (claimId: string) => {
+  // Fetch company users for selected company
+  const { data: companyUsers, refetch: refetchCompanyUsers } = useQuery<CompanyUser[]>({
+    queryKey: ['/api/admin/companies', selectedCompanyId, 'users'],
+    queryFn: async () => {
+      if (!selectedCompanyId || !adminToken) return [];
+      const response = await fetch(`/api/admin/companies/${selectedCompanyId}/users`, {
+        headers: {
+          'Authorization': `Bearer ${adminToken}`
+        }
+      });
+      if (!response.ok) throw new Error('Failed to fetch company users');
+      return response.json();
+    },
+    enabled: !!selectedCompanyId && !!admin && !!adminToken,
+  });
+
+  const handleApproveClaim = async (claimId: string, companyName: string) => {
     try {
       const response = await fetch(`/api/admin/claim-requests/${claimId}/approve`, {
         method: 'POST',
@@ -133,20 +178,105 @@ export default function AdminDashboard() {
         const data = await response.json();
         refetchClaims();
         
-        // Show access token to admin
+        // Show access token in dialog
         if (data.accessToken) {
-          const message = `Claim approved! Access token for company login:\n\n${data.accessToken}\n\nShare this with the company owner.`;
-          alert(message);
+          setAccessTokenDialog({
+            open: true,
+            token: data.accessToken,
+            companyName: companyName
+          });
           // Copy to clipboard
           navigator.clipboard.writeText(data.accessToken);
+          toast({
+            title: "Token copied to clipboard",
+            description: "Access token has been copied to your clipboard."
+          });
         }
       } else {
         const errorData = await response.json();
-        alert(`Failed to approve claim: ${errorData.message || 'Unknown error'}`);
+        toast({
+          title: "Failed to approve claim",
+          description: errorData.message || 'Unknown error',
+          variant: "destructive"
+        });
       }
     } catch (error) {
       console.error('Failed to approve claim:', error);
-      alert('Failed to approve claim. Please try again.');
+      toast({
+        title: "Error",
+        description: 'Failed to approve claim. Please try again.',
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleRevokeAccess = async (userId: string) => {
+    try {
+      const response = await fetch(`/api/admin/company-users/${userId}/revoke`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('admin_token')}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        refetchCompanyUsers();
+        refetchClaims();
+        toast({
+          title: "Access revoked",
+          description: "Company user access has been revoked."
+        });
+      } else {
+        const errorData = await response.json();
+        toast({
+          title: "Failed to revoke access",
+          description: errorData.message || 'Unknown error',
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error('Failed to revoke access:', error);
+      toast({
+        title: "Error",
+        description: 'Failed to revoke access. Please try again.',
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleActivateAccess = async (userId: string) => {
+    try {
+      const response = await fetch(`/api/admin/company-users/${userId}/activate`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('admin_token')}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        refetchCompanyUsers();
+        refetchClaims();
+        toast({
+          title: "Access reactivated",
+          description: "Company user access has been reactivated."
+        });
+      } else {
+        const errorData = await response.json();
+        toast({
+          title: "Failed to reactivate access",
+          description: errorData.message || 'Unknown error',
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error('Failed to reactivate access:', error);
+      toast({
+        title: "Error",
+        description: 'Failed to reactivate access. Please try again.',
+        variant: "destructive"
+      });
     }
   };
 
@@ -401,6 +531,67 @@ export default function AdminDashboard() {
                                 </div>
                               </div>
                             )}
+                            {claim.status === 'approved' && (
+                              <div className="mt-4 pt-4 border-t border-gray-200">
+                                <div className="flex items-center justify-between mb-2">
+                                  <p><strong>Company Users:</strong></p>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => {
+                                      setSelectedCompanyId(claim.companyId);
+                                      refetchCompanyUsers();
+                                    }}
+                                  >
+                                    <UserCheck className="h-4 w-4 mr-1" />
+                                    {selectedCompanyId === claim.companyId ? 'Hide' : 'View'} Users
+                                  </Button>
+                                </div>
+                                {selectedCompanyId === claim.companyId && companyUsers && (
+                                  <div className="mt-2 space-y-2">
+                                    {companyUsers.length === 0 ? (
+                                      <p className="text-sm text-gray-500">No company users found.</p>
+                                    ) : (
+                                      companyUsers.map((user) => (
+                                        <div key={user.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                                          <div>
+                                            <p className="text-sm font-medium">{user.name}</p>
+                                            <p className="text-xs text-gray-600">{user.email}</p>
+                                            <p className="text-xs text-gray-500">Role: {user.role}</p>
+                                          </div>
+                                          <div className="flex items-center gap-2">
+                                            <Badge variant={user.isActive ? "default" : "secondary"}>
+                                              {user.isActive ? 'Active' : 'Inactive'}
+                                            </Badge>
+                                            {user.isActive ? (
+                                              <Button
+                                                size="sm"
+                                                variant="outline"
+                                                onClick={() => handleRevokeAccess(user.id)}
+                                                className="text-red-600 border-red-300 hover:bg-red-50"
+                                              >
+                                                <Ban className="h-3 w-3 mr-1" />
+                                                Revoke
+                                              </Button>
+                                            ) : (
+                                              <Button
+                                                size="sm"
+                                                variant="outline"
+                                                onClick={() => handleActivateAccess(user.id)}
+                                                className="text-green-600 border-green-300 hover:bg-green-50"
+                                              >
+                                                <UserCheck className="h-3 w-3 mr-1" />
+                                                Activate
+                                              </Button>
+                                            )}
+                                          </div>
+                                        </div>
+                                      ))
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            )}
                           </div>
                         </div>
                         <div className="flex space-x-2 ml-4">
@@ -408,7 +599,7 @@ export default function AdminDashboard() {
                             <>
                               <Button
                                 size="sm"
-                                onClick={() => handleApproveClaim(claim.id)}
+                                onClick={() => handleApproveClaim(claim.id, claim.company?.name || 'Company')}
                                 className="bg-gray-900 hover:bg-black"
                               >
                                 <CheckCircle className="h-4 w-4 mr-1" />
@@ -452,6 +643,55 @@ export default function AdminDashboard() {
           </div>
         )}
       </main>
+
+      {/* Access Token Dialog */}
+      <Dialog open={accessTokenDialog.open} onOpenChange={(open) => setAccessTokenDialog({ ...accessTokenDialog, open })}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Claim Approved - Access Token</DialogTitle>
+            <DialogDescription>
+              Access token for {accessTokenDialog.companyName}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <p className="text-sm font-medium text-gray-700 mb-2">Access Token:</p>
+              <p className="font-mono text-sm break-all bg-white p-3 rounded border">
+                {accessTokenDialog.token}
+              </p>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <CheckCircle className="h-4 w-4 text-green-600" />
+              <span>Token has been copied to your clipboard</span>
+            </div>
+            <p className="text-sm text-gray-600">
+              Share this token with the company owner. They can use it along with their email to log in at <code className="bg-gray-100 px-1 rounded">/company/login</code>
+            </p>
+            <div className="flex gap-2">
+              <Button
+                onClick={() => {
+                  navigator.clipboard.writeText(accessTokenDialog.token);
+                  toast({
+                    title: "Copied",
+                    description: "Token copied to clipboard again."
+                  });
+                }}
+                className="flex-1"
+              >
+                <Copy className="h-4 w-4 mr-2" />
+                Copy Again
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setAccessTokenDialog({ open: false, token: '', companyName: '' })}
+                className="flex-1"
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -442,6 +442,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Revoke company user access (deactivate)
+  app.post("/api/admin/company-users/:id/revoke", verifyAdminAuth, async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      const companyUser = await storage.updateCompanyUser(id, { isActive: false });
+      
+      if (!companyUser) {
+        return res.status(404).json({ message: 'Company user not found' });
+      }
+
+      res.json({ message: 'Company user access revoked', companyUser });
+    } catch (error) {
+      console.error("Error revoking company user access:", error);
+      res.status(500).json({ message: "Failed to revoke access" });
+    }
+  });
+
+  // Reactivate company user access
+  app.post("/api/admin/company-users/:id/activate", verifyAdminAuth, async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      const companyUser = await storage.updateCompanyUser(id, { isActive: true });
+      
+      if (!companyUser) {
+        return res.status(404).json({ message: 'Company user not found' });
+      }
+
+      res.json({ message: 'Company user access reactivated', companyUser });
+    } catch (error) {
+      console.error("Error reactivating company user access:", error);
+      res.status(500).json({ message: "Failed to reactivate access" });
+    }
+  });
+
+  // Get company users for a company
+  app.get("/api/admin/companies/:companyId/users", verifyAdminAuth, async (req, res) => {
+    try {
+      const { companyId } = req.params;
+      const companyUsers = await storage.getCompanyUsersByCompany(companyId);
+      res.json(companyUsers);
+    } catch (error) {
+      console.error("Error fetching company users:", error);
+      res.status(500).json({ message: "Failed to fetch company users" });
+    }
+  });
+
   // ===== COMPANY ADMIN ROUTES =====
 
   // Company admin login

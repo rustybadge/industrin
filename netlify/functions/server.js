@@ -3,6 +3,7 @@ import { Pool, neonConfig } from '@neondatabase/serverless';
 import ws from 'ws';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { nanoid } from 'nanoid';
 
 // Configure Neon for serverless environment
 neonConfig.webSocketConstructor = ws;
@@ -562,6 +563,39 @@ export const handler = async (event, context) => {
       const claimId = path.split('/')[4];
       const { reviewNotes } = JSON.parse(event.body || '{}');
 
+      // Get claim request
+      const claimResult = await pool.query('SELECT * FROM claim_requests WHERE id = $1', [claimId]);
+      if (claimResult.rows.length === 0) {
+        return {
+          statusCode: 404,
+          headers,
+          body: JSON.stringify({ message: 'Claim request not found' }),
+        };
+      }
+
+      const claim = claimResult.rows[0];
+
+      // Check if company user already exists
+      const existingUserResult = await pool.query('SELECT * FROM company_users WHERE email = $1', [claim.email]);
+      if (existingUserResult.rows.length > 0) {
+        return {
+          statusCode: 400,
+          headers,
+          body: JSON.stringify({ message: 'A company user account already exists for this email' }),
+        };
+      }
+
+      // Generate access token
+      const accessToken = nanoid(32);
+
+      // Create company user
+      await pool.query(
+        `INSERT INTO company_users (company_id, email, name, role, access_token, approved_by, is_active, created_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())`,
+        [claim.company_id, claim.email, claim.name, 'owner', accessToken, authResult.admin.id, true]
+      );
+
+      // Update claim request status
       await pool.query(
         'UPDATE claim_requests SET status = $1, reviewed_at = NOW(), reviewed_by = $2, review_notes = $3 WHERE id = $4',
         ['approved', authResult.admin.id, reviewNotes, claimId]
@@ -570,7 +604,10 @@ export const handler = async (event, context) => {
       return {
         statusCode: 200,
         headers,
-        body: JSON.stringify({ message: 'Claim request approved' }),
+        body: JSON.stringify({ 
+          message: 'Claim request approved and company user account created',
+          accessToken 
+        }),
       };
     }
 
@@ -597,6 +634,74 @@ export const handler = async (event, context) => {
         statusCode: 200,
         headers,
         body: JSON.stringify({ message: 'Claim request rejected' }),
+      };
+    }
+
+    // Revoke company user access
+    if (path.startsWith('/api/admin/company-users/') && path.endsWith('/revoke') && httpMethod === 'POST') {
+      const authResult = verifyAdminAuth(event);
+      if (authResult.error) {
+        return {
+          statusCode: authResult.statusCode,
+          headers,
+          body: JSON.stringify({ message: authResult.error }),
+        };
+      }
+
+      const userId = path.split('/')[4];
+      await pool.query('UPDATE company_users SET is_active = $1 WHERE id = $2', [false, userId]);
+
+      const userResult = await pool.query('SELECT * FROM company_users WHERE id = $1', [userId]);
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ message: 'Company user access revoked', companyUser: userResult.rows[0] }),
+      };
+    }
+
+    // Activate company user access
+    if (path.startsWith('/api/admin/company-users/') && path.endsWith('/activate') && httpMethod === 'POST') {
+      const authResult = verifyAdminAuth(event);
+      if (authResult.error) {
+        return {
+          statusCode: authResult.statusCode,
+          headers,
+          body: JSON.stringify({ message: authResult.error }),
+        };
+      }
+
+      const userId = path.split('/')[4];
+      await pool.query('UPDATE company_users SET is_active = $1 WHERE id = $2', [true, userId]);
+
+      const userResult = await pool.query('SELECT * FROM company_users WHERE id = $1', [userId]);
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ message: 'Company user access reactivated', companyUser: userResult.rows[0] }),
+      };
+    }
+
+    // Get company users for a company
+    if (path.startsWith('/api/admin/companies/') && path.endsWith('/users') && httpMethod === 'GET') {
+      const authResult = verifyAdminAuth(event);
+      if (authResult.error) {
+        return {
+          statusCode: authResult.statusCode,
+          headers,
+          body: JSON.stringify({ message: authResult.error }),
+        };
+      }
+
+      const companyId = path.split('/')[4];
+      const usersResult = await pool.query(
+        'SELECT * FROM company_users WHERE company_id = $1 ORDER BY created_at DESC',
+        [companyId]
+      );
+
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify(usersResult.rows),
       };
     }
 
