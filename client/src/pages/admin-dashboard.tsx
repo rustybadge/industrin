@@ -46,27 +46,41 @@ export default function AdminDashboard() {
   const [, navigate] = useLocation();
   const [selectedTab, setSelectedTab] = useState<'overview' | 'claims'>('overview');
 
+  // Get token from localStorage
+  const adminToken = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : null;
+
   // Fetch dashboard stats
-  const { data: stats, isLoading: statsLoading } = useQuery<DashboardStats>({
+  const { data: stats, isLoading: statsLoading, error: statsError } = useQuery<DashboardStats>({
     queryKey: ['/api/admin/stats'],
     queryFn: async () => {
+      if (!adminToken) {
+        throw new Error('No admin token found. Please log in.');
+      }
       const response = await fetch('/api/admin/stats', {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+          'Authorization': `Bearer ${adminToken}`
         }
       });
-      if (!response.ok) throw new Error('Failed to fetch stats');
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Failed to fetch stats:', response.status, errorText);
+        throw new Error(`Failed to fetch stats: ${response.status}`);
+      }
       return response.json();
     },
+    enabled: !!admin && !!adminToken, // Only fetch when admin is authenticated
   });
 
   // Fetch claim requests
   const { data: claimRequests, isLoading: claimsLoading, error: claimsError, refetch: refetchClaims } = useQuery<ClaimRequest[]>({
     queryKey: ['/api/admin/claim-requests'],
     queryFn: async () => {
+      if (!adminToken) {
+        throw new Error('No admin token found. Please log in.');
+      }
       const response = await fetch('/api/admin/claim-requests', {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+          'Authorization': `Bearer ${adminToken}`
         }
       });
       if (!response.ok) {
@@ -78,6 +92,7 @@ export default function AdminDashboard() {
       console.log('Claim requests fetched:', data);
       return data;
     },
+    enabled: !!admin && !!adminToken, // Only fetch when admin is authenticated
   });
 
   const handleApproveClaim = async (claimId: string) => {
@@ -204,6 +219,23 @@ export default function AdminDashboard() {
           <div className="space-y-6">
             <h2 className="text-2xl font-bold text-gray-900">Dashboard Overview</h2>
             
+            {!admin ? (
+              <div className="text-center py-8">
+                <p className="text-red-600 mb-4">You must be logged in to view the dashboard.</p>
+                <Button onClick={() => navigate('/admin/login')}>Go to Login</Button>
+              </div>
+            ) : statsError ? (
+              <div className="text-center py-8">
+                <p className="text-red-600 mb-4">Error loading stats: {statsError.message}</p>
+                <p className="text-sm text-gray-600 mb-4">
+                  {statsError.message.includes('401') || statsError.message.includes('Unauthorized') 
+                    ? 'Your session may have expired. Please log in again.'
+                    : 'Please try refreshing the page.'}
+                </p>
+                <Button onClick={() => navigate('/admin/login')}>Go to Login</Button>
+              </div>
+            ) : (
+              <>
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <Card>
@@ -273,6 +305,8 @@ export default function AdminDashboard() {
                 </div>
               </CardContent>
             </Card>
+              </>
+            )}
           </div>
         )}
 
@@ -280,10 +314,23 @@ export default function AdminDashboard() {
           <div className="space-y-6">
             <h2 className="text-2xl font-bold text-gray-900">Claim Requests</h2>
             
-            {claimsError ? (
+            {!admin ? (
+              <div className="text-center py-8">
+                <p className="text-red-600 mb-4">You must be logged in to view claim requests.</p>
+                <Button onClick={() => navigate('/admin/login')}>Go to Login</Button>
+              </div>
+            ) : claimsError ? (
               <div className="text-center py-8">
                 <p className="text-red-600 mb-4">Error loading claim requests: {claimsError.message}</p>
-                <Button onClick={() => refetchClaims()}>Retry</Button>
+                <p className="text-sm text-gray-600 mb-4">
+                  {claimsError.message.includes('401') || claimsError.message.includes('Unauthorized')
+                    ? 'Your session may have expired. Please log in again.'
+                    : 'Please try refreshing the page.'}
+                </p>
+                <div className="flex gap-2 justify-center">
+                  <Button onClick={() => refetchClaims()}>Retry</Button>
+                  <Button variant="outline" onClick={() => navigate('/admin/login')}>Go to Login</Button>
+                </div>
               </div>
             ) : claimsLoading ? (
               <div className="text-center py-8">
