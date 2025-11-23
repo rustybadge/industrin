@@ -80,8 +80,11 @@ export default function ClaimRequest() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(data)
-      }).then(res => {
-        if (!res.ok) throw new Error('Failed to submit claim');
+      }).then(async (res) => {
+        if (!res.ok) {
+          const errorData = await res.json().catch(() => ({}));
+          throw new Error(errorData.message || 'Failed to submit claim');
+        }
         return res.json();
       });
     },
@@ -103,7 +106,12 @@ export default function ClaimRequest() {
   });
 
   const onSubmit = (data: ClaimFormData) => {
-    createClaimMutation.mutate(data);
+    // Ensure message is always a string (not undefined)
+    const submitData = {
+      ...data,
+      message: data.message || '',
+    };
+    createClaimMutation.mutate(submitData);
   };
 
   if (!match) {

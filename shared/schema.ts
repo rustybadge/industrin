@@ -60,7 +60,7 @@ export const claimRequests = pgTable("claim_requests", {
   name: text("name").notNull(),
   email: text("email").notNull(),
   phone: text("phone"),
-  message: text("message").notNull(),
+  message: text("message"),
   serviceCategories: json("service_categories"), // Store selected service categories as JSON
   status: claimRequestStatusEnum("status").default('pending'),
   submittedAt: timestamp("submitted_at").defaultNow(),

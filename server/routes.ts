@@ -147,10 +147,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(201).json(claimRequest);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid request data", errors: error.errors });
+        console.error("Validation error:", error.errors);
+        return res.status(400).json({ 
+          message: "Invalid request data", 
+          errors: error.errors 
+        });
       }
       console.error("Error creating claim request:", error);
-      res.status(500).json({ message: "Failed to create claim request" });
+      res.status(500).json({ 
+        message: "Failed to create claim request",
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
     }
   });
 
