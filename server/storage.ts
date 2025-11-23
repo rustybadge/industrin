@@ -45,7 +45,9 @@ export interface IStorage {
   getCompanyUserByEmail(email: string): Promise<CompanyUser | undefined>;
   getCompanyUserByToken(accessToken: string): Promise<CompanyUser | undefined>;
   getCompanyUsersByCompany(companyId: string): Promise<CompanyUser[]>;
+  getAllCompanyUsers(): Promise<CompanyUser[]>;
   updateCompanyUser(id: string, updateData: Partial<InsertCompanyUser>): Promise<CompanyUser | undefined>;
+  deleteCompanyUser(id: string): Promise<CompanyUser | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -339,10 +341,25 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(companyUsers.createdAt));
   }
 
+  async getAllCompanyUsers(): Promise<CompanyUser[]> {
+    return await db
+      .select()
+      .from(companyUsers)
+      .orderBy(desc(companyUsers.createdAt));
+  }
+
   async updateCompanyUser(id: string, updateData: Partial<InsertCompanyUser>): Promise<CompanyUser | undefined> {
     const [companyUser] = await db
       .update(companyUsers)
       .set(updateData)
+      .where(eq(companyUsers.id, id))
+      .returning();
+    return companyUser || undefined;
+  }
+
+  async deleteCompanyUser(id: string): Promise<CompanyUser | undefined> {
+    const [companyUser] = await db
+      .delete(companyUsers)
       .where(eq(companyUsers.id, id))
       .returning();
     return companyUser || undefined;

@@ -33,39 +33,38 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
 
       if (response.ok) {
         const adminData = await response.json();
-        console.log('Token verified successfully:', adminData);
+        console.log('Admin token verified successfully');
         setAdmin(adminData);
         setIsLoading(false);
-      } else if (response.status === 401) {
-        // Token is invalid or expired - definitely remove it
-        console.log('Token verification failed (401), removing token');
+      } else if (response.status === 401 || response.status === 403) {
+        // Token is invalid or expired - remove it
+        console.log('Token verification failed (401/403), removing token');
         localStorage.removeItem('admin_token');
         setAdmin(null);
         setIsLoading(false);
       } else {
-        // Other error (500, etc.) - retry once
+        // Other error (500, etc.) - retry up to 3 times
         console.warn('Token verification failed with status:', response.status);
-        if (retryCount < 1) {
-          console.log('Retrying token verification...');
-          setTimeout(() => verifyAdminToken(token, retryCount + 1), 1000);
+        if (retryCount < 3) {
+          console.log(`Retrying token verification... (attempt ${retryCount + 1}/3)`);
+          setTimeout(() => verifyAdminToken(token, retryCount + 1), 1000 * (retryCount + 1));
         } else {
-          // After retry, if still failing, keep token but don't set admin
-          // This prevents redirect loop
-          console.error('Token verification failed after retry');
+          // After retries, keep token but don't set admin
+          // User will need to refresh or re-login
+          console.error('Token verification failed after retries - please refresh or re-login');
           setAdmin(null);
           setIsLoading(false);
         }
       }
     } catch (error) {
       console.error('Token verification network error:', error);
-      // On network error, retry once
-      if (retryCount < 1) {
-        console.log('Retrying token verification after network error...');
-        setTimeout(() => verifyAdminToken(token, retryCount + 1), 1000);
+      // On network error, retry up to 3 times with exponential backoff
+      if (retryCount < 3) {
+        console.log(`Retrying after network error... (attempt ${retryCount + 1}/3)`);
+        setTimeout(() => verifyAdminToken(token, retryCount + 1), 1000 * (retryCount + 1));
       } else {
-        // After retry, if still failing, keep token but don't set admin
-        // This prevents redirect loop - user can manually refresh
-        console.error('Token verification failed after retry');
+        // After retries, keep token - server might be starting up
+        console.error('Token verification failed after retries - keeping token, please refresh');
         setAdmin(null);
         setIsLoading(false);
       }

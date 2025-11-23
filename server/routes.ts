@@ -300,7 +300,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: 'Invalid credentials' });
       }
 
-      // Generate JWT token
+      // Generate JWT token with 30 day expiration
       const token = jwt.sign(
         { 
           id: user.id, 
@@ -309,7 +309,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           isSuperAdmin: user.isSuperAdmin 
         },
         JWT_SECRET,
-        { expiresIn: '24h' }
+        { expiresIn: '30d' }
       );
 
       res.json({
@@ -502,6 +502,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching company users:", error);
       res.status(500).json({ message: "Failed to fetch company users" });
+    }
+  });
+
+  // Get all company users (for admin)
+  app.get("/api/admin/company-users", verifyAdminAuth, async (req, res) => {
+    try {
+      const companyUsers = await storage.getAllCompanyUsers();
+      
+      // Enrich with company information
+      const enrichedUsers = await Promise.all(
+        companyUsers.map(async (user) => {
+          const company = await storage.getCompanyById(user.companyId);
+          return {
+            ...user,
+            company: company ? {
+              id: company.id,
+              name: company.name,
+              slug: company.slug,
+            } : null,
+          };
+        })
+      );
+      
+      res.json(enrichedUsers);
+    } catch (error) {
+      console.error("Error fetching company users:", error);
+      res.status(500).json({ message: "Failed to fetch company users" });
+    }
+  });
+
+  // Delete company user (for admin testing)
+  app.delete("/api/admin/company-users/:id", verifyAdminAuth, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const deletedUser = await storage.deleteCompanyUser(id);
+      
+      if (!deletedUser) {
+        return res.status(404).json({ message: 'Company user not found' });
+      }
+
+      res.json({ message: 'Company user deleted', companyUser: deletedUser });
+    } catch (error) {
+      console.error("Error deleting company user:", error);
+      res.status(500).json({ message: "Failed to delete company user" });
     }
   });
 
