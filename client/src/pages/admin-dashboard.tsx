@@ -182,7 +182,7 @@ export default function AdminDashboard() {
   });
 
   // Fetch company users for selected company
-  const { data: companyUsers, refetch: refetchCompanyUsers } = useQuery<CompanyUser[]>({
+  const { data: companyUsers, isLoading: companyUsersLoading, refetch: refetchCompanyUsers } = useQuery<CompanyUser[]>({
     queryKey: ['/api/admin/companies', selectedCompanyId, 'users'],
     queryFn: async () => {
       if (!selectedCompanyId || !adminToken) return [];
@@ -191,10 +191,19 @@ export default function AdminDashboard() {
           'Authorization': `Bearer ${adminToken}`
         }
       });
-      if (!response.ok) throw new Error('Failed to fetch company users');
+      if (!response.ok) {
+        if (response.status === 401) {
+          localStorage.removeItem('admin_token');
+          navigate('/admin/login');
+          throw new Error('Session expired. Please log in again.');
+        }
+        throw new Error('Failed to fetch company users');
+      }
       return response.json();
     },
     enabled: !!selectedCompanyId && !!admin && !!adminToken,
+    retry: 1,
+    retryDelay: 1000,
   });
 
   const handleApproveClaim = async (claimId: string, companyName: string) => {
@@ -566,34 +575,45 @@ export default function AdminDashboard() {
                             )}
                             {claim.status === 'approved' && (
                               <div className="mt-4 pt-4 border-t border-gray-200">
-                                <div className="flex items-center justify-between mb-2">
-                                  <p><strong>Company Users:</strong></p>
+                                <div className="flex items-center justify-between mb-3">
+                                  <p className="font-semibold text-gray-900">Company Users:</p>
                                   <Button
                                     size="sm"
                                     variant="outline"
                                     onClick={() => {
-                                      setSelectedCompanyId(claim.companyId);
-                                      refetchCompanyUsers();
+                                      if (selectedCompanyId === claim.companyId) {
+                                        setSelectedCompanyId(null);
+                                      } else {
+                                        setSelectedCompanyId(claim.companyId);
+                                        refetchCompanyUsers();
+                                      }
                                     }}
                                   >
                                     <UserCheck className="h-4 w-4 mr-1" />
-                                    {selectedCompanyId === claim.companyId ? 'Hide' : 'View'} Users
+                                    {selectedCompanyId === claim.companyId ? 'Hide Users' : 'View Users'}
                                   </Button>
                                 </div>
-                                {selectedCompanyId === claim.companyId && companyUsers && (
+                                {selectedCompanyId === claim.companyId && (
                                   <div className="mt-2 space-y-2">
-                                    {companyUsers.length === 0 ? (
-                                      <p className="text-sm text-gray-500">No company users found.</p>
-                                    ) : (
+                                    {companyUsersLoading ? (
+                                      <div className="flex items-center gap-2 p-3">
+                                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                                        <p className="text-sm text-gray-500">Loading users...</p>
+                                      </div>
+                                    ) : companyUsers && companyUsers.length === 0 ? (
+                                      <p className="text-sm text-gray-500 p-3 bg-yellow-50 border border-yellow-200 rounded">
+                                        No company users found. This might mean the claim was approved but no user account was created.
+                                      </p>
+                                    ) : companyUsers ? (
                                       companyUsers.map((user) => (
-                                        <div key={user.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                                          <div>
-                                            <p className="text-sm font-medium">{user.name}</p>
+                                        <div key={user.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
+                                          <div className="flex-1">
+                                            <p className="text-sm font-medium text-gray-900">{user.name}</p>
                                             <p className="text-xs text-gray-600">{user.email}</p>
-                                            <p className="text-xs text-gray-500">Role: {user.role}</p>
+                                            <p className="text-xs text-gray-500 mt-1">Role: {user.role}</p>
                                           </div>
-                                          <div className="flex items-center gap-2">
-                                            <Badge variant={user.isActive ? "default" : "secondary"}>
+                                          <div className="flex items-center gap-3 ml-4">
+                                            <Badge variant={user.isActive ? "default" : "secondary"} className="min-w-[70px] justify-center">
                                               {user.isActive ? 'Active' : 'Inactive'}
                                             </Badge>
                                             {user.isActive ? (
@@ -601,17 +621,17 @@ export default function AdminDashboard() {
                                                 size="sm"
                                                 variant="outline"
                                                 onClick={() => handleRevokeAccess(user.id)}
-                                                className="text-red-600 border-red-300 hover:bg-red-50"
+                                                className="text-red-600 border-red-300 hover:bg-red-50 hover:border-red-400"
                                               >
                                                 <Ban className="h-3 w-3 mr-1" />
-                                                Revoke
+                                                Revoke Access
                                               </Button>
                                             ) : (
                                               <Button
                                                 size="sm"
                                                 variant="outline"
                                                 onClick={() => handleActivateAccess(user.id)}
-                                                className="text-green-600 border-green-300 hover:bg-green-50"
+                                                className="text-green-600 border-green-300 hover:bg-green-50 hover:border-green-400"
                                               >
                                                 <UserCheck className="h-3 w-3 mr-1" />
                                                 Activate
@@ -620,6 +640,8 @@ export default function AdminDashboard() {
                                           </div>
                                         </div>
                                       ))
+                                    ) : (
+                                      <p className="text-sm text-gray-500">Click "View Users" to load company users.</p>
                                     )}
                                   </div>
                                 )}
