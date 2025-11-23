@@ -45,11 +45,16 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
         const adminData = await response.json();
         setAdmin(adminData);
       } else {
+        // Token is invalid or expired
+        console.log('Token verification failed, removing token');
         localStorage.removeItem('admin_token');
+        setAdmin(null);
       }
     } catch (error) {
-      console.error('Token verification failed:', error);
-      localStorage.removeItem('admin_token');
+      console.error('Token verification error:', error);
+      // On network error, keep the token but clear admin state
+      // This allows retry without forcing re-login
+      setAdmin(null);
     } finally {
       setIsLoading(false);
     }

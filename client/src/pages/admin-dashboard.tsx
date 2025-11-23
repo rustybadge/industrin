@@ -75,20 +75,24 @@ export default function AdminDashboard() {
   });
   const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(null);
 
+  // Get token from localStorage
+  const adminToken = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : null;
+
   // Redirect to login if not authenticated
   useEffect(() => {
     if (!authLoading && !admin) {
-      navigate('/admin/login');
+      // Small delay to ensure state is stable
+      const timer = setTimeout(() => {
+        navigate('/admin/login');
+      }, 100);
+      return () => clearTimeout(timer);
     }
   }, [admin, authLoading, navigate]);
-
-  // Get token from localStorage
-  const adminToken = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : null;
 
   // Show loading state while checking authentication
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading...</p>
@@ -97,9 +101,22 @@ export default function AdminDashboard() {
     );
   }
 
-  // Don't render if not authenticated (will redirect)
+  // Show redirecting message if not authenticated (instead of blank page)
   if (!admin) {
-    return null;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Redirecting to login...</p>
+          <Button 
+            onClick={() => navigate('/admin/login')} 
+            className="mt-4"
+          >
+            Go to Login
+          </Button>
+        </div>
+      </div>
+    );
   }
 
   // Fetch dashboard stats
@@ -115,6 +132,12 @@ export default function AdminDashboard() {
         }
       });
       if (!response.ok) {
+        // If 401, token might be invalid - clear it
+        if (response.status === 401) {
+          localStorage.removeItem('admin_token');
+          navigate('/admin/login');
+          throw new Error('Session expired. Please log in again.');
+        }
         const errorText = await response.text();
         console.error('Failed to fetch stats:', response.status, errorText);
         throw new Error(`Failed to fetch stats: ${response.status}`);
@@ -122,6 +145,8 @@ export default function AdminDashboard() {
       return response.json();
     },
     enabled: !!admin && !!adminToken, // Only fetch when admin is authenticated
+    retry: 1, // Only retry once
+    retryDelay: 1000,
   });
 
   // Fetch claim requests
@@ -137,6 +162,12 @@ export default function AdminDashboard() {
         }
       });
       if (!response.ok) {
+        // If 401, token might be invalid - clear it
+        if (response.status === 401) {
+          localStorage.removeItem('admin_token');
+          navigate('/admin/login');
+          throw new Error('Session expired. Please log in again.');
+        }
         const errorText = await response.text();
         console.error('Failed to fetch claim requests:', response.status, errorText);
         throw new Error(`Failed to fetch claim requests: ${response.status}`);
@@ -146,6 +177,8 @@ export default function AdminDashboard() {
       return data;
     },
     enabled: !!admin && !!adminToken, // Only fetch when admin is authenticated
+    retry: 1, // Only retry once
+    retryDelay: 1000,
   });
 
   // Fetch company users for selected company
