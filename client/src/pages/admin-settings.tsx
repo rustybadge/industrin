@@ -376,6 +376,7 @@ export default function AdminSettings() {
               </ul>
             </CardContent>
           </Card>
+          </div>
         </div>
       </main>
 
