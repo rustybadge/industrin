@@ -231,6 +231,7 @@ export default function CompanyProfile() {
                   type="button"
                   onClick={() => navigate(`/ansokkontroll/${companySlug || companyId}`)}
                   className="inline-flex items-center text-[#3467FF] hover:text-[#1B43F5] font-medium"
+                  data-testid="company-claim-button"
                 >
                   <span className="mr-1 inline-flex h-5 w-5 items-center justify-center rounded-full border border-[#3467FF]">
                     <UserCheck className="h-3 w-3" />

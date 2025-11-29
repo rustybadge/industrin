@@ -187,7 +187,7 @@ export default function ClaimRequest() {
             </Button>
           </div>
           
-          <Card className="border border-gray-200 shadow-sm text-center">
+          <Card className="border border-gray-200 shadow-sm text-center" data-testid="claim-success-message">
             <CardContent className="p-8">
               <CheckCircle className="h-16 w-16 text-green-600 mx-auto mb-6" />
               <h1 className="text-2xl font-bold text-gray-900 mb-4">Ansökan skickad!</h1>
@@ -404,6 +404,7 @@ export default function ClaimRequest() {
                           checked={field.value}
                           onCheckedChange={field.onChange}
                           className="mt-1"
+                          data-testid="claim-consent-checkbox"
                         />
                       </FormControl>
                       <div className="space-y-1 leading-none">

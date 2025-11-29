@@ -639,7 +639,12 @@ export default function AdminDashboard() {
             ) : (
               <div className="space-y-4">
                 {claimRequests?.map((claim) => (
-                  <Card key={claim.id}>
+                  <Card 
+                    key={claim.id}
+                    data-testid="claim-card"
+                    data-claim-id={claim.id}
+                    data-claim-email={claim.email}
+                  >
                     <CardContent className="p-6">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
@@ -755,6 +760,7 @@ export default function AdminDashboard() {
                                 size="sm"
                                 onClick={() => handleApproveClaim(claim.id, claim.company?.name || 'Company')}
                                 className="bg-gray-900 hover:bg-black"
+                                data-testid="approve-claim-button"
                               >
                                 <CheckCircle className="h-4 w-4 mr-1" />
                                 Approve
@@ -822,7 +828,7 @@ export default function AdminDashboard() {
 
       {/* Access Token Dialog */}
       <Dialog open={accessTokenDialog.open} onOpenChange={(open) => setAccessTokenDialog({ ...accessTokenDialog, open })}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md" data-testid="access-token-dialog">
           <DialogHeader>
             <DialogTitle>Claim Approved - Access Token</DialogTitle>
             <DialogDescription>
@@ -832,7 +838,7 @@ export default function AdminDashboard() {
           <div className="space-y-4 py-4">
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
               <p className="text-sm font-medium text-gray-700 mb-2">Access Token:</p>
-              <p className="font-mono text-sm break-all bg-white p-3 rounded border">
+              <p className="font-mono text-sm break-all bg-white p-3 rounded border" data-testid="access-token-value">
                 {accessTokenDialog.token}
               </p>
             </div>

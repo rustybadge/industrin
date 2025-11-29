@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode, useRef } from 'react';
 import { useLocation } from 'wouter';
 
 interface AdminUser {
@@ -22,6 +22,9 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
   const [admin, setAdmin] = useState<AdminUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [, navigate] = useLocation();
+  const tokenRef = useRef<string | null>(null);
+
+  const isCurrentToken = (token: string | null) => tokenRef.current === token;
 
   const verifyAdminToken = async (token: string, retryCount = 0) => {
     try {
@@ -34,12 +37,19 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
       if (response.ok) {
         const adminData = await response.json();
         console.log('Admin token verified successfully');
+        if (!isCurrentToken(token)) {
+          return;
+        }
         setAdmin(adminData);
         setIsLoading(false);
       } else if (response.status === 401 || response.status === 403) {
         // Token is invalid or expired - remove it
         console.log('Token verification failed (401/403), removing token');
+        if (!isCurrentToken(token)) {
+          return;
+        }
         localStorage.removeItem('admin_token');
+        tokenRef.current = null;
         setAdmin(null);
         setIsLoading(false);
       } else {
@@ -47,11 +57,18 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
         console.warn('Token verification failed with status:', response.status);
         if (retryCount < 3) {
           console.log(`Retrying token verification... (attempt ${retryCount + 1}/3)`);
-          setTimeout(() => verifyAdminToken(token, retryCount + 1), 1000 * (retryCount + 1));
+          setTimeout(() => {
+            if (isCurrentToken(token)) {
+              verifyAdminToken(token, retryCount + 1);
+            }
+          }, 1000 * (retryCount + 1));
         } else {
           // After retries, keep token but don't set admin
           // User will need to refresh or re-login
           console.error('Token verification failed after retries - please refresh or re-login');
+          if (!isCurrentToken(token)) {
+            return;
+          }
           setAdmin(null);
           setIsLoading(false);
         }
@@ -61,10 +78,17 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
       // On network error, retry up to 3 times with exponential backoff
       if (retryCount < 3) {
         console.log(`Retrying after network error... (attempt ${retryCount + 1}/3)`);
-        setTimeout(() => verifyAdminToken(token, retryCount + 1), 1000 * (retryCount + 1));
+        setTimeout(() => {
+          if (isCurrentToken(token)) {
+            verifyAdminToken(token, retryCount + 1);
+          }
+        }, 1000 * (retryCount + 1));
       } else {
         // After retries, keep token - server might be starting up
         console.error('Token verification failed after retries - keeping token, please refresh');
+        if (!isCurrentToken(token)) {
+          return;
+        }
         setAdmin(null);
         setIsLoading(false);
       }
@@ -84,7 +108,9 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
       if (response.ok) {
         const { admin, token } = await response.json();
         localStorage.setItem('admin_token', token);
+        tokenRef.current = token;
         setAdmin(admin);
+        setIsLoading(false);
         return true;
       }
       return false;
@@ -96,7 +122,9 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     localStorage.removeItem('admin_token');
+    tokenRef.current = null;
     setAdmin(null);
+    setIsLoading(false);
     navigate('/admin/login');
   };
 
@@ -104,6 +132,7 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
     // Check if admin is logged in on app start
     const token = localStorage.getItem('admin_token');
     if (token) {
+      tokenRef.current = token;
       // Verify token is still valid
       verifyAdminToken(token);
     } else {
@@ -116,6 +145,7 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
     const token = localStorage.getItem('admin_token');
     if (token) {
       setIsLoading(true);
+      tokenRef.current = token;
       await verifyAdminToken(token);
     }
   };

@@ -87,6 +87,33 @@ npm run dev
 - `npm run build` - Build for production
 - `npm run start` - Start production server
 - `npm run db:push` - Push database schema changes
+- `npm run test:e2e` - Run Playwright end-to-end tests
+- `npm run test:e2e:report` - Re-open the latest HTML test report
+
+## 🧪 End-to-End Testing
+
+End-to-end coverage is powered by Playwright and focuses on the full company-claim workflow (company owner submits a claim and an admin approves it).
+
+### Test Environment Variables
+
+| Variable | Description | Default |
+| --- | --- | --- |
+| `E2E_BASE_URL` | URL where the combined Express/Vite server is running | `http://127.0.0.1:5000` |
+| `E2E_ADMIN_USERNAME` | Admin username used on `/admin/login` | `admin` |
+| `E2E_ADMIN_PASSWORD` | Admin password used on `/admin/login` | `admin123` |
+| `E2E_COMPANY_SLUG` | Slug of the company to claim during the test | `rusty-support-ab` |
+
+### Running the Tests
+
+1. Start the app locally: `npm run dev`
+2. (One time) install Playwright browsers: `npx playwright install`
+3. Execute the suite: `npm run test:e2e`
+
+The test will:
+- Navigate to `/companies/:slug`, open the claim form, and submit it with synthetic data
+- Log in as an admin, open the Claim Requests tab, approve the pending claim, and capture the generated token
+
+Use `npm run test:e2e:report` to re-open the HTML report after a run.
 
 ## 📝 Features
 

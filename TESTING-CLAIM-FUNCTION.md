@@ -144,3 +144,4 @@ npm run delete-company-user <email>
 - Verify company exists in database
 - Check browser console for validation errors
 
+
