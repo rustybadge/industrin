@@ -6,10 +6,13 @@ import type { Company } from "@shared/schema";
 import { z } from "zod";
 import { nanoid } from "nanoid";
 import { requireAuth, getAuth, clerkClient } from "@clerk/express";
+import type { JwtPayload } from "@clerk/types";
 
 type ClerkMetadata = {
   role?: string;
   companyId?: string;
+  orgId?: string;
+  orgRole?: string;
 };
 
 declare global {
@@ -20,13 +23,19 @@ declare global {
   }
 }
 
-const getClerkMetadata = (req: Request): ClerkMetadata => {
-  const auth = getAuth(req);
-  const claims = (auth?.sessionClaims || {}) as Record<string, any>;
-  // Support both default Clerk publicMetadata and custom JWT claims we set in the template
-  const role = claims.role || claims.publicMetadata?.role;
-  const companyId = claims.companyId || claims.publicMetadata?.companyId;
-  return { role, companyId };
+const COMPANY_MEMBER_ROLE = "org:admin";
+const COMPANY_PORTAL_URL =
+  process.env.COMPANY_PORTAL_URL ||
+  (process.env.APP_URL ? `${process.env.APP_URL.replace(/\/$/, "")}/company/login` : undefined);
+
+const claimsToMetadata = (claims: JwtPayload): ClerkMetadata => {
+  const role = (claims as any)?.role || (claims as any)?.publicMetadata?.role;
+  const companyId =
+    (claims as any)?.companyId ||
+    (claims as any)?.publicMetadata?.companyId;
+  const orgId = (claims as any)?.org_id;
+  const orgRole = (claims as any)?.org_role;
+  return { role, companyId, orgId, orgRole };
 };
 
 const ensureAdmin: RequestHandler = (req, res, next) => {
@@ -44,19 +53,31 @@ const ensureAdmin: RequestHandler = (req, res, next) => {
   next();
 };
 
-const ensureCompanyMember: RequestHandler = (req, res, next) => {
-  const metadata = getClerkMetadata(req);
-  if (metadata.role !== "company" || !metadata.companyId) {
+const ensureCompanyMember: RequestHandler = async (req, res, next) => {
+  const auth = getAuth(req);
+  const claims = (auth?.sessionClaims || {}) as JwtPayload;
+  const metadata = claimsToMetadata(claims);
+
+  // If companyId missing but org_id present, resolve company by org id
+  let companyId = metadata.companyId;
+  if (!companyId && metadata.orgId) {
+    const company = await storage.getCompanyByClerkOrgId(metadata.orgId);
+    if (company) {
+      companyId = company.id;
+    }
+  }
+
+  const hasCompanyRole =
+    metadata.role === "company" ||
+    metadata.orgRole === COMPANY_MEMBER_ROLE;
+
+  if (!hasCompanyRole || !companyId) {
     return res.status(403).json({ message: "Company access required" });
   }
-  req.companyId = metadata.companyId;
+
+  req.companyId = companyId;
   next();
 };
-
-const COMPANY_MEMBER_ROLE = "org:admin";
-const COMPANY_PORTAL_URL =
-  process.env.COMPANY_PORTAL_URL ||
-  (process.env.APP_URL ? `${process.env.APP_URL.replace(/\/$/, "")}/company/login` : undefined);
 
 const slugify = (value: string) =>
   value
