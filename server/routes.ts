@@ -530,10 +530,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: 'Claim request not found' });
       }
 
-      // Check if company user already exists for this email
+      // Check if company user already exists for this email. If so, clean it up so we can re-invite.
       const existingUser = await storage.getCompanyUserByEmail(claimRequest.email);
       if (existingUser) {
-        return res.status(400).json({ message: 'A company user account already exists for this email' });
+        await storage.deleteCompanyUser(existingUser.id);
       }
 
       const company = await storage.getCompanyById(claimRequest.companyId);
