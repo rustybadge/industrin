@@ -6,6 +6,16 @@ import { clerkMiddleware } from "@clerk/express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
+// Light-touch env diagnostics to help catch misconfigured deployments.
+// Only logs non-sensitive prefixes/lengths (never the full secret).
+const pk = process.env.CLERK_PUBLISHABLE_KEY || process.env.VITE_CLERK_PUBLISHABLE_KEY;
+const sk = process.env.CLERK_SECRET_KEY;
+const jwtTemplate = process.env.CLERK_JWT_TEMPLATE_NAME || process.env.VITE_CLERK_JWT_TEMPLATE_NAME;
+log(
+  `Clerk env => pk:${pk ? `${pk.slice(0, 8)}… (len ${pk.length})` : "missing"} | sk:${sk ? `len ${sk.length}` : "missing"} | jwtTemplate:${jwtTemplate || "missing"}`,
+  "startup",
+);
+
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
