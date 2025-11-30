@@ -147,6 +147,7 @@ async function addUserToOrganizationOrInvite({
         ...(user.publicMetadata || {}),
         role: "company",
         companyId,
+        companyName,
       },
     });
     try {
@@ -164,17 +165,19 @@ async function addUserToOrganizationOrInvite({
     return { type: "membership", clerkUserId: user.id, invitation: undefined };
   }
 
-  const invitation = await clerkClient.organizations.createOrganizationInvitation({
-    organizationId,
-    emailAddress: email,
-    role: COMPANY_MEMBER_ROLE,
-    publicMetadata: {
-      role: "company",
-      companyId,
-      companyName,
-    },
-    redirectUrl: COMPANY_PORTAL_URL,
-  });
+  // Create an invitation without an inviter (avoid not_a_member errors) and explicitly
+  // set public metadata so the user lands with role/companyId.
+      const invitation = await clerkClient.organizations.createOrganizationInvitation({
+        organizationId,
+        emailAddress: email,
+        role: COMPANY_MEMBER_ROLE,
+        publicMetadata: {
+          role: "company",
+          companyId,
+          companyName,
+        },
+        redirectUrl: COMPANY_PORTAL_URL,
+      });
 
   return { type: "invitation", invitation, clerkUserId: undefined };
 }
