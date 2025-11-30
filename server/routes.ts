@@ -168,7 +168,6 @@ async function addUserToOrganizationOrInvite({
     organizationId,
     emailAddress: email,
     role: COMPANY_MEMBER_ROLE,
-    inviterUserId: adminClerkId,
     publicMetadata: {
       role: "company",
       companyId,
