@@ -30,6 +30,7 @@ function Router() {
       <Switch>
         {/* Admin routes - no header/footer */}
         <Route path="/admin/login" component={AdminLogin} />
+        <Route path="/admin/login/*" component={AdminLogin} />
         <Route path="/admin/login/:splat*" component={AdminLogin} />
         <Route path="/admin/" component={AdminDashboard} />
         <Route path="/admin" component={AdminDashboard} />
@@ -38,6 +39,7 @@ function Router() {
         
         {/* Company admin routes - no header/footer */}
         <Route path="/company/login" component={CompanyLogin} />
+        <Route path="/company/login/*" component={CompanyLogin} />
         <Route path="/company/login/:splat*" component={CompanyLogin} />
         <Route path="/company/dashboard/" component={CompanyDashboard} />
         <Route path="/company/dashboard" component={CompanyDashboard} />
