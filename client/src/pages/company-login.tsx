@@ -23,7 +23,9 @@ export default function CompanyLogin() {
           <SignIn
             routing="path"
             path="/company/login"
-            afterSignInUrl="/company/dashboard"
+            // Use forceRedirectUrl to avoid re-render loop and deprecated prop warnings
+            forceRedirectUrl="/company/dashboard"
+            fallbackRedirectUrl="/company/dashboard"
             appearance={{
               variables: {
                 colorPrimary: "#111827",
@@ -45,4 +47,3 @@ export default function CompanyLogin() {
     </div>
   );
 }
-

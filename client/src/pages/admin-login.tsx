@@ -25,7 +25,10 @@ export default function AdminLogin() {
           <SignIn
             routing="path"
             path="/admin/login"
-            afterSignInUrl="/admin"
+            // Use forceRedirectUrl to avoid re-render loop and deprecated prop warnings
+            forceRedirectUrl="/admin"
+            // Fallback for older Clerk versions
+            fallbackRedirectUrl="/admin"
             appearance={{
               variables: {
                 colorPrimary: "#111827",
