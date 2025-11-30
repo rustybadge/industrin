@@ -77,12 +77,20 @@ async function ensureClerkOrganization(company: Company) {
 
   const baseSlug = slugify(company.slug || company.name || company.id);
   let attempt = 0;
+  let slugsAllowed = true;
+
   while (attempt < 5) {
-    const slugCandidate = attempt === 0 ? baseSlug : `${baseSlug}-${attempt + 1}`;
+    // If slugs are allowed, keep trying unique slugs. If not, omit slug entirely.
+    const slugCandidate = slugsAllowed
+      ? attempt === 0
+        ? baseSlug
+        : `${baseSlug}-${attempt + 1}`
+      : undefined;
+
     try {
       const organization = await clerkClient.organizations.createOrganization({
         name: company.name,
-        slug: slugCandidate,
+        ...(slugCandidate ? { slug: slugCandidate } : {}),
         publicMetadata: {
           companyId: company.id,
         },
@@ -91,14 +99,20 @@ async function ensureClerkOrganization(company: Company) {
       return organization.id;
     } catch (error: any) {
       const code = error?.errors?.[0]?.code;
-      if (code === "slug_exists") {
+      if (code === "slug_exists" && slugsAllowed) {
         attempt += 1;
+        continue;
+      }
+      if (code === "organization_slugs_disabled") {
+        // Retry without slug if this Clerk instance has slugs disabled
+        slugsAllowed = false;
+        attempt = 0;
         continue;
       }
       throw error;
     }
   }
-  throw new Error("Failed to provision a Clerk organization slug after multiple attempts");
+  throw new Error("Failed to provision a Clerk organization after multiple attempts");
 }
 
 type ClerkInviteResult = {
