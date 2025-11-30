@@ -36,6 +36,7 @@ function Router() {
         <Route path="/admin" component={AdminDashboard} />
         <Route path="/admin/:splat*" component={AdminDashboard} />
         <Route path="/admin/settings" component={AdminSettings} />
+        <Route path="/admin/settings/*" component={AdminSettings} />
         
         {/* Company admin routes - no header/footer */}
         <Route path="/company/login" component={CompanyLogin} />
