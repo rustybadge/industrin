@@ -38,6 +38,12 @@ const claimsToMetadata = (claims: JwtPayload): ClerkMetadata => {
   return { role, companyId, orgId, orgRole };
 };
 
+const getClerkMetadata = (req: Request): ClerkMetadata => {
+  const auth = getAuth(req);
+  const claims = (auth?.sessionClaims || {}) as JwtPayload;
+  return claimsToMetadata(claims);
+};
+
 const ensureAdmin: RequestHandler = (req, res, next) => {
   const metadata = getClerkMetadata(req);
   if (metadata.role !== "admin") {
