@@ -1,45 +1,170 @@
-import type { Express } from "express";
+import type { Express, Request, RequestHandler } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertQuoteRequestSchema, insertClaimRequestSchema, insertCompanySchema } from "@shared/schema";
+import { insertQuoteRequestSchema, insertClaimRequestSchema } from "@shared/schema";
+import type { Company } from "@shared/schema";
 import { z } from "zod";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import { nanoid } from "nanoid";
+import { requireAuth, getAuth, clerkClient } from "@clerk/express";
 
-// JWT secret - in production, use environment variable
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+type ClerkMetadata = {
+  role?: string;
+  companyId?: string;
+};
 
-// Extend Request interface to include admin property
 declare global {
   namespace Express {
     interface Request {
-      admin?: {
-        id: string;
-        username: string;
-        role: string;
-        isSuperAdmin: boolean;
-      };
+      companyId?: string;
     }
   }
 }
 
-// Middleware to verify admin authentication
-const verifyAdminAuth = (req: any, res: any, next: any) => {
-  const token = req.headers.authorization?.replace('Bearer ', '');
-  
-  if (!token) {
-    return res.status(401).json({ message: 'No token provided' });
+const getClerkMetadata = (req: Request): ClerkMetadata => {
+  const auth = getAuth(req);
+  const claims = (auth?.sessionClaims || {}) as Record<string, any>;
+  // Support both default Clerk publicMetadata and custom JWT claims we set in the template
+  const role = claims.role || claims.publicMetadata?.role;
+  const companyId = claims.companyId || claims.publicMetadata?.companyId;
+  return { role, companyId };
+};
+
+const ensureAdmin: RequestHandler = (req, res, next) => {
+  const metadata = getClerkMetadata(req);
+  if (metadata.role !== "admin") {
+    const auth = getAuth(req);
+    console.warn("[ensureAdmin] 403 - missing admin role", {
+      userId: auth?.userId,
+      role: metadata.role,
+      companyId: metadata.companyId,
+      hasSession: Boolean(auth?.sessionId),
+    });
+    return res.status(403).json({ message: "Admin access required" });
+  }
+  next();
+};
+
+const ensureCompanyMember: RequestHandler = (req, res, next) => {
+  const metadata = getClerkMetadata(req);
+  if (metadata.role !== "company" || !metadata.companyId) {
+    return res.status(403).json({ message: "Company access required" });
+  }
+  req.companyId = metadata.companyId;
+  next();
+};
+
+const COMPANY_MEMBER_ROLE = "org:admin";
+const COMPANY_PORTAL_URL =
+  process.env.COMPANY_PORTAL_URL ||
+  (process.env.APP_URL ? `${process.env.APP_URL.replace(/\/$/, "")}/company/login` : undefined);
+
+const slugify = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 50) || "company";
+
+async function ensureClerkOrganization(company: Company) {
+  if (company.clerkOrganizationId) {
+    try {
+      await clerkClient.organizations.getOrganization({ organizationId: company.clerkOrganizationId });
+      return company.clerkOrganizationId;
+    } catch (error) {
+      console.warn(`Existing Clerk organization ${company.clerkOrganizationId} not found, creating a new one.`);
+    }
   }
 
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET) as any;
-    req.admin = decoded;
-    next();
-  } catch (error) {
-    return res.status(401).json({ message: 'Invalid token' });
+  const baseSlug = slugify(company.slug || company.name || company.id);
+  let attempt = 0;
+  while (attempt < 5) {
+    const slugCandidate = attempt === 0 ? baseSlug : `${baseSlug}-${attempt + 1}`;
+    try {
+      const organization = await clerkClient.organizations.createOrganization({
+        name: company.name,
+        slug: slugCandidate,
+        publicMetadata: {
+          companyId: company.id,
+        },
+      });
+      await storage.updateCompany(company.id, { clerkOrganizationId: organization.id });
+      return organization.id;
+    } catch (error: any) {
+      const code = error?.errors?.[0]?.code;
+      if (code === "slug_exists") {
+        attempt += 1;
+        continue;
+      }
+      throw error;
+    }
   }
+  throw new Error("Failed to provision a Clerk organization slug after multiple attempts");
+}
+
+type ClerkInviteResult = {
+  type: "membership";
+  clerkUserId: string;
+  invitation: undefined;
+} | {
+  type: "invitation";
+  clerkUserId: undefined;
+  invitation: Awaited<ReturnType<typeof clerkClient.organizations.createOrganizationInvitation>>;
 };
+
+async function addUserToOrganizationOrInvite({
+  organizationId,
+  email,
+  companyId,
+  companyName,
+  adminClerkId,
+}: {
+  organizationId: string;
+  email: string;
+  companyId: string;
+  companyName: string;
+  adminClerkId?: string;
+}): Promise<ClerkInviteResult> {
+  const existingUsers = await clerkClient.users.getUserList({ emailAddress: [email] });
+  const user = existingUsers?.data?.[0];
+
+  if (user) {
+    await clerkClient.users.updateUser(user.id, {
+      publicMetadata: {
+        ...(user.publicMetadata || {}),
+        role: "company",
+        companyId,
+      },
+    });
+    try {
+      await clerkClient.organizations.createOrganizationMembership({
+        organizationId,
+        userId: user.id,
+        role: COMPANY_MEMBER_ROLE,
+      });
+    } catch (error: any) {
+      const code = error?.errors?.[0]?.code;
+      if (code !== "organization_membership_exists") {
+        throw error;
+      }
+    }
+    return { type: "membership", clerkUserId: user.id, invitation: undefined };
+  }
+
+  const invitation = await clerkClient.organizations.createOrganizationInvitation({
+    organizationId,
+    emailAddress: email,
+    role: COMPANY_MEMBER_ROLE,
+    inviterUserId: adminClerkId,
+    publicMetadata: {
+      role: "company",
+      companyId,
+      companyName,
+    },
+    redirectUrl: COMPANY_PORTAL_URL,
+  });
+
+  return { type: "invitation", invitation, clerkUserId: undefined };
+}
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Get companies with search and filtering
@@ -278,62 +403,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // ===== ADMIN ROUTES =====
-
-  // Admin login
-  app.post("/api/admin/login", async (req, res) => {
-    try {
-      const { username, password } = req.body;
-
-      if (!username || !password) {
-        return res.status(400).json({ message: 'Username and password are required' });
-      }
-
-      // Get user from database
-      const user = await storage.getUserByUsername(username);
-      if (!user) {
-        return res.status(401).json({ message: 'Invalid credentials' });
-      }
-
-      // Check password
-      const isValidPassword = await bcrypt.compare(password, user.password);
-      if (!isValidPassword) {
-        return res.status(401).json({ message: 'Invalid credentials' });
-      }
-
-      // Generate JWT token with 30 day expiration
-      const token = jwt.sign(
-        { 
-          id: user.id, 
-          username: user.username, 
-          role: user.role,
-          isSuperAdmin: user.isSuperAdmin 
-        },
-        JWT_SECRET,
-        { expiresIn: '30d' }
-      );
-
-      res.json({
-        admin: {
-          id: user.id,
-          username: user.username,
-          role: user.role,
-          isSuperAdmin: user.isSuperAdmin,
-        },
-        token,
-      });
-    } catch (error) {
-      console.error("Admin login error:", error);
-      res.status(500).json({ message: "Login failed" });
-    }
-  });
-
-  // Verify admin token
-  app.get("/api/admin/verify", verifyAdminAuth, async (req: any, res) => {
-    res.json(req.admin);
-  });
-
   // Get admin dashboard stats
-  app.get("/api/admin/stats", verifyAdminAuth, async (req, res) => {
+  app.get("/api/admin/stats", requireAuth(), ensureAdmin, async (req, res) => {
     try {
       // Get total companies
       const allCompanies = await storage.getCompanies({});
@@ -356,7 +427,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get all claim requests
-  app.get("/api/admin/claim-requests", verifyAdminAuth, async (req, res) => {
+  app.get("/api/admin/claim-requests", requireAuth(), ensureAdmin, async (req, res) => {
     try {
       const claimRequests = await storage.getAllClaimRequests();
       
@@ -383,10 +454,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Approve claim request
-  app.post("/api/admin/claim-requests/:id/approve", verifyAdminAuth, async (req, res) => {
+  app.post("/api/admin/claim-requests/:id/approve", requireAuth(), ensureAdmin, async (req, res) => {
     try {
       const { id } = req.params;
       const { reviewNotes } = req.body;
+      const auth = getAuth(req);
+      const adminClerkId = auth.userId || undefined;
 
       // Get the claim request
       const claimRequest = await storage.getClaimRequestById(id);
@@ -400,26 +473,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: 'A company user account already exists for this email' });
       }
 
-      // Generate secure access token
+      const company = await storage.getCompanyById(claimRequest.companyId);
+      if (!company) {
+        return res.status(404).json({ message: 'Company not found' });
+      }
+
+      const organizationId = await ensureClerkOrganization(company);
+      const clerkOutcome = await addUserToOrganizationOrInvite({
+        organizationId,
+        email: claimRequest.email,
+        companyId: claimRequest.companyId,
+        companyName: company.name,
+        adminClerkId,
+      });
+
+      // Generate secure access token (legacy local auth, kept for backward compatibility)
       const accessToken = nanoid(32);
 
-      // Create company user account
       await storage.createCompanyUser({
         companyId: claimRequest.companyId,
         email: claimRequest.email,
         name: claimRequest.name,
         role: 'owner', // First user is always owner
         accessToken,
-        approvedBy: req.admin!.id,
         isActive: true,
+        ...(clerkOutcome.clerkUserId ? { clerkUserId: clerkOutcome.clerkUserId } : {}),
       });
 
       // Update claim request status
-      await storage.updateClaimRequestStatus(id, 'approved', req.admin!.id, reviewNotes);
+      await storage.updateClaimRequestStatus(id, 'approved', null, reviewNotes);
       
       res.json({ 
-        message: 'Claim request approved and company user account created',
-        accessToken // Include token in response for admin to share with company
+        message: 'Claim request approved. The company has been invited via Clerk.',
+        organizationId,
+        clerkAdminId: adminClerkId,
+        invitationId: clerkOutcome.invitation?.id ?? null,
+        invitationEmail: clerkOutcome.invitation?.emailAddress ?? null,
+        clerkUserId: clerkOutcome.clerkUserId ?? null,
+        status: clerkOutcome.type,
       });
     } catch (error) {
       console.error("Error approving claim request:", error);
@@ -428,12 +519,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Reject claim request
-  app.post("/api/admin/claim-requests/:id/reject", verifyAdminAuth, async (req, res) => {
+  app.post("/api/admin/claim-requests/:id/reject", requireAuth(), ensureAdmin, async (req, res) => {
     try {
       const { id } = req.params;
       const { reviewNotes } = req.body;
 
-      await storage.updateClaimRequestStatus(id, 'rejected', req.admin!.id, reviewNotes);
+      await storage.updateClaimRequestStatus(id, 'rejected', null, reviewNotes);
       
       res.json({ message: 'Claim request rejected' });
     } catch (error) {
@@ -443,12 +534,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Reset claim request to pending (undo approval/rejection)
-  app.post("/api/admin/claim-requests/:id/reset", verifyAdminAuth, async (req, res) => {
+  app.post("/api/admin/claim-requests/:id/reset", requireAuth(), ensureAdmin, async (req, res) => {
     try {
       const { id } = req.params;
       const { reviewNotes } = req.body;
 
-      await storage.updateClaimRequestStatus(id, 'pending', req.admin!.id, reviewNotes);
+      await storage.updateClaimRequestStatus(id, 'pending', null, reviewNotes);
       
       res.json({ message: 'Claim request reset to pending' });
     } catch (error) {
@@ -458,7 +549,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Revoke company user access (deactivate)
-  app.post("/api/admin/company-users/:id/revoke", verifyAdminAuth, async (req, res) => {
+  app.post("/api/admin/company-users/:id/revoke", requireAuth(), ensureAdmin, async (req, res) => {
     try {
       const { id } = req.params;
 
@@ -476,7 +567,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Reactivate company user access
-  app.post("/api/admin/company-users/:id/activate", verifyAdminAuth, async (req, res) => {
+  app.post("/api/admin/company-users/:id/activate", requireAuth(), ensureAdmin, async (req, res) => {
     try {
       const { id } = req.params;
 
@@ -494,7 +585,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get company users for a company
-  app.get("/api/admin/companies/:companyId/users", verifyAdminAuth, async (req, res) => {
+  app.get("/api/admin/companies/:companyId/users", requireAuth(), ensureAdmin, async (req, res) => {
     try {
       const { companyId } = req.params;
       const companyUsers = await storage.getCompanyUsersByCompany(companyId);
@@ -506,7 +597,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get all company users (for admin)
-  app.get("/api/admin/company-users", verifyAdminAuth, async (req, res) => {
+  app.get("/api/admin/company-users", requireAuth(), ensureAdmin, async (req, res) => {
     try {
       const companyUsers = await storage.getAllCompanyUsers();
       
@@ -533,7 +624,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Delete company user (for admin testing)
-  app.delete("/api/admin/company-users/:id", verifyAdminAuth, async (req, res) => {
+  app.delete("/api/admin/company-users/:id", requireAuth(), ensureAdmin, async (req, res) => {
     try {
       const { id } = req.params;
       const deletedUser = await storage.deleteCompanyUser(id);
@@ -551,123 +642,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // ===== COMPANY ADMIN ROUTES =====
 
-  // Company admin login
-  app.post("/api/company/login", async (req, res) => {
-    try {
-      const { email, accessToken } = req.body;
-
-      if (!email || !accessToken) {
-        return res.status(400).json({ message: 'Email and access token are required' });
-      }
-
-      // Get company user by email and token
-      const companyUser = await storage.getCompanyUserByEmail(email);
-      if (!companyUser || companyUser.accessToken !== accessToken) {
-        return res.status(401).json({ message: 'Invalid credentials' });
-      }
-
-      if (!companyUser.isActive) {
-        return res.status(403).json({ message: 'Account is inactive' });
-      }
-
-      // Get company details
-      const company = await storage.getCompanyById(companyUser.companyId);
-      if (!company) {
-        return res.status(404).json({ message: 'Company not found' });
-      }
-
-      // Generate JWT token for company user
-      const token = jwt.sign(
-        { 
-          id: companyUser.id, 
-          companyId: companyUser.companyId,
-          email: companyUser.email,
-          role: companyUser.role
-        },
-        JWT_SECRET,
-        { expiresIn: '30d' }
-      );
-
-      res.json({
-        companyUser: {
-          id: companyUser.id,
-          companyId: companyUser.companyId,
-          email: companyUser.email,
-          name: companyUser.name,
-          role: companyUser.role,
-          company: {
-            id: company.id,
-            name: company.name,
-            slug: company.slug,
-          },
-        },
-        token,
-      });
-    } catch (error) {
-      console.error("Company login error:", error);
-      res.status(500).json({ message: "Login failed" });
-    }
-  });
-
-  // Verify company token
-  app.get("/api/company/verify", async (req: any, res) => {
-    try {
-      const token = req.headers.authorization?.replace('Bearer ', '');
-      
-      if (!token) {
-        return res.status(401).json({ message: 'No token provided' });
-      }
-
-      const decoded = jwt.verify(token, JWT_SECRET) as any;
-      const companyUser = await storage.getCompanyUserByEmail(decoded.email);
-      
-      if (!companyUser || !companyUser.isActive) {
-        return res.status(401).json({ message: 'Invalid or inactive token' });
-      }
-
-      const company = await storage.getCompanyById(companyUser.companyId);
-      if (!company) {
-        return res.status(404).json({ message: 'Company not found' });
-      }
-
-      res.json({
-        id: companyUser.id,
-        companyId: companyUser.companyId,
-        email: companyUser.email,
-        name: companyUser.name,
-        role: companyUser.role,
-        company: {
-          id: company.id,
-          name: company.name,
-          slug: company.slug,
-        },
-      });
-    } catch (error) {
-      res.status(401).json({ message: 'Invalid token' });
-    }
-  });
-
-  // Middleware to verify company authentication
-  const verifyCompanyAuth = (req: any, res: any, next: any) => {
-    const token = req.headers.authorization?.replace('Bearer ', '');
-    
-    if (!token) {
-      return res.status(401).json({ message: 'No token provided' });
-    }
-
-    try {
-      const decoded = jwt.verify(token, JWT_SECRET) as any;
-      req.companyUser = decoded;
-      next();
-    } catch (error) {
-      res.status(401).json({ message: 'Invalid token' });
-    }
-  };
-
   // Get company profile (for company admin)
-  app.get("/api/company/profile", verifyCompanyAuth, async (req: any, res) => {
+  app.get("/api/company/profile", requireAuth(), ensureCompanyMember, async (req: any, res) => {
     try {
-      const company = await storage.getCompanyById(req.companyUser.companyId);
+      const company = await storage.getCompanyById(req.companyId!);
       if (!company) {
         return res.status(404).json({ message: 'Company not found' });
       }
@@ -679,9 +657,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Update company profile (for company admin)
-  app.put("/api/company/profile", verifyCompanyAuth, async (req: any, res) => {
+  app.put("/api/company/profile", requireAuth(), ensureCompanyMember, async (req: any, res) => {
     try {
-      const company = await storage.updateCompany(req.companyUser.companyId, req.body);
+      const company = await storage.updateCompany(req.companyId!, req.body);
       if (!company) {
         return res.status(404).json({ message: 'Company not found' });
       }
@@ -689,44 +667,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error updating company profile:", error);
       res.status(500).json({ message: "Failed to update company profile" });
-    }
-  });
-
-  // Change admin password
-  app.post("/api/admin/change-password", verifyAdminAuth, async (req, res) => {
-    try {
-      const { currentPassword, newPassword } = req.body;
-
-      if (!currentPassword || !newPassword) {
-        return res.status(400).json({ message: 'Current password and new password are required' });
-      }
-
-      if (newPassword.length < 8) {
-        return res.status(400).json({ message: 'New password must be at least 8 characters long' });
-      }
-
-      // Get current user
-      const user = await storage.getUser(req.admin!.id);
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-
-      // Verify current password
-      const isValidPassword = await bcrypt.compare(currentPassword, user.password);
-      if (!isValidPassword) {
-        return res.status(401).json({ message: 'Current password is incorrect' });
-      }
-
-      // Hash new password
-      const hashedNewPassword = await bcrypt.hash(newPassword, 10);
-
-      // Update password
-      await storage.updateUserPassword(req.admin!.id, hashedNewPassword);
-
-      res.json({ message: 'Password updated successfully' });
-    } catch (error) {
-      console.error("Error changing password:", error);
-      res.status(500).json({ message: "Failed to change password" });
     }
   });
 

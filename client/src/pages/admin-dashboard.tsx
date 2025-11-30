@@ -1,17 +1,9 @@
-import { useState, useEffect } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useState, useEffect, useCallback } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocation } from 'wouter';
-import { useAdminAuth } from '@/contexts/admin-auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
 import { 
   Users, 
   Building, 
@@ -22,11 +14,11 @@ import {
   LogOut,
   Settings,
   TrendingUp,
-  Copy,
   Ban,
   UserCheck
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useAdminAccess } from '@/hooks/use-admin-access';
 
 interface ClaimRequest {
   id: string;
@@ -63,43 +55,29 @@ interface CompanyUser {
 }
 
 export default function AdminDashboard() {
-  const { admin, logout, isLoading: authLoading } = useAdminAuth();
+  const { admin, logout, isLoading: authLoading, getAdminToken } = useAdminAccess();
   const [, navigate] = useLocation();
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [selectedTab, setSelectedTab] = useState<'overview' | 'claims'>('overview');
-  const [accessTokenDialog, setAccessTokenDialog] = useState<{ open: boolean; token: string; companyName: string }>({
-    open: false,
-    token: '',
-    companyName: ''
-  });
   const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(null);
 
-  // Get token from localStorage
-  const adminToken = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : null;
+  const fetchWithAdminAuth = useCallback(
+    async (input: RequestInfo, init?: RequestInit) => {
+      const token = await getAdminToken();
+      const headers = new Headers(init?.headers || {});
+      headers.set('Authorization', `Bearer ${token}`);
+      return fetch(input, { ...init, headers });
+    },
+    [getAdminToken]
+  );
 
-  // Redirect to login if not authenticated (but only if we're sure)
   useEffect(() => {
-    // Only redirect if:
-    // 1. Not loading
-    // 2. No admin
-    // 3. No token in localStorage (meaning it was removed due to invalid token)
-    const token = localStorage.getItem('admin_token');
-    
-    if (!authLoading && !admin && !token) {
-      // Token was removed, definitely redirect
-      console.log('No admin and no token, redirecting to login');
-      const timer = setTimeout(() => {
-        navigate('/admin/login');
-      }, 100);
-      return () => clearTimeout(timer);
-    } else if (!authLoading && !admin && token) {
-      // We have a token but no admin - might be verifying, don't redirect yet
-      console.log('Token exists but no admin - might be verifying, waiting...');
+    if (!authLoading && !admin) {
+      navigate('/admin/login');
     }
   }, [admin, authLoading, navigate]);
 
-  // Show loading state while checking authentication
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -111,77 +89,18 @@ export default function AdminDashboard() {
     );
   }
 
-  // Show message if not authenticated but token exists (might be verifying)
-  const token = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : null;
-  
   if (!admin) {
-    // If we have a token, we might still be verifying - show loading
-    if (token && authLoading) {
-      return (
-        <div className="min-h-screen flex items-center justify-center bg-background">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Verifying authentication...</p>
-          </div>
-        </div>
-      );
-    }
-    
-    // No token or verification failed - show redirect message with retry option
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center max-w-md">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 mb-2">
-            {token ? 'Authentication verification failed.' : 'No authentication token found.'}
-          </p>
-          <p className="text-sm text-gray-500 mb-4">
-            {token ? 'Your session may have expired or there was a network error.' : 'Please log in to continue.'}
-          </p>
-          <div className="flex gap-2 justify-center">
-            {token && (
-              <Button 
-                variant="outline"
-                onClick={() => {
-                  // Force re-verification by reloading
-                  window.location.reload();
-                }} 
-              >
-                Retry
-              </Button>
-            )}
-            <Button 
-              onClick={() => {
-                if (token) {
-                  localStorage.removeItem('admin_token');
-                }
-                navigate('/admin/login');
-              }} 
-            >
-              Go to Login
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   // Fetch dashboard stats
   const { data: stats, isLoading: statsLoading, error: statsError } = useQuery<DashboardStats>({
     queryKey: ['/api/admin/stats'],
     queryFn: async () => {
-      if (!adminToken) {
-        throw new Error('No admin token found. Please log in.');
-      }
-      const response = await fetch('/api/admin/stats', {
-        headers: {
-          'Authorization': `Bearer ${adminToken}`
-        }
-      });
+      const response = await fetchWithAdminAuth('/api/admin/stats');
       if (!response.ok) {
-        // If 401, token might be invalid - clear it
         if (response.status === 401) {
-          localStorage.removeItem('admin_token');
+          logout();
           navigate('/admin/login');
           throw new Error('Session expired. Please log in again.');
         }
@@ -191,8 +110,8 @@ export default function AdminDashboard() {
       }
       return response.json();
     },
-    enabled: !!admin && !!adminToken, // Only fetch when admin is authenticated
-    retry: 1, // Only retry once
+    enabled: !!admin,
+    retry: 1,
     retryDelay: 1000,
   });
 
@@ -200,18 +119,10 @@ export default function AdminDashboard() {
   const { data: claimRequests, isLoading: claimsLoading, error: claimsError, refetch: refetchClaims } = useQuery<ClaimRequest[]>({
     queryKey: ['/api/admin/claim-requests'],
     queryFn: async () => {
-      if (!adminToken) {
-        throw new Error('No admin token found. Please log in.');
-      }
-      const response = await fetch('/api/admin/claim-requests', {
-        headers: {
-          'Authorization': `Bearer ${adminToken}`
-        }
-      });
+      const response = await fetchWithAdminAuth('/api/admin/claim-requests');
       if (!response.ok) {
-        // If 401, token might be invalid - clear it
         if (response.status === 401) {
-          localStorage.removeItem('admin_token');
+          logout();
           navigate('/admin/login');
           throw new Error('Session expired. Please log in again.');
         }
@@ -219,12 +130,10 @@ export default function AdminDashboard() {
         console.error('Failed to fetch claim requests:', response.status, errorText);
         throw new Error(`Failed to fetch claim requests: ${response.status}`);
       }
-      const data = await response.json();
-      console.log('Claim requests fetched:', data);
-      return data;
+      return response.json();
     },
-    enabled: !!admin && !!adminToken, // Only fetch when admin is authenticated
-    retry: 1, // Only retry once
+    enabled: !!admin,
+    retry: 1,
     retryDelay: 1000,
   });
 
@@ -232,15 +141,11 @@ export default function AdminDashboard() {
   const { data: companyUsers, isLoading: companyUsersLoading, refetch: refetchCompanyUsers } = useQuery<CompanyUser[]>({
     queryKey: ['/api/admin/companies', selectedCompanyId, 'users'],
     queryFn: async () => {
-      if (!selectedCompanyId || !adminToken) return [];
-      const response = await fetch(`/api/admin/companies/${selectedCompanyId}/users`, {
-        headers: {
-          'Authorization': `Bearer ${adminToken}`
-        }
-      });
+      if (!selectedCompanyId) return [];
+      const response = await fetchWithAdminAuth(`/api/admin/companies/${selectedCompanyId}/users`);
       if (!response.ok) {
         if (response.status === 401) {
-          localStorage.removeItem('admin_token');
+          logout();
           navigate('/admin/login');
           throw new Error('Session expired. Please log in again.');
         }
@@ -248,17 +153,16 @@ export default function AdminDashboard() {
       }
       return response.json();
     },
-    enabled: !!selectedCompanyId && !!admin && !!adminToken,
+    enabled: !!selectedCompanyId && !!admin,
     retry: 1,
     retryDelay: 1000,
   });
 
   const handleApproveClaim = async (claimId: string, companyName: string) => {
     try {
-      const response = await fetch(`/api/admin/claim-requests/${claimId}/approve`, {
+      const response = await fetchWithAdminAuth(`/api/admin/claim-requests/${claimId}/approve`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('admin_token')}`,
           'Content-Type': 'application/json',
         },
       });
@@ -266,21 +170,12 @@ export default function AdminDashboard() {
       if (response.ok) {
         const data = await response.json();
         refetchClaims();
-        
-        // Show access token in dialog
-        if (data.accessToken) {
-          setAccessTokenDialog({
-            open: true,
-            token: data.accessToken,
-            companyName: companyName
-          });
-          // Copy to clipboard
-          navigator.clipboard.writeText(data.accessToken);
-          toast({
-            title: "Token copied to clipboard",
-            description: "Access token has been copied to your clipboard."
-          });
-        }
+        toast({
+          title: "Claim approved",
+          description: data.status === 'membership'
+            ? `${companyName} already had a Clerk account. Access granted automatically.`
+            : `Invitation sent via Clerk${data.invitationEmail ? ` to ${data.invitationEmail}` : ''}.`,
+        });
       } else {
         const errorData = await response.json();
         toast({
@@ -301,10 +196,9 @@ export default function AdminDashboard() {
 
   const handleRevokeAccess = async (userId: string) => {
     try {
-      const response = await fetch(`/api/admin/company-users/${userId}/revoke`, {
+      const response = await fetchWithAdminAuth(`/api/admin/company-users/${userId}/revoke`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('admin_token')}`,
           'Content-Type': 'application/json',
         },
       });
@@ -336,10 +230,9 @@ export default function AdminDashboard() {
 
   const handleActivateAccess = async (userId: string) => {
     try {
-      const response = await fetch(`/api/admin/company-users/${userId}/activate`, {
+      const response = await fetchWithAdminAuth(`/api/admin/company-users/${userId}/activate`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('admin_token')}`,
           'Content-Type': 'application/json',
         },
       });
@@ -371,10 +264,9 @@ export default function AdminDashboard() {
 
   const handleRejectClaim = async (claimId: string) => {
     try {
-      const response = await fetch(`/api/admin/claim-requests/${claimId}/reject`, {
+      const response = await fetchWithAdminAuth(`/api/admin/claim-requests/${claimId}/reject`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('admin_token')}`,
           'Content-Type': 'application/json',
         },
       });
@@ -409,10 +301,9 @@ export default function AdminDashboard() {
     }
 
     try {
-      const response = await fetch(`/api/admin/claim-requests/${claimId}/reset`, {
+      const response = await fetchWithAdminAuth(`/api/admin/claim-requests/${claimId}/reset`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('admin_token')}`,
           'Content-Type': 'application/json',
         },
       });
@@ -826,54 +717,6 @@ export default function AdminDashboard() {
         )}
       </main>
 
-      {/* Access Token Dialog */}
-      <Dialog open={accessTokenDialog.open} onOpenChange={(open) => setAccessTokenDialog({ ...accessTokenDialog, open })}>
-        <DialogContent className="sm:max-w-md" data-testid="access-token-dialog">
-          <DialogHeader>
-            <DialogTitle>Claim Approved - Access Token</DialogTitle>
-            <DialogDescription>
-              Access token for {accessTokenDialog.companyName}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <p className="text-sm font-medium text-gray-700 mb-2">Access Token:</p>
-              <p className="font-mono text-sm break-all bg-white p-3 rounded border" data-testid="access-token-value">
-                {accessTokenDialog.token}
-              </p>
-            </div>
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <CheckCircle className="h-4 w-4 text-green-600" />
-              <span>Token has been copied to your clipboard</span>
-            </div>
-            <p className="text-sm text-gray-600">
-              Share this token with the company owner. They can use it along with their email to log in at <code className="bg-gray-100 px-1 rounded">/company/login</code>
-            </p>
-            <div className="flex gap-2">
-              <Button
-                onClick={() => {
-                  navigator.clipboard.writeText(accessTokenDialog.token);
-                  toast({
-                    title: "Copied",
-                    description: "Token copied to clipboard again."
-                  });
-                }}
-                className="flex-1"
-              >
-                <Copy className="h-4 w-4 mr-2" />
-                Copy Again
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => setAccessTokenDialog({ open: false, token: '', companyName: '' })}
-                className="flex-1"
-              >
-                Close
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

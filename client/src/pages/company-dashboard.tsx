@@ -1,6 +1,5 @@
-import { useState } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useCompanyAuth } from '@/contexts/company-auth';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,24 +16,51 @@ import {
   MapPin,
   FileText
 } from 'lucide-react';
-import { withCompanyAuth } from '@/contexts/company-auth';
+import { useCompanyAccess } from '@/hooks/use-company-access';
 
 function CompanyDashboard() {
-  const { companyUser, logout } = useCompanyAuth();
+  const { companyUser, logout, isLoading: authLoading, getCompanyToken } = useCompanyAccess();
   const [, navigate] = useLocation();
   const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<any>({});
 
+  const fetchWithCompanyAuth = useCallback(
+    async (input: RequestInfo, init?: RequestInit) => {
+      const token = await getCompanyToken();
+      const headers = new Headers(init?.headers || {});
+      headers.set('Authorization', `Bearer ${token}`);
+      return fetch(input, { ...init, headers });
+    },
+    [getCompanyToken]
+  );
+
+  useEffect(() => {
+    if (!authLoading && !companyUser) {
+      navigate('/company/login');
+    }
+  }, [authLoading, companyUser, navigate]);
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!companyUser) {
+    return null;
+  }
+
   // Fetch company profile
   const { data: company, isLoading } = useQuery({
     queryKey: ['/api/company/profile'],
     queryFn: async () => {
-      const response = await fetch('/api/company/profile', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('company_token')}`
-        }
-      });
+      const response = await fetchWithCompanyAuth('/api/company/profile');
       if (!response.ok) throw new Error('Failed to fetch company profile');
       const data = await response.json();
       setFormData(data);
@@ -45,10 +71,9 @@ function CompanyDashboard() {
   // Update company mutation
   const updateMutation = useMutation({
     mutationFn: async (data: any) => {
-      const response = await fetch('/api/company/profile', {
+      const response = await fetchWithCompanyAuth('/api/company/profile', {
         method: 'PUT',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('company_token')}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
@@ -91,11 +116,16 @@ function CompanyDashboard() {
               <Building className="h-6 w-6 text-blue-600 mr-3" />
               <h1 className="text-2xl font-bold text-gray-900">Company Dashboard</h1>
               <Badge variant="outline" className="ml-3 bg-blue-50 text-blue-700 border-blue-200">
-                {companyUser?.company.name}
+                {company?.name || 'Company'}
               </Badge>
             </div>
             <div className="flex items-center space-x-4">
-              <Button variant="outline" size="sm" onClick={() => navigate(`/companies/${companyUser?.company.slug}`)}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => company?.slug && navigate(`/companies/${company.slug}`)}
+                disabled={!company?.slug}
+              >
                 View Public Profile
               </Button>
               <Button variant="outline" size="sm" onClick={logout}>
@@ -254,5 +284,5 @@ function CompanyDashboard() {
   );
 }
 
-export default withCompanyAuth(CompanyDashboard);
+export default CompanyDashboard;
 

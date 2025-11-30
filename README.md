@@ -43,8 +43,8 @@ npm install
 
 3. Set up environment variables:
 ```bash
-cp .env.example .env
-# Edit .env with your DATABASE_URL
+cp env.sample .env
+# Edit .env with your DATABASE_URL and Clerk keys
 ```
 
 4. Set up the database:
@@ -68,7 +68,31 @@ npm run dev
 
 ### Environment Variables
 
-- `DATABASE_URL`: PostgreSQL connection string
+| Variable | Description |
+| --- | --- |
+| `DATABASE_URL` | PostgreSQL connection string (Neon recommended) |
+| `VITE_CLERK_PUBLISHABLE_KEY` | Clerk publishable key used by the Vite frontend |
+| `CLERK_PUBLISHABLE_KEY` | Same publishable key, provided for Clerk's server middleware |
+| `CLERK_SECRET_KEY` | Server-side Clerk secret for API access |
+| `VITE_CLERK_JWT_TEMPLATE_NAME` | Clerk JWT template name used by the frontend to request session tokens |
+| `APP_URL` | Canonical base URL for the public site (used for Clerk redirects) |
+| `COMPANY_PORTAL_URL` | Optional override for the company dashboard login URL |
+
+> Copy `env.sample` to `.env` and fill the values before running `npm run dev` or `npm run db:push`.
+
+## 🧑‍💼 Clerk Invitations & CMS Flow
+
+The entire claim-approval workflow now runs through Clerk:
+
+1. **Admin approves a claim** on `/admin` → `/api/admin/claim-requests/:id/approve`.
+2. The server:
+   - Ensures there's a matching **Clerk organization** for the company (creates one if needed and stores the `clerkOrganizationId` in Postgres).
+   - Looks up the claimant's email in Clerk.
+     - If the user already exists, it adds them to the organization and stores the `clerkUserId` on the `company_users` row.
+     - Otherwise, it creates an **organization invitation** (sent via Clerk) and reports the invitation details back to the admin UI.
+3. The Neon database is always the source of truth for the listing content. Clerk only stores identity + membership data.
+
+Environment variables `CLERK_SECRET_KEY`, `APP_URL`, and `COMPANY_PORTAL_URL` control the URLs embedded in the invitation emails. Update them whenever the dashboard URL changes.
 
 ## 📁 Project Structure
 

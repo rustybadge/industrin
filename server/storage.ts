@@ -38,10 +38,10 @@ export interface IStorage {
   getClaimRequestById(id: string): Promise<ClaimRequest | undefined>;
   getClaimRequestsByCompany(companyId: string): Promise<ClaimRequest[]>;
   getAllClaimRequests(): Promise<ClaimRequest[]>;
-  updateClaimRequestStatus(id: string, status: 'approved' | 'rejected' | 'pending', reviewedBy: string, reviewNotes?: string): Promise<void>;
+  updateClaimRequestStatus(id: string, status: 'approved' | 'rejected' | 'pending', reviewedBy: string | null, reviewNotes?: string): Promise<void>;
 
   // Company Users
-  createCompanyUser(companyUser: InsertCompanyUser): Promise<CompanyUser>;
+  createCompanyUser(companyUser: InsertCompanyUser & { accessToken: string }): Promise<CompanyUser>;
   getCompanyUserByEmail(email: string): Promise<CompanyUser | undefined>;
   getCompanyUserByToken(accessToken: string): Promise<CompanyUser | undefined>;
   getCompanyUsersByCompany(companyId: string): Promise<CompanyUser[]>;
@@ -301,7 +301,7 @@ export class DatabaseStorage implements IStorage {
   async updateClaimRequestStatus(
     id: string, 
     status: 'approved' | 'rejected' | 'pending', 
-    reviewedBy: string, 
+    reviewedBy: string | null, 
     reviewNotes?: string
   ): Promise<void> {
     await db
@@ -315,7 +315,7 @@ export class DatabaseStorage implements IStorage {
       .where(eq(claimRequests.id, id));
   }
 
-  async createCompanyUser(insertCompanyUser: InsertCompanyUser): Promise<CompanyUser> {
+  async createCompanyUser(insertCompanyUser: InsertCompanyUser & { accessToken: string }): Promise<CompanyUser> {
     const [companyUser] = await db
       .insert(companyUsers)
       .values(insertCompanyUser)

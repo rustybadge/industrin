@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, boolean, timestamp, pgEnum, integer, json } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, boolean, timestamp, pgEnum, integer, json, foreignKey } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -34,18 +34,28 @@ export const companies = pgTable("companies", {
   city: text("city"),
   isFeatured: boolean("is_featured").default(false),
   isVerified: boolean("is_verified").default(false),
+  clerkOrganizationId: text("clerk_organization_id").unique(),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
 export const claimRequestStatusEnum = pgEnum('claim_request_status', ['pending', 'approved', 'rejected']);
 
-export const serviceCategories = pgTable("service_categories", {
-  id: varchar("id").primaryKey(),
-  name: text("name").notNull(),
-  parentId: varchar("parent_id").references(() => serviceCategories.id),
-  sortOrder: integer("sort_order").default(0),
-  createdAt: timestamp("created_at").defaultNow(),
-});
+export const serviceCategories = pgTable(
+  "service_categories",
+  {
+    id: varchar("id").primaryKey(),
+    name: text("name").notNull(),
+    parentId: varchar("parent_id"),
+    sortOrder: integer("sort_order").default(0),
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    parentReference: foreignKey({
+      columns: [table.parentId],
+      foreignColumns: [table.id],
+    }),
+  })
+);
 
 export const companyServices = pgTable("company_services", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
@@ -79,6 +89,7 @@ export const companyUsers = pgTable("company_users", {
   createdAt: timestamp("created_at").defaultNow(),
   approvedBy: varchar("approved_by").references(() => users.id),
   isActive: boolean("is_active").default(true),
+  clerkUserId: text("clerk_user_id").unique(),
 });
 
 export const quoteRequests = pgTable("quote_requests", {
