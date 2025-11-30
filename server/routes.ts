@@ -181,6 +181,26 @@ async function addUserToOrganizationOrInvite({
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Temporary debug endpoint to verify runtime env (non-sensitive prefixes only).
+  // Remove once deployment issues are resolved.
+  app.get("/api/debug/env", (_req, res) => {
+    const pk = process.env.CLERK_PUBLISHABLE_KEY || process.env.VITE_CLERK_PUBLISHABLE_KEY;
+    const sk = process.env.CLERK_SECRET_KEY;
+    const template = process.env.CLERK_JWT_TEMPLATE_NAME || process.env.VITE_CLERK_JWT_TEMPLATE_NAME;
+    const appUrl = process.env.APP_URL;
+    const companyPortal = process.env.COMPANY_PORTAL_URL;
+    res.json({
+      nodeEnv: process.env.NODE_ENV || "unknown",
+      clerkPublishableKeyPrefix: pk ? `${pk.slice(0, 10)}…` : null,
+      clerkPublishableKeyLength: pk?.length ?? 0,
+      clerkSecretKeyPresent: Boolean(sk),
+      clerkSecretKeyLength: sk?.length ?? 0,
+      jwtTemplate: template || null,
+      appUrl: appUrl || null,
+      companyPortalUrl: companyPortal || null,
+    });
+  });
+
   // Get companies with search and filtering
   app.get("/api/companies", async (req, res) => {
     try {
