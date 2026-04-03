@@ -1,56 +1,68 @@
-import { useLocation } from "wouter";
-import { Shield } from "lucide-react";
+import { Link } from "wouter";
 import { SignIn } from "@clerk/clerk-react";
-import { Button } from "@/components/ui/button";
+import IndustrinLogo from "@/components/ui/industrin-logo";
 
 export default function AdminLogin() {
-  const [, navigate] = useLocation();
-
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div className="text-center">
-          <div className="flex justify-center mb-4">
-            <div className="bg-blue-600 p-3 rounded-full">
-              <Shield className="h-8 w-8 text-white" />
-            </div>
-          </div>
-          <h2 className="text-3xl font-bold text-gray-900">Admin Login</h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Sign in with your Clerk admin account to manage Industrin.se
-          </p>
-        </div>
+    <div className="min-h-screen bg-white flex flex-col">
+      {/* Header */}
+      <div className="px-8 py-6 border-b border-gray-100">
+        <Link href="/">
+          <IndustrinLogo className="h-7 w-auto text-gray-900 cursor-pointer" height={28} width={170} />
+        </Link>
+      </div>
 
-        <div className="bg-white rounded-xl shadow-sm border p-4">
+      {/* Content */}
+      <div className="flex-1 flex items-center justify-center px-4 py-16">
+        <div className="w-full max-w-sm">
+          <div className="mb-8">
+            <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2">Admin</p>
+            <h1 className="text-3xl font-semibold text-gray-900" style={{ fontFamily: 'PP Neue Montreal, Inter Tight, sans-serif', letterSpacing: '-0.01em' }}>
+              Logga in
+            </h1>
+          </div>
+
           <SignIn
             routing="path"
             path="/admin/login"
-            // Use forceRedirectUrl to avoid re-render loop and deprecated prop warnings
             forceRedirectUrl="/admin"
-            // Fallback for older Clerk versions
             fallbackRedirectUrl="/admin"
             appearance={{
               variables: {
                 colorPrimary: "#111827",
                 colorBackground: "#ffffff",
+                colorText: "#111827",
+                colorTextSecondary: "#6b7280",
+                colorInputBackground: "#ffffff",
+                colorInputText: "#111827",
+                borderRadius: "6px",
+                fontFamily: "Inter Tight, sans-serif",
               },
               elements: {
-                footerAction: {
-                  display: "none",
+                card: {
+                  boxShadow: "none",
+                  border: "none",
+                  padding: "0",
+                },
+                headerTitle: { display: "none" },
+                headerSubtitle: { display: "none" },
+                footerAction: { display: "none" },
+                formButtonPrimary: {
+                  backgroundColor: "#111827",
+                  fontSize: "14px",
+                  fontWeight: "500",
                 },
               },
             }}
           />
-        </div>
 
-        <div className="text-center">
-          <Button
-            variant="ghost"
-            onClick={() => navigate("/")}
-            className="text-gray-600 hover:text-gray-800"
-          >
-            ← Back to Industrin.se
-          </Button>
+          <div className="mt-8 pt-6 border-t border-gray-100">
+            <Link href="/">
+              <span className="text-sm text-gray-400 hover:text-gray-700 cursor-pointer transition-colors">
+                ← Tillbaka till Industrin.net
+              </span>
+            </Link>
+          </div>
         </div>
       </div>
     </div>
