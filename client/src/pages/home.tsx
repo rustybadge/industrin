@@ -96,10 +96,10 @@ export default function Home() {
         <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
             <p className="font-medium mb-1 text-[#0A0A0A]" style={{ fontFamily: 'PP Neue Montreal, Inter Tight, sans-serif', fontSize: '42px', lineHeight: '1.1', fontWeight: 500, letterSpacing: '-0.01em' }}>
-              Eftermarknad. Reservdelar. Reparationer.
+              Service och support när maskinen stannar.
             </p>
-            
-            <p className="font-medium mb-12 text-[#A3A3A3]" style={{ fontFamily: 'PP Neue Montreal, Inter Tight, sans-serif', fontSize: '42px', lineHeight: '1.1', maxWidth: '900px', fontWeight: 500, letterSpacing: '-0.01em' }}>Vi samlar Sveriges bästa serviceföretag. Hitta rätt partner snabbt, nära dig och redo att agera.</p>
+
+            <p className="font-medium mb-12 text-[#A3A3A3]" style={{ fontFamily: 'PP Neue Montreal, Inter Tight, sans-serif', fontSize: '42px', lineHeight: '1.1', maxWidth: '900px', fontWeight: 500, letterSpacing: '-0.01em' }}>Hitta rätt företag — snabbt.</p>
             
             {/* Clean CTA */}
             <Link href="/begar-offert">
