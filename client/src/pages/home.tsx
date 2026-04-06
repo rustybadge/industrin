@@ -116,7 +116,7 @@ export default function Home() {
         <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-12">
             <h3 className="text-3xl font-bold mb-4 text-[#171717]">
-              Sök bland företag som kan hjälpa dig med reparation, underhåll och service. <span className="text-sm font-normal bg-yellow-300 text-black px-2 py-1 rounded ml-2">[STAGING TEST]</span>
+              Sök bland företag som kan hjälpa dig med reparation, underhåll och service.
             </h3>
           </div>
 
