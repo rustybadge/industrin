@@ -169,42 +169,26 @@ export default function CompanyProfile() {
                 </div>
               </div>
 
-              <div>
-                <h3 className="text-xl font-bold mb-5 text-[#171717]" style={{letterSpacing: '-0.01em'}}>Serviceområden</h3>
-                <div className="flex flex-wrap gap-3">
-                  {company.serviceområden && company.serviceområden.length > 0 ? (
-                    company.serviceområden.map((serviceområde) => (
-                      <Badge 
-                        key={serviceområde} 
-                        variant="outline" 
+              {/* Tjänster — from categories (set during claim) and serviceområden */}
+              {((company.categories && company.categories.length > 0) || (company.serviceområden && company.serviceområden.length > 0)) && (
+                <div>
+                  <h3 className="text-xl font-bold mb-5 text-[#171717]" style={{letterSpacing: '-0.01em'}}>Tjänster</h3>
+                  <div className="flex flex-wrap gap-3">
+                    {[
+                      ...(company.categories || []),
+                      ...(company.serviceområden || []),
+                    ].map((item) => (
+                      <Badge
+                        key={item}
+                        variant="outline"
                         className="bg-[var(--secondary-lightest)] text-[var(--secondary-darker)] border border-[var(--secondary-lighter)] px-5 py-2 rounded-full font-medium text-sm hover:bg-[var(--secondary-lighter)] transition-colors"
                       >
-                        {serviceområde}
+                        {item}
                       </Badge>
-                    ))
-                  ) : (
-                    <Badge 
-                      variant="outline" 
-                      className="bg-gray-50 text-gray-500 border border-gray-200 px-5 py-2 rounded-full font-medium text-sm"
-                    >
-                      Inga serviceområden angivna
-                    </Badge>
-                  )}
+                    ))}
+                  </div>
                 </div>
-              </div>
-
-              {/* Service Categories Section - will be populated when companies claim their profiles */}
-              <div>
-                <h3 className="text-xl font-bold mb-5 text-[#171717]" style={{letterSpacing: '-0.01em'}}>Tjänster & Specialiseringar</h3>
-                <div className="flex flex-wrap gap-3">
-                  <Badge 
-                    variant="outline" 
-                    className="bg-gray-50 text-gray-500 border border-gray-200 px-5 py-2 rounded-full font-medium text-sm"
-                  >
-                    Kontakta företaget för detaljerade tjänster
-                  </Badge>
-                </div>
-              </div>
+              )}
 
               {company.isVerified && (
                 <div>

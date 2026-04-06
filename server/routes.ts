@@ -589,6 +589,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ...(clerkOutcome.clerkUserId ? { clerkUserId: clerkOutcome.clerkUserId } : {}),
       });
 
+      // Copy serviceCategories from claim to company profile
+      if (claimRequest.serviceCategories) {
+        const cats = Array.isArray(claimRequest.serviceCategories)
+          ? (claimRequest.serviceCategories as string[])
+          : [];
+        if (cats.length > 0) {
+          await storage.updateCompany(claimRequest.companyId, { categories: cats });
+        }
+      }
+
       // Update claim request status
       await storage.updateClaimRequestStatus(id, 'approved', null, reviewNotes);
       
