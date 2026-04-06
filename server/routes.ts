@@ -189,7 +189,9 @@ async function addUserToOrganizationOrInvite({
       });
     } catch (error: any) {
       const code = error?.errors?.[0]?.code;
-      if (code !== "organization_membership_exists") {
+      const msg = (error?.errors?.[0]?.message || error?.message || "").toLowerCase();
+      const alreadyMember = code === "organization_membership_exists" || msg.includes("already a member") || msg.includes("already member");
+      if (!alreadyMember) {
         throw error;
       }
     }
