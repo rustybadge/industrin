@@ -633,9 +633,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         clerkUserId: clerkOutcome.clerkUserId ?? null,
         status: clerkOutcome.type,
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error approving claim request:", error);
-      res.status(500).json({ message: "Failed to approve claim request" });
+      const detail = error?.errors?.[0]?.message || error?.message || String(error);
+      res.status(500).json({ message: `Failed to approve claim request: ${detail}` });
     }
   });
 
