@@ -802,7 +802,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Update company profile (for company admin)
-  app.put("/api/company/profile", requireAuth(), ensureCompanyMember, async (req: any, res) => {
+  app.post("/api/company/profile/update", requireAuth(), ensureCompanyMember, async (req: any, res) => {
     try {
       const company = await storage.updateCompany(req.companyId!, req.body);
       if (!company) {

@@ -94,8 +94,8 @@ function CompanyDashboard() {
   // Update company mutation
   const updateMutation = useMutation({
     mutationFn: async (data: any) => {
-      const response = await fetchWithCompanyAuth('/api/company/profile', {
-        method: 'PUT',
+      const response = await fetchWithCompanyAuth('/api/company/profile/update', {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
