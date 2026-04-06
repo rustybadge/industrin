@@ -804,7 +804,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Update company profile (for company admin)
   app.post("/api/company/profile/update", requireAuth(), ensureCompanyMember, async (req: any, res) => {
     try {
-      const company = await storage.updateCompany(req.companyId!, req.body);
+      // Strip read-only fields — never allow updating id, slug, createdAt, clerkOrganizationId
+      const { id, slug, createdAt, clerkOrganizationId, ...editableFields } = req.body;
+      const company = await storage.updateCompany(req.companyId!, editableFields);
       if (!company) {
         return res.status(404).json({ message: 'Company not found' });
       }
