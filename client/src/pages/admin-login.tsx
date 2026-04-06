@@ -15,7 +15,7 @@ export default function AdminLogin() {
           <p className="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-4">
             Admin
           </p>
-          <h2 className="text-3xl font-semibold text-white leading-snug" style={{ letterSpacing: '-0.02em' }}>
+          <h2 className="text-3xl font-semibold text-gray-400 leading-snug" style={{ letterSpacing: '-0.02em' }}>
             Hantera listningar,<br />godkänn claims.
           </h2>
         </div>
@@ -68,6 +68,11 @@ export default function AdminLogin() {
                   boxShadow: "none",
                   border: "none",
                   padding: "0",
+                  background: "transparent",
+                },
+                cardBox: {
+                  boxShadow: "none",
+                  border: "none",
                 },
                 headerTitle: { display: "none" },
                 headerSubtitle: { display: "none" },
@@ -78,9 +83,19 @@ export default function AdminLogin() {
                   fontSize: "14px",
                   fontWeight: "500",
                 },
+                formFieldLabel: {
+                  fontSize: "13px",
+                  color: "#374151",
+                  marginBottom: "6px",
+                },
                 formFieldInput: {
                   backgroundColor: "#f9fafb",
                   border: "1px solid #e5e7eb",
+                  padding: "10px 12px",
+                  fontSize: "14px",
+                },
+                formFieldRow: {
+                  marginBottom: "16px",
                 },
               },
             }}
