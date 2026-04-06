@@ -743,6 +743,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // ===== COMPANY ADMIN ROUTES =====
 
+  // Auto-setup: fix missing publicMetadata for users who accepted org invitations
+  // Called on first dashboard load when role/companyId metadata is missing
+  app.post("/api/company/setup", requireAuth(), async (req, res) => {
+    try {
+      const auth = getAuth(req);
+      const clerkUserId = auth.userId;
+      if (!clerkUserId) return res.status(401).json({ message: "Unauthorized" });
+
+      // Get the user's email from Clerk
+      const clerkUser = await clerkClient.users.getUser(clerkUserId);
+      const email = clerkUser.primaryEmailAddress?.emailAddress;
+      if (!email) return res.status(400).json({ message: "No email found" });
+
+      // Check if metadata is already set
+      const existing = clerkUser.publicMetadata as any;
+      if (existing?.role === "company" && existing?.companyId) {
+        return res.json({ role: existing.role, companyId: existing.companyId });
+      }
+
+      // Look up approved claim for this email in the database
+      const allClaims = await storage.getAllClaimRequests();
+      const approvedClaim = allClaims.find(
+        (c) => c.email?.toLowerCase() === email.toLowerCase() && c.status === "approved"
+      );
+      if (!approvedClaim) {
+        return res.status(404).json({ message: "No approved claim found for this account" });
+      }
+
+      // Set the missing metadata on the Clerk user
+      await clerkClient.users.updateUser(clerkUserId, {
+        publicMetadata: {
+          ...existing,
+          role: "company",
+          companyId: approvedClaim.companyId,
+        },
+      });
+
+      res.json({ role: "company", companyId: approvedClaim.companyId });
+    } catch (error) {
+      console.error("Error in company setup:", error);
+      res.status(500).json({ message: "Setup failed" });
+    }
+  });
+
   // Get company profile (for company admin)
   app.get("/api/company/profile", requireAuth(), ensureCompanyMember, async (req: any, res) => {
     try {

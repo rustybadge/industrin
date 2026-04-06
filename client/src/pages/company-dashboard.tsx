@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
@@ -6,9 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Building, 
-  LogOut, 
+import {
+  Building,
+  LogOut,
   Save,
   Mail,
   Phone,
@@ -17,13 +17,16 @@ import {
   FileText
 } from 'lucide-react';
 import { useCompanyAccess } from '@/hooks/use-company-access';
+import { useAuth } from '@clerk/clerk-react';
 
 function CompanyDashboard() {
   const { companyUser, logout, isLoading: authLoading, getCompanyToken } = useCompanyAccess();
+  const { isSignedIn, getToken } = useAuth();
   const [, navigate] = useLocation();
   const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<any>({});
+  const setupAttempted = useRef(false);
 
   const fetchWithCompanyAuth = useCallback(
     async (input: RequestInfo, init?: RequestInit) => {
@@ -35,11 +38,31 @@ function CompanyDashboard() {
     [getCompanyToken]
   );
 
+  // If user is signed in via Clerk but missing role metadata (new invitation flow),
+  // call the setup endpoint to fix their metadata, then reload.
   useEffect(() => {
-    if (!authLoading && !companyUser) {
+    if (!authLoading && !companyUser && isSignedIn && !setupAttempted.current) {
+      setupAttempted.current = true;
+      getToken().then(async (token) => {
+        try {
+          const res = await fetch('/api/company/setup', {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (res.ok) {
+            // Metadata updated — reload to pick up new Clerk session
+            window.location.reload();
+          } else {
+            navigate('/company/login');
+          }
+        } catch {
+          navigate('/company/login');
+        }
+      });
+    } else if (!authLoading && !companyUser && !isSignedIn) {
       navigate('/company/login');
     }
-  }, [authLoading, companyUser, navigate]);
+  }, [authLoading, companyUser, isSignedIn, getToken, navigate]);
 
   if (authLoading) {
     return (
