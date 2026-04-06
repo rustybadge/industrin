@@ -4,20 +4,45 @@ import IndustrinLogo from "@/components/ui/industrin-logo";
 
 export default function AdminLogin() {
   return (
-    <div className="min-h-screen bg-white flex flex-col">
-      {/* Header */}
-      <div className="absolute top-0 left-0 px-8 py-6">
+    <div className="min-h-screen flex">
+      {/* Left panel — dark brand */}
+      <div className="hidden lg:flex lg:w-1/2 bg-gray-950 flex-col justify-between p-12">
         <Link href="/">
-          <IndustrinLogo className="h-7 w-auto text-gray-900 cursor-pointer" height={28} width={170} />
+          <IndustrinLogo className="h-7 w-auto text-white cursor-pointer" height={28} width={170} />
         </Link>
+
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-4">
+            Admin
+          </p>
+          <h2 className="text-3xl font-semibold text-white leading-snug" style={{ letterSpacing: '-0.02em' }}>
+            Hantera listningar,<br />godkänn claims.
+          </h2>
+        </div>
+
+        <p className="text-xs text-gray-600">
+          industrin.net &copy; {new Date().getFullYear()}
+        </p>
       </div>
 
-      {/* Content */}
-      <div className="flex-1 flex items-center justify-center px-4">
+      {/* Right panel — login form */}
+      <div className="w-full lg:w-1/2 flex flex-col items-center justify-center px-8 py-12 bg-white">
+        {/* Mobile logo */}
+        <div className="lg:hidden mb-10">
+          <Link href="/">
+            <IndustrinLogo className="h-7 w-auto text-gray-900 cursor-pointer" height={28} width={170} />
+          </Link>
+        </div>
+
         <div className="w-full max-w-sm">
           <div className="mb-8">
-            <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2">Admin</p>
-            <h1 className="text-3xl font-semibold text-gray-900" style={{ fontFamily: 'PP Neue Montreal, Inter Tight, sans-serif', letterSpacing: '-0.01em' }}>
+            <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2">
+              Admin
+            </p>
+            <h1
+              className="text-3xl font-semibold text-gray-900"
+              style={{ letterSpacing: '-0.01em' }}
+            >
               Logga in
             </h1>
           </div>
@@ -33,7 +58,7 @@ export default function AdminLogin() {
                 colorBackground: "#ffffff",
                 colorText: "#111827",
                 colorTextSecondary: "#6b7280",
-                colorInputBackground: "#ffffff",
+                colorInputBackground: "#f9fafb",
                 colorInputText: "#111827",
                 borderRadius: "6px",
                 fontFamily: "Inter Tight, sans-serif",
@@ -52,6 +77,10 @@ export default function AdminLogin() {
                   backgroundColor: "#111827",
                   fontSize: "14px",
                   fontWeight: "500",
+                },
+                formFieldInput: {
+                  backgroundColor: "#f9fafb",
+                  border: "1px solid #e5e7eb",
                 },
               },
             }}
