@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/hooks/use-toast';
 import {
   Building,
   LogOut,
@@ -24,6 +25,7 @@ function CompanyDashboard() {
   const { isSignedIn, getToken } = useAuth();
   const [, navigate] = useLocation();
   const queryClient = useQueryClient();
+  const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<any>({});
   const setupAttempted = useRef(false);
@@ -64,24 +66,10 @@ function CompanyDashboard() {
     }
   }, [authLoading, companyUser, isSignedIn, getToken, navigate]);
 
-  if (authLoading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!companyUser) {
-    return null;
-  }
-
-  // Fetch company profile
+  // Fetch company profile — hooks must be before any early returns
   const { data: company, isLoading } = useQuery({
     queryKey: ['/api/company/profile'],
+    enabled: !!companyUser,
     queryFn: async () => {
       const response = await fetchWithCompanyAuth('/api/company/profile');
       if (!response.ok) throw new Error('Failed to fetch company profile');
@@ -96,19 +84,39 @@ function CompanyDashboard() {
     mutationFn: async (data: any) => {
       const response = await fetchWithCompanyAuth('/api/company/profile/update', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
-      if (!response.ok) throw new Error('Failed to update company');
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.message || `Server error ${response.status}`);
+      }
       return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/company/profile'] });
       setIsEditing(false);
+      toast({ title: 'Sparat', description: 'Ändringarna har sparats.' });
+    },
+    onError: (error: any) => {
+      toast({ title: 'Kunde inte spara', description: error.message, variant: 'destructive' });
     },
   });
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!companyUser) {
+    return null;
+  }
 
   const handleSave = () => {
     updateMutation.mutate(formData);
