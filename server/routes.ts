@@ -622,6 +622,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Delete claim request
+  app.delete("/api/admin/claim-requests/:id", requireAuth(), ensureAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      await storage.deleteClaimRequest(id);
+      res.json({ message: 'Claim request deleted' });
+    } catch (error) {
+      console.error("Error deleting claim request:", error);
+      res.status(500).json({ message: "Failed to delete claim request" });
+    }
+  });
+
   // Reset claim request to pending (undo approval/rejection)
   app.post("/api/admin/claim-requests/:id/reset", requireAuth(), ensureAdmin, async (req, res) => {
     try {

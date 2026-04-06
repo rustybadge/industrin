@@ -295,6 +295,23 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleDeleteClaim = async (claimId: string) => {
+    if (!confirm('Delete this claim request permanently?')) return;
+    try {
+      const response = await fetchWithAdminAuth(`/api/admin/claim-requests/${claimId}`, {
+        method: 'DELETE',
+      });
+      if (response.ok) {
+        refetchClaims();
+        toast({ title: "Deleted", description: "Claim request removed." });
+      } else {
+        toast({ title: "Error", description: "Failed to delete.", variant: "destructive" });
+      }
+    } catch (error) {
+      toast({ title: "Error", description: "Failed to delete.", variant: "destructive" });
+    }
+  };
+
   const handleResetClaim = async (claimId: string) => {
     if (!confirm('Are you sure you want to reset this claim to pending? This will allow you to approve it again.')) {
       return;
@@ -695,6 +712,14 @@ export default function AdminDashboard() {
                             onClick={() => window.open(`/companies/${claim.company?.slug}`, '_blank')}
                           >
                             View Company
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleDeleteClaim(claim.id)}
+                            className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                          >
+                            Delete
                           </Button>
                         </div>
                       </div>

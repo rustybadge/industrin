@@ -40,6 +40,7 @@ export interface IStorage {
   getClaimRequestsByCompany(companyId: string): Promise<ClaimRequest[]>;
   getAllClaimRequests(): Promise<ClaimRequest[]>;
   updateClaimRequestStatus(id: string, status: 'approved' | 'rejected' | 'pending', reviewedBy: string | null, reviewNotes?: string): Promise<void>;
+  deleteClaimRequest(id: string): Promise<void>;
 
   // Company Users
   createCompanyUser(companyUser: InsertCompanyUser & { accessToken: string }): Promise<CompanyUser>;
@@ -319,6 +320,10 @@ export class DatabaseStorage implements IStorage {
         reviewNotes,
       })
       .where(eq(claimRequests.id, id));
+  }
+
+  async deleteClaimRequest(id: string): Promise<void> {
+    await db.delete(claimRequests).where(eq(claimRequests.id, id));
   }
 
   async createCompanyUser(insertCompanyUser: InsertCompanyUser & { accessToken: string }): Promise<CompanyUser> {
