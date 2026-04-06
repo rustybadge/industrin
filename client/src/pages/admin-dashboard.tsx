@@ -298,8 +298,8 @@ export default function AdminDashboard() {
   const handleDeleteClaim = async (claimId: string) => {
     if (!confirm('Delete this claim request permanently?')) return;
     try {
-      const response = await fetchWithAdminAuth(`/api/admin/claim-requests/${claimId}`, {
-        method: 'DELETE',
+      const response = await fetchWithAdminAuth(`/api/admin/claim-requests/${claimId}/delete`, {
+        method: 'POST',
       });
       if (response.ok) {
         refetchClaims();

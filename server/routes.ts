@@ -623,7 +623,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Delete claim request
-  app.delete("/api/admin/claim-requests/:id", requireAuth(), ensureAdmin, async (req, res) => {
+  app.post("/api/admin/claim-requests/:id/delete", requireAuth(), ensureAdmin, async (req, res) => {
     try {
       const { id } = req.params;
       await storage.deleteClaimRequest(id);
