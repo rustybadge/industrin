@@ -295,10 +295,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           html: `
             <h2>Ny offertförfrågan inkom</h2>
             <p><strong>Företag:</strong> ${company.name}</p>
-            <p><strong>Namn:</strong> ${quoteRequest.contactName}</p>
-            <p><strong>E-post:</strong> ${quoteRequest.contactEmail}</p>
-            <p><strong>Telefon:</strong> ${quoteRequest.contactPhone || '–'}</p>
-            <p><strong>Beskrivning:</strong> ${quoteRequest.description || '–'}</p>
+            <p><strong>Namn:</strong> ${quoteRequest.name}</p>
+            <p><strong>E-post:</strong> ${quoteRequest.email}</p>
+            <p><strong>Telefon:</strong> ${quoteRequest.phone || '–'}</p>
+            <p><strong>Meddelande:</strong> ${quoteRequest.message || '–'}</p>
             <br/>
             <a href="https://www.industrin.net/admin" style="background:#111827;color:#fff;padding:10px 20px;text-decoration:none;border-radius:6px;">
               Visa i admin
