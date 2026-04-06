@@ -196,19 +196,38 @@ async function addUserToOrganizationOrInvite({
     return { type: "membership", clerkUserId: user.id, invitation: undefined };
   }
 
+  // Revoke any existing pending invitations for this email before creating a new one
+  try {
+    const pendingInvitations = await clerkClient.organizations.getOrganizationInvitationList({
+      organizationId,
+      status: ["pending"],
+    });
+    for (const inv of pendingInvitations.data) {
+      if (inv.emailAddress === email) {
+        await clerkClient.organizations.revokeOrganizationInvitation({
+          organizationId,
+          invitationId: inv.id,
+          requestingUserId: adminClerkId || organizationId,
+        });
+      }
+    }
+  } catch (e) {
+    console.warn("Could not revoke pending invitations:", e);
+  }
+
   // Create an invitation without an inviter (avoid not_a_member errors) and explicitly
   // set public metadata so the user lands with role/companyId.
-      const invitation = await clerkClient.organizations.createOrganizationInvitation({
-        organizationId,
-        emailAddress: email,
-        role: COMPANY_MEMBER_ROLE,
-        publicMetadata: {
-          role: "company",
-          companyId,
-          companyName,
-        },
-        redirectUrl: COMPANY_PORTAL_URL,
-      });
+  const invitation = await clerkClient.organizations.createOrganizationInvitation({
+    organizationId,
+    emailAddress: email,
+    role: COMPANY_MEMBER_ROLE,
+    publicMetadata: {
+      role: "company",
+      companyId,
+      companyName,
+    },
+    redirectUrl: COMPANY_PORTAL_URL,
+  });
 
   return { type: "invitation", invitation, clerkUserId: undefined };
 }
@@ -589,14 +608,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ...(clerkOutcome.clerkUserId ? { clerkUserId: clerkOutcome.clerkUserId } : {}),
       });
 
-      // Copy serviceCategories from claim to company profile
-      if (claimRequest.serviceCategories) {
-        const cats = Array.isArray(claimRequest.serviceCategories)
-          ? (claimRequest.serviceCategories as string[])
-          : [];
-        if (cats.length > 0) {
-          await storage.updateCompany(claimRequest.companyId, { categories: cats });
+      // Copy serviceCategories from claim to company profile (non-blocking)
+      try {
+        if (claimRequest.serviceCategories) {
+          const raw = claimRequest.serviceCategories;
+          const cats: string[] = Array.isArray(raw) ? raw as string[] : [];
+          if (cats.length > 0) {
+            await storage.updateCompany(claimRequest.companyId, { categories: cats });
+          }
         }
+      } catch (catError) {
+        console.warn("Could not copy service categories to company profile:", catError);
       }
 
       // Update claim request status
