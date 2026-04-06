@@ -7,6 +7,10 @@ import { z } from "zod";
 import { nanoid } from "nanoid";
 import { requireAuth, getAuth, clerkClient } from "@clerk/express";
 import type { JwtPayload } from "@clerk/types";
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+const ADMIN_EMAIL = "rus121@hotmail.com";
 
 type ClerkMetadata = {
   role?: string;
@@ -280,9 +284,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const quoteRequest = await storage.createQuoteRequest(validatedData);
       
-      // TODO: Send email notification to company
       console.log(`Quote request submitted for ${company.name}:`, quoteRequest);
-      
+
+      // Notify admin
+      if (process.env.RESEND_API_KEY) {
+        await resend.emails.send({
+          from: "Industrin.net <noreply@industrin.net>",
+          to: ADMIN_EMAIL,
+          subject: `Ny offertförfrågan: ${company.name}`,
+          html: `
+            <h2>Ny offertförfrågan inkom</h2>
+            <p><strong>Företag:</strong> ${company.name}</p>
+            <p><strong>Namn:</strong> ${quoteRequest.contactName}</p>
+            <p><strong>E-post:</strong> ${quoteRequest.contactEmail}</p>
+            <p><strong>Telefon:</strong> ${quoteRequest.contactPhone || '–'}</p>
+            <p><strong>Beskrivning:</strong> ${quoteRequest.description || '–'}</p>
+            <br/>
+            <a href="https://www.industrin.net/admin" style="background:#111827;color:#fff;padding:10px 20px;text-decoration:none;border-radius:6px;">
+              Visa i admin
+            </a>
+          `
+        });
+      }
+
       res.status(201).json(quoteRequest);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -312,6 +336,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const claimRequest = await storage.createClaimRequest(validatedData);
       
       console.log(`Claim request submitted for ${company.name}:`, claimRequest);
+
+      // Notify admin
+      if (process.env.RESEND_API_KEY) {
+        await resend.emails.send({
+          from: "Industrin.net <noreply@industrin.net>",
+          to: ADMIN_EMAIL,
+          subject: `Ny ägaransökan: ${company.name}`,
+          html: `
+            <h2>Ny ägaransökan inkom</h2>
+            <p><strong>Företag:</strong> ${company.name}</p>
+            <p><strong>Namn:</strong> ${claimRequest.name}</p>
+            <p><strong>E-post:</strong> ${claimRequest.email}</p>
+            <p><strong>Telefon:</strong> ${claimRequest.phone || '–'}</p>
+            <p><strong>Meddelande:</strong> ${claimRequest.message || '–'}</p>
+            <br/>
+            <a href="https://www.industrin.net/admin" style="background:#111827;color:#fff;padding:10px 20px;text-decoration:none;border-radius:6px;">
+              Granska ansökan i admin
+            </a>
+          `
+        });
+      }
+
       res.status(201).json(claimRequest);
     } catch (error) {
       if (error instanceof z.ZodError) {
