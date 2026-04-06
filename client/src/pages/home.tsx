@@ -99,7 +99,7 @@ export default function Home() {
               Service och support när maskinen stannar.
             </p>
 
-            <p className="font-medium mb-12 text-[#A3A3A3]" style={{ fontFamily: 'PP Neue Montreal, Inter Tight, sans-serif', fontSize: '42px', lineHeight: '1.1', maxWidth: '900px', fontWeight: 500, letterSpacing: '-0.01em' }}>Hitta rätt företag — snabbt.</p>
+            <p className="font-medium mb-12 text-[#A3A3A3]" style={{ fontFamily: 'PP Neue Montreal, Inter Tight, sans-serif', fontSize: '42px', lineHeight: '1.1', maxWidth: '900px', fontWeight: 500, letterSpacing: '-0.01em' }}>Hitta rätt företag, snabbt.</p>
             
             {/* Clean CTA */}
             <Link href="/begar-offert">
