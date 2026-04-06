@@ -6,14 +6,14 @@ export default function AdminLogin() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       {/* Header */}
-      <div className="px-8 py-6 border-b border-gray-100">
+      <div className="absolute top-0 left-0 px-8 py-6">
         <Link href="/">
           <IndustrinLogo className="h-7 w-auto text-gray-900 cursor-pointer" height={28} width={170} />
         </Link>
       </div>
 
       {/* Content */}
-      <div className="flex-1 flex items-center justify-center px-4 py-16">
+      <div className="flex-1 flex items-center justify-center px-4">
         <div className="w-full max-w-sm">
           <div className="mb-8">
             <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2">Admin</p>
@@ -47,6 +47,7 @@ export default function AdminLogin() {
                 headerTitle: { display: "none" },
                 headerSubtitle: { display: "none" },
                 footerAction: { display: "none" },
+                footer: { display: "none" },
                 formButtonPrimary: {
                   backgroundColor: "#111827",
                   fontSize: "14px",
