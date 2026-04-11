@@ -13,6 +13,7 @@ import QuoteRequest from "@/pages/quote-request";
 import Integritetspolicy from "@/pages/integritetspolicy";
 import Villkor from "@/pages/villkor";
 import AdminLogin from "@/pages/admin-login";
+import Signout from "@/pages/signout";
 import AdminDashboard from "@/pages/admin-dashboard";
 import AdminSettings from "@/pages/admin-settings";
 import GeneralQuoteRequest from "@/pages/general-quote-request";
@@ -32,6 +33,9 @@ function Router() {
   return (
     <div className="min-h-screen flex flex-col">
       <Switch>
+        {/* Emergency sign-out — clears any session and goes to home */}
+        <Route path="/signout" component={Signout} />
+
         {/* Admin routes - no header/footer */}
         <Route path="/admin/login" component={AdminLogin} />
         <Route path="/admin/login/*" component={AdminLogin} />

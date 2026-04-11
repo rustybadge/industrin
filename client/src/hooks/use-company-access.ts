@@ -57,6 +57,7 @@ export function useCompanyAccess() {
   return {
     companyUser,
     isLoading,
+    isSignedIn: isLoaded ? !!user : null,
     logout,
     getCompanyToken,
   };
