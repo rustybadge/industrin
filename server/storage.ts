@@ -488,7 +488,7 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(contacts)
       .where(eq(contacts.companyId, companyId))
-      .orderBy(contacts.sortOrder, contacts.createdAt);
+      .orderBy(contacts.createdAt);
   }
 
   async createContact(contact: InsertContact): Promise<Contact> {
