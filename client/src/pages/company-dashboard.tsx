@@ -178,6 +178,13 @@ function CompanyDashboard() {
               <Button
                 variant="outline"
                 size="sm"
+                onClick={() => navigate('/company/edit')}
+              >
+                Redigera profil
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={() => company?.slug && navigate(`/companies/${company.slug}`)}
                 disabled={!company?.slug}
               >

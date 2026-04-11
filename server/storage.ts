@@ -1,10 +1,13 @@
-import { 
+import {
   users, companies, claimRequests, quoteRequests, companyUsers,
+  companyProfiles, contacts,
   type User, type InsertUser,
   type Company, type InsertCompany,
   type ClaimRequest, type InsertClaimRequest,
   type QuoteRequest, type InsertQuoteRequest,
-  type CompanyUser, type InsertCompanyUser
+  type CompanyUser, type InsertCompanyUser,
+  type CompanyProfile, type InsertCompanyProfile,
+  type Contact, type InsertContact,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, ilike, inArray, desc, sql } from "drizzle-orm";
@@ -50,6 +53,15 @@ export interface IStorage {
   getAllCompanyUsers(): Promise<CompanyUser[]>;
   updateCompanyUser(id: string, updateData: Partial<InsertCompanyUser>): Promise<CompanyUser | undefined>;
   deleteCompanyUser(id: string): Promise<CompanyUser | undefined>;
+
+  // Company Profiles
+  getCompanyProfile(companyId: string): Promise<CompanyProfile | undefined>;
+  upsertCompanyProfile(companyId: string, data: Partial<InsertCompanyProfile>): Promise<CompanyProfile>;
+
+  // Contacts
+  getContactsByCompany(companyId: string): Promise<Contact[]>;
+  createContact(contact: InsertContact): Promise<Contact>;
+  deleteContact(id: string, companyId: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -374,6 +386,48 @@ export class DatabaseStorage implements IStorage {
       .where(eq(companyUsers.id, id))
       .returning();
     return companyUser || undefined;
+  }
+
+  async getCompanyProfile(companyId: string): Promise<CompanyProfile | undefined> {
+    const [profile] = await db
+      .select()
+      .from(companyProfiles)
+      .where(eq(companyProfiles.companyId, companyId));
+    return profile || undefined;
+  }
+
+  async upsertCompanyProfile(companyId: string, data: Partial<InsertCompanyProfile>): Promise<CompanyProfile> {
+    const [profile] = await db
+      .insert(companyProfiles)
+      .values({ companyId, ...data, updatedAt: new Date() })
+      .onConflictDoUpdate({
+        target: companyProfiles.companyId,
+        set: { ...data, updatedAt: new Date() },
+      })
+      .returning();
+    return profile;
+  }
+
+  async getContactsByCompany(companyId: string): Promise<Contact[]> {
+    return await db
+      .select()
+      .from(contacts)
+      .where(eq(contacts.companyId, companyId))
+      .orderBy(contacts.sortOrder, contacts.createdAt);
+  }
+
+  async createContact(contact: InsertContact): Promise<Contact> {
+    const [created] = await db
+      .insert(contacts)
+      .values(contact)
+      .returning();
+    return created;
+  }
+
+  async deleteContact(id: string, companyId: string): Promise<void> {
+    await db
+      .delete(contacts)
+      .where(and(eq(contacts.id, id), eq(contacts.companyId, companyId)));
   }
 }
 

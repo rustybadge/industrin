@@ -1,3 +1,6 @@
+// MIGRATION REQUIRED: Run `npx drizzle-kit push` after pulling this schema change
+// to create company_profiles and contacts tables in the database.
+
 import { sql } from "drizzle-orm";
 import { pgTable, text, varchar, boolean, timestamp, pgEnum, integer, json, foreignKey } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
@@ -92,6 +95,26 @@ export const companyUsers = pgTable("company_users", {
   clerkUserId: text("clerk_user_id").unique(),
 });
 
+export const companyProfiles = pgTable("company_profiles", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  companyId: varchar("company_id").notNull().unique().references(() => companies.id, { onDelete: "cascade" }),
+  visitingAddress: text("visiting_address"),
+  postalAddress: text("postal_address"),
+  openingHours: text("opening_hours"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const contacts = pgTable("contacts", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  companyId: varchar("company_id").notNull().references(() => companies.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  phone: text("phone"),
+  email: text("email"),
+  sortOrder: integer("sort_order").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const quoteRequests = pgTable("quote_requests", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   companyId: varchar("company_id").notNull().references(() => companies.id),
@@ -121,11 +144,30 @@ export const generalQuoteRequests = pgTable("general_quote_requests", {
 });
 
 // Relations
-export const companiesRelations = relations(companies, ({ many }) => ({
+export const companiesRelations = relations(companies, ({ one, many }) => ({
   claimRequests: many(claimRequests),
   quoteRequests: many(quoteRequests),
   companyUsers: many(companyUsers),
   companyServices: many(companyServices),
+  companyProfile: one(companyProfiles, {
+    fields: [companies.id],
+    references: [companyProfiles.companyId],
+  }),
+  contacts: many(contacts),
+}));
+
+export const companyProfilesRelations = relations(companyProfiles, ({ one }) => ({
+  company: one(companies, {
+    fields: [companyProfiles.companyId],
+    references: [companies.id],
+  }),
+}));
+
+export const contactsRelations = relations(contacts, ({ one }) => ({
+  company: one(companies, {
+    fields: [contacts.companyId],
+    references: [companies.id],
+  }),
 }));
 
 export const serviceCategoriesRelations = relations(serviceCategories, ({ one, many }) => ({
@@ -227,3 +269,10 @@ export type QuoteRequest = typeof quoteRequests.$inferSelect;
 
 export type ServiceCategory = typeof serviceCategories.$inferSelect;
 export type CompanyService = typeof companyServices.$inferSelect;
+
+export const insertCompanyProfileSchema = createInsertSchema(companyProfiles).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertContactSchema = createInsertSchema(contacts).omit({ id: true, createdAt: true });
+export type CompanyProfile = typeof companyProfiles.$inferSelect;
+export type InsertCompanyProfile = z.infer<typeof insertCompanyProfileSchema>;
+export type Contact = typeof contacts.$inferSelect;
+export type InsertContact = z.infer<typeof insertContactSchema>;

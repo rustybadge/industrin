@@ -1,8 +1,10 @@
 import type { Express, Request, RequestHandler } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertQuoteRequestSchema, insertClaimRequestSchema } from "@shared/schema";
+import { insertQuoteRequestSchema, insertClaimRequestSchema, insertContactSchema } from "@shared/schema";
 import type { Company } from "@shared/schema";
+import multer from "multer";
+import { getStore } from "@netlify/blobs";
 import { z } from "zod";
 import { nanoid } from "nanoid";
 import { requireAuth, getAuth, clerkClient } from "@clerk/express";
@@ -11,6 +13,15 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const ADMIN_EMAIL = "rus121@hotmail.com";
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 2 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    if (file.mimetype.startsWith("image/")) cb(null, true);
+    else cb(new Error("Only image files allowed"));
+  },
+});
 
 type ClerkMetadata = {
   role?: string;
@@ -898,21 +909,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get company profile (for company admin)
+  // Get company profile (for company admin) — returns company + extended profile + contacts
   app.get("/api/company/profile", requireAuth(), ensureCompanyMember, async (req: any, res) => {
     try {
       const company = await storage.getCompanyById(req.companyId!);
       if (!company) {
         return res.status(404).json({ message: 'Company not found' });
       }
-      res.json(company);
+      const profile = await storage.getCompanyProfile(req.companyId!) ?? {};
+      const companyContacts = await storage.getContactsByCompany(req.companyId!);
+      res.json({ ...company, profile, contacts: companyContacts });
     } catch (error) {
       console.error("Error fetching company profile:", error);
       res.status(500).json({ message: "Failed to fetch company profile" });
     }
   });
 
-  // Update company profile (for company admin)
+  // Update company profile (for company admin) — legacy POST kept for backward compatibility
   app.post("/api/company/profile/update", requireAuth(), ensureCompanyMember, async (req: any, res) => {
     try {
       // Strip read-only fields — never allow updating id, slug, createdAt, clerkOrganizationId
@@ -927,6 +940,91 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to update company profile" });
     }
   });
+
+  // PUT /api/company/profile — save company fields + extended profile in one call
+  app.put("/api/company/profile", requireAuth(), ensureCompanyMember, async (req: any, res) => {
+    try {
+      const { id, slug, createdAt, clerkOrganizationId, profile: profileData, contacts: _c, ...companyFields } = req.body;
+      const company = await storage.updateCompany(req.companyId!, companyFields);
+      if (!company) {
+        return res.status(404).json({ message: 'Company not found' });
+      }
+      const profile = profileData
+        ? await storage.upsertCompanyProfile(req.companyId!, profileData)
+        : await storage.getCompanyProfile(req.companyId!) ?? {};
+      const companyContacts = await storage.getContactsByCompany(req.companyId!);
+      res.json({ ...company, profile, contacts: companyContacts });
+    } catch (error) {
+      console.error("Error updating company profile:", error);
+      res.status(500).json({ message: "Failed to update company profile" });
+    }
+  });
+
+  // POST /api/company/contacts — add a named contact
+  app.post("/api/company/contacts", requireAuth(), ensureCompanyMember, async (req: any, res) => {
+    try {
+      const parsed = insertContactSchema.safeParse({ ...req.body, companyId: req.companyId });
+      if (!parsed.success) {
+        return res.status(400).json({ message: "Invalid data", errors: parsed.error.errors });
+      }
+      const contact = await storage.createContact(parsed.data);
+      res.status(201).json(contact);
+    } catch (error) {
+      console.error("Error creating contact:", error);
+      res.status(500).json({ message: "Failed to create contact" });
+    }
+  });
+
+  // DELETE /api/company/contacts/:contactId — remove a named contact
+  app.delete("/api/company/contacts/:contactId", requireAuth(), ensureCompanyMember, async (req: any, res) => {
+    try {
+      await storage.deleteContact(req.params.contactId, req.companyId!);
+      res.json({ ok: true });
+    } catch (error) {
+      console.error("Error deleting contact:", error);
+      res.status(500).json({ message: "Failed to delete contact" });
+    }
+  });
+
+  // POST /api/company/logo — upload logo via Netlify Blobs
+  app.post(
+    "/api/company/logo",
+    requireAuth(),
+    ensureCompanyMember,
+    upload.single("logo"),
+    async (req: any, res) => {
+      try {
+        if (!req.file) {
+          return res.status(400).json({ message: "No file uploaded" });
+        }
+
+        const netlifyToken = process.env.NETLIFY_TOKEN;
+        const siteId = process.env.NETLIFY_SITE_ID;
+        if (!netlifyToken || !siteId) {
+          return res.status(503).json({
+            message: "Logo upload not configured. Set NETLIFY_TOKEN and NETLIFY_SITE_ID on the server.",
+          });
+        }
+
+        const store = getStore({ name: "company-logos", token: netlifyToken, siteID: siteId });
+        const ext = req.file.originalname.split(".").pop() ?? "jpg";
+        const key = `${req.companyId}/${Date.now()}.${ext}`;
+        // @netlify/blobs set() does not accept contentType in options — pass buffer directly
+        await store.set(key, req.file.buffer);
+
+        // Netlify Blobs public URL — requires the store to be configured as public
+        // The URL pattern for public Netlify Blobs is project-specific; store the key
+        // and construct via the Netlify CDN URL convention.
+        const logoUrl = `https://storage.googleapis.com/production-netlify/sites/${siteId}/blobs/${key}`;
+
+        await storage.updateCompany(req.companyId!, { logoUrl });
+        res.json({ logoUrl });
+      } catch (error) {
+        console.error("Error uploading logo:", error);
+        res.status(500).json({ message: "Failed to upload logo" });
+      }
+    }
+  );
 
   const httpServer = createServer(app);
   return httpServer;

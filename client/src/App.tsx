@@ -18,6 +18,7 @@ import AdminSettings from "@/pages/admin-settings";
 import GeneralQuoteRequest from "@/pages/general-quote-request";
 import CompanyLogin from "@/pages/company-login";
 import CompanyDashboard from "@/pages/company-dashboard";
+import CompanyEdit from "@/pages/company-edit";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import { useScrollToTop } from "@/hooks/use-scroll-to-top";
@@ -48,6 +49,7 @@ function Router() {
         <Route path="/company/dashboard/" component={CompanyDashboard} />
         <Route path="/company/dashboard" component={CompanyDashboard} />
         <Route path="/company/dashboard/:splat*" component={CompanyDashboard} />
+        <Route path="/company/edit" component={CompanyEdit} />
         
         {/* Public routes - with header/footer */}
         <Route path="/">
