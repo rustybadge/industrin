@@ -235,6 +235,11 @@ async function addUserToOrganizationOrInvite({
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Health / keep-alive — no auth required, must stay first
+  app.get("/api/ping", (_req, res) => {
+    res.json({ ok: true, ts: Date.now() });
+  });
+
   // Get companies with search and filtering
   app.get("/api/companies", async (req, res) => {
     try {

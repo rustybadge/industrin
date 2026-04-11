@@ -1,6 +1,6 @@
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
-import { QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider, useIsFetching } from "@tanstack/react-query";
 import { ClerkLoaded, ClerkLoading } from "@clerk/clerk-react";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -20,6 +20,8 @@ import CompanyDashboard from "@/pages/company-dashboard";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import { useScrollToTop } from "@/hooks/use-scroll-to-top";
+import { useState, useEffect } from "react";
+import AppLoadingSkeleton from "@/components/AppLoadingSkeleton";
 
 function Router() {
   // Automatically scroll to top on route changes
@@ -141,6 +143,32 @@ function Router() {
   );
 }
 
+// Renders the skeleton until the very first API fetch resolves.
+// Once `initialLoading` flips to false it stays false for the lifetime of the app.
+function AppWithLoadingGate() {
+  const isFetching = useIsFetching();
+  const [initialLoading, setInitialLoading] = useState(true);
+
+  useEffect(() => {
+    // The first time React Query has an active fetch and then it drops to 0,
+    // we know the initial data is in — permanently exit the skeleton.
+    if (initialLoading && isFetching === 0) {
+      setInitialLoading(false);
+    }
+  }, [isFetching, initialLoading]);
+
+  if (initialLoading && isFetching > 0) {
+    return <AppLoadingSkeleton />;
+  }
+
+  return (
+    <>
+      <Router />
+      <Toaster />
+    </>
+  );
+}
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -154,8 +182,7 @@ function App() {
           </div>
         </ClerkLoading>
         <ClerkLoaded>
-          <Router />
-          <Toaster />
+          <AppWithLoadingGate />
         </ClerkLoaded>
       </TooltipProvider>
     </QueryClientProvider>
