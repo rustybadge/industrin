@@ -101,7 +101,17 @@ function Router() {
             <Footer />
           </div>
         </Route>
-        
+
+        <Route path="/företag/:slug">
+          <div className="min-h-screen flex flex-col">
+            <Header />
+            <main className="flex-1">
+              <CompanyProfile />
+            </main>
+            <Footer />
+          </div>
+        </Route>
+
         <Route path="/companies/:slug/quote">
           <div className="min-h-screen flex flex-col">
             <Header />

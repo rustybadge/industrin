@@ -240,7 +240,7 @@ function AddressSection({
     setVisitingAddress(company.profile?.visitingAddress ?? '');
     setPostalAddress(company.profile?.postalAddress ?? '');
     setOpeningHours(company.profile?.openingHours ?? '');
-  }, [company.profile]);
+  }, [company.profile?.visitingAddress, company.profile?.postalAddress, company.profile?.openingHours]);
 
   const mutation = useMutation({
     mutationFn: async (data: { profile: CompanyProfileData }) => {
@@ -697,6 +697,7 @@ function CompanyEdit() {
   const { data: company, isLoading } = useQuery({
     queryKey: ['/api/company/profile'],
     enabled: !!companyUser,
+    staleTime: 0,
     queryFn: async () => {
       const response = await fetchWithCompanyAuth('/api/company/profile');
       if (!response.ok) throw new Error('Kunde inte hämta företagsprofil');

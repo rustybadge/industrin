@@ -25,10 +25,16 @@ import {
   Settings,
   TrendingUp,
   Ban,
-  UserCheck
+  UserCheck,
+  MapPin,
+  Phone,
+  Globe,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAdminAccess } from '@/hooks/use-admin-access';
+import type { CompanyDetail } from '@/lib/api';
 
 interface ClaimRequest {
   id: string;
@@ -69,8 +75,9 @@ export default function AdminDashboard() {
   const [, navigate] = useLocation();
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  const [selectedTab, setSelectedTab] = useState<'overview' | 'claims'>('overview');
+  const [selectedTab, setSelectedTab] = useState<'overview' | 'claims' | 'companies'>('overview');
   const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(null);
+  const [expandedCompanyId, setExpandedCompanyId] = useState<string | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [resetConfirmId, setResetConfirmId] = useState<string | null>(null);
 
@@ -166,6 +173,29 @@ export default function AdminDashboard() {
       return response.json();
     },
     enabled: !!selectedCompanyId && !!admin,
+    retry: 1,
+    retryDelay: 1000,
+  });
+
+  // Fetch all companies with profiles (admin companies tab)
+  const { data: adminCompanies, isLoading: adminCompaniesLoading, error: adminCompaniesError } = useQuery<CompanyDetail[]>({
+    queryKey: ['/api/admin/companies'],
+    queryFn: async () => {
+      const token = await getAdminToken();
+      const response = await fetch('/api/admin/companies', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) {
+        if (response.status === 401) {
+          logout();
+          navigate('/admin/login');
+          throw new Error('Session expired. Please log in again.');
+        }
+        throw new Error(`Failed to fetch companies: ${response.status}`);
+      }
+      return response.json();
+    },
+    enabled: !!admin && selectedTab === 'companies',
     retry: 1,
     retryDelay: 1000,
   });
@@ -418,6 +448,16 @@ export default function AdminDashboard() {
               }`}
             >
               Ägaransökningar
+            </button>
+            <button
+              onClick={() => setSelectedTab('companies')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                selectedTab === 'companies'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Företag
             </button>
           </div>
         </div>
@@ -747,7 +787,209 @@ export default function AdminDashboard() {
             )}
           </div>
         )}
+        {selectedTab === 'companies' && (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-gray-900">Företag</h2>
+
+            {adminCompaniesError ? (
+              <div className="text-center py-8">
+                <p className="text-red-600 mb-4">Kunde inte hämta företag: {(adminCompaniesError as Error).message}</p>
+                <Button onClick={() => navigate('/admin/login')}>Gå till inloggning</Button>
+              </div>
+            ) : adminCompaniesLoading ? (
+              <div className="text-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                <p className="text-gray-600">Laddar företag...</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {adminCompanies?.map((company) => {
+                  const isExpanded = expandedCompanyId === company.id;
+                  const isComplete = Boolean(company.profile?.visitingAddress && company.contacts?.length > 0);
+                  const displayAddress = company.profile?.visitingAddress
+                    || (company.city ? company.city : null);
+
+                  return (
+                    <Card key={company.id} className="border border-gray-200">
+                      <CardContent className="p-4">
+                        {/* Row: thumbnail + name + city + badge + button */}
+                        <div className="flex items-center gap-4">
+                          {/* Logo thumbnail */}
+                          {company.logoUrl ? (
+                            <img
+                              src={company.logoUrl}
+                              alt={`${company.name} logotyp`}
+                              className="w-10 h-10 object-contain rounded border border-gray-100 bg-white flex-shrink-0"
+                            />
+                          ) : (
+                            <div className="w-10 h-10 rounded border border-gray-100 bg-gray-50 flex items-center justify-center flex-shrink-0">
+                              <Building className="h-5 w-5 text-gray-300" />
+                            </div>
+                          )}
+
+                          {/* Name + city */}
+                          <div className="flex-1 min-w-0">
+                            <p className="font-semibold text-gray-900 truncate">{company.name}</p>
+                            {(company.city || company.region) && (
+                              <p className="text-sm text-gray-500 truncate">
+                                {[company.city, company.region].filter(Boolean).join(', ')}
+                              </p>
+                            )}
+                          </div>
+
+                          {/* Profile completion badge */}
+                          <div className="flex-shrink-0">
+                            {isComplete ? (
+                              <Badge className="bg-green-100 text-green-800 border-green-200 border">
+                                <CheckCircle className="h-3 w-3 mr-1" />
+                                Komplett
+                              </Badge>
+                            ) : (
+                              <Badge variant="secondary" className="bg-gray-100 text-gray-600 border-gray-200 border">
+                                Ofullständig
+                              </Badge>
+                            )}
+                          </div>
+
+                          {/* Expand button */}
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setExpandedCompanyId(isExpanded ? null : company.id)}
+                            className="flex-shrink-0"
+                          >
+                            {isExpanded ? (
+                              <><ChevronUp className="h-4 w-4 mr-1" />Dölj</>
+                            ) : (
+                              <><ChevronDown className="h-4 w-4 mr-1" />Visa detaljer</>
+                            )}
+                          </Button>
+                        </div>
+
+                        {/* Expanded detail panel */}
+                        {isExpanded && (
+                          <div className="mt-4 pt-4 border-t border-gray-100 grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* Left column */}
+                            <div className="space-y-4">
+                              {/* Logo larger */}
+                              {company.logoUrl && (
+                                <img
+                                  src={company.logoUrl}
+                                  alt={`${company.name} logotyp`}
+                                  className="w-24 h-24 object-contain rounded-lg border border-gray-100 bg-white"
+                                />
+                              )}
+
+                              <div>
+                                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Beskrivning</p>
+                                <p className="text-sm text-gray-700 line-clamp-4">
+                                  {company.description_sv || company.description || '–'}
+                                </p>
+                              </div>
+
+                              {(company.categories?.length > 0 || (company.serviceområden?.length ?? 0) > 0) && (
+                                <div>
+                                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Tjänster</p>
+                                  <div className="flex flex-wrap gap-1">
+                                    {[...(company.categories || []), ...(company.serviceområden || [])].map((item) => (
+                                      <Badge key={item} variant="secondary" className="text-xs">{item}</Badge>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Right column */}
+                            <div className="space-y-3 text-sm">
+                              {company.phone && (
+                                <div className="flex items-center gap-2">
+                                  <Phone className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                                  <span className="text-gray-700">{company.phone}</span>
+                                </div>
+                              )}
+                              {company.website && (
+                                <div className="flex items-center gap-2">
+                                  <Globe className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                                  <a
+                                    href={`https://${company.website}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-blue-600 hover:underline truncate"
+                                  >
+                                    {company.website}
+                                  </a>
+                                </div>
+                              )}
+                              {company.contactEmail && (
+                                <div className="flex items-center gap-2">
+                                  <span className="text-xs text-gray-400 font-semibold uppercase tracking-wider">E-post:</span>
+                                  <span className="text-gray-700">{company.contactEmail}</span>
+                                </div>
+                              )}
+                              {company.profile?.visitingAddress && (
+                                <div className="flex items-start gap-2">
+                                  <MapPin className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                                  <span className="text-gray-700">{company.profile.visitingAddress}</span>
+                                </div>
+                              )}
+                              {company.profile?.openingHours && (
+                                <div className="flex items-start gap-2">
+                                  <Clock className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                                  <span className="text-gray-700 whitespace-pre-wrap">{company.profile.openingHours}</span>
+                                </div>
+                              )}
+                              {company.contacts && company.contacts.length > 0 && (
+                                <div>
+                                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Kontaktpersoner</p>
+                                  <div className="space-y-1">
+                                    {company.contacts.map((c) => (
+                                      <div key={c.id} className="flex items-center gap-2">
+                                        <span className="font-medium text-gray-800">{c.name}</span>
+                                        {c.phone && (
+                                          <span className="text-gray-500">{c.phone}</span>
+                                        )}
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                              <div className="pt-2">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => window.open(`/companies/${company.slug}`, '_blank')}
+                                >
+                                  Öppna publikt
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+                {adminCompanies?.length === 0 && (
+                  <div className="text-center py-8">
+                    <p className="text-gray-500">Inga företag hittades.</p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
       </main>
+
+      <footer className="border-t border-gray-100 mt-8">
+        <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-end">
+          <button
+            onClick={logout}
+            className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            Logga ut
+          </button>
+        </div>
+      </footer>
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog

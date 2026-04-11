@@ -279,12 +279,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { id } = req.params;
       const company = await storage.getCompanyById(id);
-      
+
       if (!company) {
         return res.status(404).json({ message: "Company not found" });
       }
-      
-      res.json(company);
+
+      const profile = await storage.getCompanyProfile(company.id) ?? {};
+      const contacts = await storage.getContactsByCompany(company.id);
+      res.json({ ...company, profile, contacts });
     } catch (error) {
       console.error("Error fetching company:", error);
       res.status(500).json({ message: "Failed to fetch company" });
@@ -296,12 +298,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { slug } = req.params;
       const company = await storage.getCompanyBySlug(slug);
-      
+
       if (!company) {
         return res.status(404).json({ message: "Company not found" });
       }
-      
-      res.json(company);
+
+      const profile = await storage.getCompanyProfile(company.id) ?? {};
+      const contacts = await storage.getContactsByCompany(company.id);
+      res.json({ ...company, profile, contacts });
     } catch (error) {
       console.error("Error fetching company:", error);
       res.status(500).json({ message: "Failed to fetch company" });
@@ -860,6 +864,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting company user:", error);
       res.status(500).json({ message: "Failed to delete company user" });
+    }
+  });
+
+  // Get all companies with profile + contacts (admin)
+  app.get("/api/admin/companies", requireAuth(), ensureAdmin, async (req, res) => {
+    try {
+      const companiesWithProfile = await storage.getAllCompaniesWithProfile();
+      res.json(companiesWithProfile);
+    } catch (error) {
+      console.error("Error fetching admin companies:", error);
+      res.status(500).json({ message: "Failed to fetch companies" });
+    }
+  });
+
+  // Get single company with profile + contacts (admin)
+  app.get("/api/admin/companies/:companyId/detail", requireAuth(), ensureAdmin, async (req, res) => {
+    try {
+      const { companyId } = req.params;
+      const company = await storage.getCompanyById(companyId);
+      if (!company) {
+        return res.status(404).json({ message: "Company not found" });
+      }
+      const profile = await storage.getCompanyProfile(companyId) ?? {};
+      const contacts = await storage.getContactsByCompany(companyId);
+      res.json({ ...company, profile, contacts });
+    } catch (error) {
+      console.error("Error fetching admin company detail:", error);
+      res.status(500).json({ message: "Failed to fetch company" });
     }
   });
 

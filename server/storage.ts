@@ -62,6 +62,9 @@ export interface IStorage {
   getContactsByCompany(companyId: string): Promise<Contact[]>;
   createContact(contact: InsertContact): Promise<Contact>;
   deleteContact(id: string, companyId: string): Promise<void>;
+
+  // Admin
+  getAllCompaniesWithProfile(): Promise<(Company & { profile: CompanyProfile | null; contacts: Contact[] })[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -428,6 +431,18 @@ export class DatabaseStorage implements IStorage {
     await db
       .delete(contacts)
       .where(and(eq(contacts.id, id), eq(contacts.companyId, companyId)));
+  }
+
+  async getAllCompaniesWithProfile(): Promise<(Company & { profile: CompanyProfile | null; contacts: Contact[] })[]> {
+    const allCompanies = await db.select().from(companies).orderBy(companies.name);
+    const results = await Promise.all(
+      allCompanies.map(async (company) => {
+        const profile = await this.getCompanyProfile(company.id) ?? null;
+        const companyContacts = await this.getContactsByCompany(company.id);
+        return { ...company, profile, contacts: companyContacts };
+      })
+    );
+    return results;
   }
 }
 

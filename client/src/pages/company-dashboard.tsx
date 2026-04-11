@@ -169,7 +169,9 @@ function CompanyDashboard() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <Building className="h-6 w-6 text-blue-600 mr-3" />
-              <h1 className="text-2xl font-bold text-gray-900">Min företagssida</h1>
+              <h1 className="text-2xl font-bold text-gray-900">
+                {company?.name ?? 'Min företagssida'} — Företagssida
+              </h1>
               <Badge variant="outline" className="ml-3 bg-blue-50 text-blue-700 border-blue-200">
                 {company?.name || 'Company'}
               </Badge>
@@ -185,8 +187,8 @@ function CompanyDashboard() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => company?.slug && navigate(`/companies/${company.slug}`)}
-                disabled={!company?.slug}
+                onClick={() => company?.slug && navigate(`/företag/${company.slug}`)}
+                disabled={isLoading || !company?.slug}
               >
                 Visa publik profil
               </Button>
@@ -342,6 +344,17 @@ function CompanyDashboard() {
           </Card>
         </div>
       </main>
+
+      <footer className="border-t border-gray-100 mt-8">
+        <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-end">
+          <button
+            onClick={logout}
+            className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            Logga ut
+          </button>
+        </div>
+      </footer>
     </div>
   );
 }
