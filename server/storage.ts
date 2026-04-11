@@ -27,6 +27,11 @@ export interface IStorage {
     limit?: number;
     offset?: number;
   }): Promise<Company[]>;
+  getCompaniesCount(filters?: {
+    search?: string;
+    region?: string;
+    categories?: string[];
+  }): Promise<number>;
   getCompanyById(id: string): Promise<Company | undefined>;
   getCompanyBySlug(slug: string): Promise<Company | undefined>;
   getCompanyByClerkOrgId(orgId: string): Promise<Company | undefined>;
@@ -170,6 +175,7 @@ export class DatabaseStorage implements IStorage {
     if (filters?.search) {
       const searchValue = filters.search.trim();
       query = query.orderBy(
+        sql`CASE WHEN ${companies.clerkOrganizationId} IS NOT NULL THEN 0 ELSE 1 END`,
         desc(companies.isFeatured),
         // Relevance scoring: exact name matches first, then partial matches
         sql`CASE
@@ -186,7 +192,11 @@ export class DatabaseStorage implements IStorage {
         companies.name
       ) as any;
     } else {
-      query = query.orderBy(desc(companies.isFeatured), companies.name) as any;
+      query = query.orderBy(
+        sql`CASE WHEN ${companies.clerkOrganizationId} IS NOT NULL THEN 0 ELSE 1 END`,
+        desc(companies.isFeatured),
+        companies.name
+      ) as any;
     }
     
     if (filters?.limit) {
@@ -198,6 +208,68 @@ export class DatabaseStorage implements IStorage {
     }
     
     return await query;
+  }
+
+  async getCompaniesCount(filters?: {
+    search?: string;
+    region?: string;
+    categories?: string[];
+  }): Promise<number> {
+    let query = db.select({ count: sql<number>`count(*)` }).from(companies);
+
+    const conditions = [];
+
+    if (filters?.search) {
+      const searchValue = filters.search.trim();
+
+      if (searchValue.includes(' ') && searchValue.length > 10) {
+        conditions.push(
+          sql`(
+            ${companies.name} ILIKE ${searchValue} OR
+            ${companies.name} ILIKE ${`%${searchValue}%`}
+          )`
+        );
+      } else {
+        const searchTerms = searchValue.split(/\s+/);
+        const searchConditions = searchTerms.map(term => {
+          const synonyms = this.getSearchSynonyms(term.toLowerCase());
+          const allTerms = [term, ...synonyms];
+          const termConditions = [];
+          for (const searchTerm of allTerms) {
+            termConditions.push(
+              sql`(
+                ${companies.name} ILIKE ${`%${searchTerm}%`} OR
+                ${companies.description} ILIKE ${`%${searchTerm}%`} OR
+                ${companies.description_sv} ILIKE ${`%${searchTerm}%`} OR
+                ${companies.categories}::text ILIKE ${`%${searchTerm}%`} OR
+                ${companies.city} ILIKE ${`%${searchTerm}%`} OR
+                ${companies.region} ILIKE ${`%${searchTerm}%`}
+              )`
+            );
+          }
+          return termConditions.length > 1 ? sql`(${sql.join(termConditions, sql` OR `)})` : termConditions[0];
+        });
+        conditions.push(and(...searchConditions));
+      }
+    }
+
+    if (filters?.region && filters.region !== 'Alla regioner') {
+      conditions.push(eq(companies.region, filters.region));
+    }
+
+    if (filters?.categories && filters.categories.length > 0 && !filters.categories.includes('Alla kategorier')) {
+      const categoryConditions = filters.categories.map(category =>
+        sql`${companies.categories}::text ILIKE ${`%${category}%`}`
+      );
+      conditions.push(sql`(${sql.join(categoryConditions, sql` OR `)})`);
+    }
+
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions)) as any;
+    }
+
+    const [result] = await query;
+    return Number(result.count);
   }
 
   private getSearchSynonyms(term: string): string[] {

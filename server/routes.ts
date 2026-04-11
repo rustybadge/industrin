@@ -293,6 +293,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Count companies matching filters (must be before /:slug)
+  app.get("/api/companies/count", async (req, res) => {
+    try {
+      const { search, region, categories } = req.query;
+      const total = await storage.getCompaniesCount({
+        search: search as string,
+        region: region as string,
+        categories: categories ? (categories as string).split(',') : undefined,
+      });
+      res.json({ total });
+    } catch (error) {
+      console.error("Error counting companies:", error);
+      res.status(500).json({ message: "Failed to count companies" });
+    }
+  });
+
   // Get company by ID
   app.get("/api/company-profile/:id", async (req, res) => {
     try {

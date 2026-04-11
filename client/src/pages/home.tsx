@@ -2,11 +2,9 @@ import { useState } from "react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Search, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { api } from "@/lib/api";
 import SmartSearch, { type SearchTag } from "@/components/search/smart-search";
-import SortOptions from "@/components/search/sort-options";
 import CompanyCard from "@/components/company/company-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Company } from "@shared/schema";
@@ -14,76 +12,19 @@ import type { Company } from "@shared/schema";
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchTags, setSearchTags] = useState<SearchTag[]>([]);
-  const [sortBy, setSortBy] = useState("name-asc");
-  
-  // Build filters from search state
+
   const filters = {
     search: searchQuery,
     region: searchTags.find(tag => tag.type === 'region')?.value || '',
     categories: searchTags.filter(tag => tag.type === 'category').map(tag => tag.value),
   };
 
-  // Get companies for homepage with filters
-  const { data: allCompanies = [], isLoading } = useQuery({
-    queryKey: ['/api/companies', { ...filters, limit: 500 }],
-    queryFn: () => api.companies.getAll({ ...filters, limit: 500 }),
+  const { data: companies = [], isLoading } = useQuery({
+    queryKey: ['/api/companies', { ...filters, limit: 18 }],
+    queryFn: () => api.companies.getAll({ ...filters, limit: 18 }),
+    staleTime: 30_000,
   });
 
-  // Sort companies, prioritizing Utmärkt/Verifierat, then using selected sort option
-  const companies = [...allCompanies].sort((a, b) => {
-    // Helper: higher number = better description
-    const getDescriptionPriority = (company: Company) => {
-      if (!company.description || company.description.length === 0) return 0;
-      if (company.description.length < 50) return 1;
-      if (company.description.length < 150) return 2;
-      return 3;
-    };
-
-    // Helper: prioritize featured/verified companies
-    const getBadgePriority = (company: Company) => {
-      let score = 0;
-      if ((company as any).isFeatured) score += 2; // Utmärkt
-      if ((company as any).isVerified) score += 1; // Verifierat
-      return score;
-    };
-
-    const aBadge = getBadgePriority(a);
-    const bBadge = getBadgePriority(b);
-    if (aBadge !== bBadge) {
-      return bBadge - aBadge; // Companies with badges first
-    }
-
-    switch (sortBy) {
-      case "name-asc": {
-        const aPriority = getDescriptionPriority(a);
-        const bPriority = getDescriptionPriority(b);
-        if (aPriority !== bPriority) {
-          return bPriority - aPriority;
-        }
-        return a.name.localeCompare(b.name, "sv");
-      }
-      case "name-desc": {
-        const aPriorityDesc = getDescriptionPriority(a);
-        const bPriorityDesc = getDescriptionPriority(b);
-        if (aPriorityDesc !== bPriorityDesc) {
-          return bPriorityDesc - aPriorityDesc;
-        }
-        return b.name.localeCompare(a.name, "sv");
-      }
-      case "relevance": {
-        if (!searchQuery) return 0;
-        const aRelevant = a.name.toLowerCase().includes(searchQuery.toLowerCase()) ? 1 : 0;
-        const bRelevant = b.name.toLowerCase().includes(searchQuery.toLowerCase()) ? 1 : 0;
-        return bRelevant - aRelevant;
-      }
-      case "newest":
-        return b.id.localeCompare(a.id);
-      default:
-        return 0;
-    }
-  });
-
-  // Handle smart search
   const handleSmartSearch = (query: string, tags: SearchTag[]) => {
     setSearchQuery(query);
     setSearchTags(tags);
@@ -100,8 +41,7 @@ export default function Home() {
             </p>
 
             <p className="font-medium mb-12 text-[#A3A3A3]" style={{ fontFamily: 'PP Neue Montreal, Inter Tight, sans-serif', fontSize: '42px', lineHeight: '1.1', maxWidth: '900px', fontWeight: 500, letterSpacing: '-0.01em' }}>Hitta rätt företag, snabbt.</p>
-            
-            {/* Clean CTA */}
+
             <Link href="/begar-offert">
               <Button className="inline-flex items-center bg-primary hover:bg-primary-dark text-white font-medium px-8 transition-colors group text-lg" style={{ height: '56px' }}>
                 Hitta Service
@@ -111,6 +51,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+
       {/* Company Directory Section */}
       <section className="py-16 bg-background">
         <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -121,23 +62,17 @@ export default function Home() {
           </div>
 
           <div className="max-w-2xl mb-8">
-            <SmartSearch 
+            <SmartSearch
               onSearch={handleSmartSearch}
               placeholder="Sök företag, ort eller specialområde..."
             />
           </div>
 
-          {/* Results header + sort dropdown (same behaviour as companies page) */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
-            <div>
-              {searchQuery && (
-                <p className="text-sm text-gray-500 mt-1">
-                  Sökning: "{searchQuery}"
-                </p>
-              )}
-            </div>
-            <SortOptions value={sortBy} onChange={setSortBy} />
-          </div>
+          {searchQuery && (
+            <p className="text-sm text-gray-500 mb-8">
+              Sökning: "{searchQuery}"
+            </p>
+          )}
 
           {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

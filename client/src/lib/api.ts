@@ -41,6 +41,15 @@ export const api = {
       return response.json();
     },
 
+    getCount: async (filters?: { search?: string; region?: string; categories?: string[] }): Promise<{ total: number }> => {
+      const params = new URLSearchParams();
+      if (filters?.search) params.append('search', filters.search);
+      if (filters?.region) params.append('region', filters.region);
+      if (filters?.categories?.length) params.append('categories', filters.categories.join(','));
+      const response = await apiRequest('GET', `/api/companies/count?${params.toString()}`);
+      return response.json();
+    },
+
     getBySlug: async (slug: string): Promise<CompanyDetail> => {
       const response = await apiRequest('GET', `/api/companies/${slug}`);
       return response.json();
