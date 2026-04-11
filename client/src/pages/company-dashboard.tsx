@@ -76,7 +76,7 @@ function CompanyDashboard() {
       if (!response.ok) {
         const body = await response.text().catch(() => '');
         console.error('[company-dashboard] /api/company/profile failed:', response.status, body);
-        throw new Error(`Failed to fetch company profile: ${response.status}`);
+        throw new Error(`HTTP ${response.status}: ${body || 'no body'}`);
       }
       const data = await response.json();
       setFormData(data);
@@ -170,6 +170,9 @@ function CompanyDashboard() {
       <div className="min-h-screen bg-background flex items-center justify-center px-4">
         <div className="max-w-md text-center space-y-3">
           <p className="text-gray-700 font-medium">Kunde inte ladda företagsprofil.</p>
+          <p className="text-sm text-gray-500 font-mono bg-gray-100 px-3 py-2 rounded text-left break-all">
+            {(error as Error).message}
+          </p>
           <p className="text-sm text-gray-500">Kontakta support om problemet kvarstår.</p>
           <button onClick={() => window.location.reload()} className="text-sm text-blue-600 hover:underline">
             Försök igen
