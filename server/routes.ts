@@ -319,11 +319,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Company not found" });
       }
 
-      const profile = await storage.getCompanyProfile(company.id) ?? {};
-      const contacts = await storage.getContactsByCompany(company.id);
+      let profile: Record<string, unknown> = {};
+      let contacts: unknown[] = [];
+      try {
+        profile = await storage.getCompanyProfile(company.id) ?? {};
+        contacts = await storage.getContactsByCompany(company.id);
+      } catch (enrichErr) {
+        console.warn("[company-profile/:id] Could not fetch profile/contacts — check migrations:", enrichErr);
+      }
+
       res.json({ ...company, profile, contacts });
     } catch (error) {
-      console.error("Error fetching company:", error);
+      console.error("Error fetching company by id:", error);
       res.status(500).json({ message: "Failed to fetch company" });
     }
   });
@@ -338,11 +345,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Company not found" });
       }
 
-      const profile = await storage.getCompanyProfile(company.id) ?? {};
-      const contacts = await storage.getContactsByCompany(company.id);
+      let profile: Record<string, unknown> = {};
+      let contacts: unknown[] = [];
+      try {
+        profile = await storage.getCompanyProfile(company.id) ?? {};
+        contacts = await storage.getContactsByCompany(company.id);
+      } catch (enrichErr) {
+        console.warn("[companies/:slug] Could not fetch profile/contacts — check migrations:", enrichErr);
+      }
+
       res.json({ ...company, profile, contacts });
     } catch (error) {
-      console.error("Error fetching company:", error);
+      console.error("Error fetching company by slug:", error);
       res.status(500).json({ message: "Failed to fetch company" });
     }
   });
