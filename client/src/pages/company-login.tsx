@@ -13,9 +13,9 @@ export default function CompanyLogin() {
           <div className="mx-auto mb-4 flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full">
             <Building className="h-6 w-6 text-blue-600" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Company Login</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Logga in som företag</h1>
           <p className="text-sm text-gray-600 mt-2">
-            Sign in with the Clerk account assigned to your company
+            Logga in med kontot kopplat till ert företag på Industrin.net
           </p>
         </div>
 
@@ -40,7 +40,7 @@ export default function CompanyLogin() {
             onClick={() => navigate("/")}
             className="text-gray-600 hover:text-gray-800"
           >
-            ← Back to Industrin.se
+            ← Tillbaka till Industrin.net
           </Button>
         </div>
       </div>

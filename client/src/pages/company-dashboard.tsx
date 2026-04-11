@@ -108,7 +108,7 @@ function CompanyDashboard() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
+          <p className="text-gray-600">Laddar...</p>
         </div>
       </div>
     );
@@ -131,7 +131,7 @@ function CompanyDashboard() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
+          <p className="text-gray-600">Laddar...</p>
         </div>
       </div>
     );
@@ -145,7 +145,7 @@ function CompanyDashboard() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <Building className="h-6 w-6 text-blue-600 mr-3" />
-              <h1 className="text-2xl font-bold text-gray-900">Company Dashboard</h1>
+              <h1 className="text-2xl font-bold text-gray-900">Företagspanel</h1>
               <Badge variant="outline" className="ml-3 bg-blue-50 text-blue-700 border-blue-200">
                 {company?.name || 'Company'}
               </Badge>
@@ -157,11 +157,11 @@ function CompanyDashboard() {
                 onClick={() => company?.slug && navigate(`/companies/${company.slug}`)}
                 disabled={!company?.slug}
               >
-                View Public Profile
+                Visa publik profil
               </Button>
               <Button variant="outline" size="sm" onClick={logout}>
                 <LogOut className="h-4 w-4 mr-2" />
-                Logout
+                Logga ut
               </Button>
             </div>
           </div>
@@ -174,19 +174,19 @@ function CompanyDashboard() {
           {/* Company Profile Card */}
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Company Profile</CardTitle>
+              <CardTitle>Företagsprofil</CardTitle>
               {!isEditing ? (
                 <Button onClick={() => setIsEditing(true)} variant="outline" size="sm">
-                  Edit Profile
+                  Redigera profil
                 </Button>
               ) : (
                 <div className="flex space-x-2">
                   <Button onClick={() => { setIsEditing(false); setFormData(company); }} variant="outline" size="sm">
-                    Cancel
+                    Avbryt
                   </Button>
                   <Button onClick={handleSave} size="sm" disabled={updateMutation.isPending}>
                     <Save className="h-4 w-4 mr-2" />
-                    {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
+                    {updateMutation.isPending ? 'Sparar...' : 'Spara ändringar'}
                   </Button>
                 </div>
               )}
@@ -194,7 +194,7 @@ function CompanyDashboard() {
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Företagsnamn</label>
                   {isEditing ? (
                     <Input
                       value={formData.name || ''}
@@ -206,7 +206,7 @@ function CompanyDashboard() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Stad</label>
                   {isEditing ? (
                     <Input
                       value={formData.city || ''}
@@ -220,7 +220,7 @@ function CompanyDashboard() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
                     <Mail className="h-4 w-4 mr-1" />
-                    Email
+                    E-post
                   </label>
                   {isEditing ? (
                     <Input
@@ -229,14 +229,14 @@ function CompanyDashboard() {
                       onChange={(e) => handleChange('contactEmail', e.target.value)}
                     />
                   ) : (
-                    <p className="text-gray-900">{company?.contactEmail || 'Not provided'}</p>
+                    <p className="text-gray-900">{company?.contactEmail || 'Ej angivet'}</p>
                   )}
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
                     <Phone className="h-4 w-4 mr-1" />
-                    Phone
+                    Telefon
                   </label>
                   {isEditing ? (
                     <Input
@@ -244,14 +244,14 @@ function CompanyDashboard() {
                       onChange={(e) => handleChange('phone', e.target.value)}
                     />
                   ) : (
-                    <p className="text-gray-900">{company?.phone || 'Not provided'}</p>
+                    <p className="text-gray-900">{company?.phone || 'Ej angivet'}</p>
                   )}
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
                     <Globe className="h-4 w-4 mr-1" />
-                    Website
+                    Webbplats
                   </label>
                   {isEditing ? (
                     <Input
@@ -259,14 +259,14 @@ function CompanyDashboard() {
                       onChange={(e) => handleChange('website', e.target.value)}
                     />
                   ) : (
-                    <p className="text-gray-900">{company?.website || 'Not provided'}</p>
+                    <p className="text-gray-900">{company?.website || 'Ej angivet'}</p>
                   )}
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
                     <MapPin className="h-4 w-4 mr-1" />
-                    Address
+                    Adress
                   </label>
                   {isEditing ? (
                     <Input
@@ -274,7 +274,7 @@ function CompanyDashboard() {
                       onChange={(e) => handleChange('address', e.target.value)}
                     />
                   ) : (
-                    <p className="text-gray-900">{company?.address || 'Not provided'}</p>
+                    <p className="text-gray-900">{company?.address || 'Ej angivet'}</p>
                   )}
                 </div>
               </div>
@@ -282,18 +282,18 @@ function CompanyDashboard() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
                   <FileText className="h-4 w-4 mr-1" />
-                  Description
+                  Beskrivning
                 </label>
                 {isEditing ? (
                   <Textarea
                     value={formData.description_sv || formData.description || ''}
                     onChange={(e) => handleChange('description_sv', e.target.value)}
                     rows={6}
-                    placeholder="Describe your company and services..."
+                    placeholder="Beskriv ert företag och era tjänster..."
                   />
                 ) : (
                   <p className="text-gray-700 whitespace-pre-wrap">
-                    {company?.description_sv || company?.description || 'No description provided'}
+                    {company?.description_sv || company?.description || 'Ingen beskrivning angiven'}
                   </p>
                 )}
               </div>
@@ -303,10 +303,10 @@ function CompanyDashboard() {
           {/* Quote Requests Card */}
           <Card>
             <CardHeader>
-              <CardTitle>Quote Requests</CardTitle>
+              <CardTitle>Offertförfrågningar</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-600">Quote request management coming soon...</p>
+              <p className="text-gray-600">Hantering av offertförfrågningar kommer snart...</p>
             </CardContent>
           </Card>
         </div>

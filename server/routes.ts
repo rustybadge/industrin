@@ -353,6 +353,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Company not found" });
       }
 
+      const existingClaims = await storage.getClaimRequestsByCompany(companyId);
+      const duplicate = existingClaims.find(
+        (c) => c.email.toLowerCase() === (req.body.email || '').toLowerCase()
+              && (c.status === 'pending' || c.status === 'approved')
+      );
+      if (duplicate) {
+        return res.status(409).json({
+          message: duplicate.status === 'approved'
+            ? 'En ansökan för detta företag och denna e-postadress har redan godkänts.'
+            : 'En ansökan för detta företag och denna e-postadress väntar redan på granskning.',
+        });
+      }
+
       const claimData = {
         ...req.body,
         companyId: companyId
@@ -628,6 +641,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.warn("Could not copy service categories to company profile:", catError);
       }
 
+      // Send approval email to claimant
+      if (process.env.RESEND_API_KEY) {
+        try {
+          const portalUrl = COMPANY_PORTAL_URL ?? 'https://www.industrin.net/company/login';
+          await resend.emails.send({
+            from: 'Industrin.net <noreply@industrin.net>',
+            to: claimRequest.email,
+            subject: `Din ägaransökan för ${company.name} har godkänts`,
+            html: `
+              <div style="font-family:sans-serif;max-width:600px;margin:0 auto;color:#111827;">
+                <h2 style="font-size:20px;margin-bottom:16px;">Din ägaransökan har godkänts</h2>
+                <p>Hej ${claimRequest.name},</p>
+                <p>Vi har granskat din ansökan och godkänt dig som ägare av <strong>${company.name}</strong> på Industrin.net.</p>
+                <p>Du kommer inom kort att få ett <strong>separat inbjudningsmail</strong> från vårt system. Acceptera inbjudan så kommer du direkt till företagsportalen där du kan hantera er profil.</p>
+                <p>Har du redan ett konto kan du logga in direkt här:</p>
+                <p style="margin:24px 0;">
+                  <a href="${portalUrl}" style="background:#111827;color:#fff;padding:10px 20px;text-decoration:none;border-radius:6px;">Logga in på företagsportalen</a>
+                </p>
+                <p>Hör av dig om du har några frågor.</p>
+                <p>Med vänliga hälsningar,<br/>Industrin.net-teamet</p>
+              </div>
+            `,
+          });
+        } catch (emailError) {
+          console.warn('Could not send approval email to claimant:', emailError);
+        }
+      }
+
       // Update claim request status
       await storage.updateClaimRequestStatus(id, 'approved', null, reviewNotes);
       
@@ -653,8 +694,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { id } = req.params;
       const { reviewNotes } = req.body;
 
+      const claimRequest = await storage.getClaimRequestById(id);
+      if (!claimRequest) {
+        return res.status(404).json({ message: 'Claim request not found' });
+      }
+
+      const company = await storage.getCompanyById(claimRequest.companyId);
+
       await storage.updateClaimRequestStatus(id, 'rejected', null, reviewNotes);
-      
+
+      // Send rejection email to claimant
+      if (process.env.RESEND_API_KEY) {
+        try {
+          await resend.emails.send({
+            from: 'Industrin.net <noreply@industrin.net>',
+            to: claimRequest.email,
+            subject: `Angående din ägaransökan för ${company?.name ?? 'företaget'}`,
+            html: `
+              <div style="font-family:sans-serif;max-width:600px;margin:0 auto;color:#111827;">
+                <h2 style="font-size:20px;margin-bottom:16px;">Angående din ägaransökan</h2>
+                <p>Hej ${claimRequest.name},</p>
+                <p>Tack för att du skickade in en ägaransökan för <strong>${company?.name ?? 'företaget'}</strong> på Industrin.net.</p>
+                <p>Efter granskning kan vi tyvärr inte godkänna ansökan vid detta tillfälle.</p>
+                <p>Har du frågor eller vill lämna mer information är du välkommen att kontakta oss på <a href="mailto:kontakt@industrin.net">kontakt@industrin.net</a>.</p>
+                <p>Med vänliga hälsningar,<br/>Industrin.net-teamet</p>
+              </div>
+            `,
+          });
+        } catch (emailError) {
+          console.warn('Could not send rejection email to claimant:', emailError);
+        }
+      }
+
       res.json({ message: 'Claim request rejected' });
     } catch (error) {
       console.error("Error rejecting claim request:", error);
