@@ -81,11 +81,15 @@ const ensureCompanyMember: RequestHandler = async (req, res, next) => {
 
   let companyId = metadata.companyId;
   let role = metadata.role;
+  let resolvedVia = 'jwt-claims';
 
   // Fallback 1: org_id present in JWT → resolve company via Clerk org
   if (!companyId && metadata.orgId) {
     const company = await storage.getCompanyByClerkOrgId(metadata.orgId);
-    if (company) companyId = company.id;
+    if (company) {
+      companyId = company.id;
+      resolvedVia = 'jwt-orgId';
+    }
   }
 
   // Fallback 2: JWT has no publicMetadata claims → hit Clerk API directly
@@ -94,7 +98,10 @@ const ensureCompanyMember: RequestHandler = async (req, res, next) => {
       const clerkUser = await clerkClient.users.getUser(auth.userId);
       const userMeta = (clerkUser.publicMetadata || {}) as Record<string, unknown>;
       if (!role && userMeta.role) role = userMeta.role as string;
-      if (!companyId && userMeta.companyId) companyId = userMeta.companyId as string;
+      if (!companyId && userMeta.companyId) {
+        companyId = userMeta.companyId as string;
+        resolvedVia = 'clerk-api';
+      }
     } catch (err) {
       console.warn('[ensureCompanyMember] Clerk API fallback failed:', err);
     }
@@ -115,6 +122,7 @@ const ensureCompanyMember: RequestHandler = async (req, res, next) => {
     return res.status(403).json({ message: "Company access required" });
   }
 
+  console.log(`[ensureCompanyMember] resolved userId=${auth.userId} → companyId=${companyId} via ${resolvedVia}`);
   req.companyId = companyId;
   next();
 };
@@ -992,16 +1000,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Get company profile (for company admin) — returns company + extended profile + contacts
   app.get("/api/company/profile", requireAuth(), ensureCompanyMember, async (req: any, res) => {
+    const companyId = req.companyId!;
+    console.log(`[GET /api/company/profile] companyId=${companyId}`);
     try {
-      const company = await storage.getCompanyById(req.companyId!);
+      const company = await storage.getCompanyById(companyId);
       if (!company) {
+        console.warn(`[GET /api/company/profile] company not found for id=${companyId}`);
         return res.status(404).json({ message: 'Company not found' });
       }
-      const profile = await storage.getCompanyProfile(req.companyId!) ?? {};
-      const companyContacts = await storage.getContactsByCompany(req.companyId!);
+      console.log(`[GET /api/company/profile] company found: ${company.name}`);
+
+      let profile: any = {};
+      try {
+        profile = await storage.getCompanyProfile(companyId) ?? {};
+        console.log(`[GET /api/company/profile] profile loaded`);
+      } catch (profileErr) {
+        console.warn(`[GET /api/company/profile] getCompanyProfile failed (non-fatal):`, profileErr);
+      }
+
+      let companyContacts: any[] = [];
+      try {
+        companyContacts = await storage.getContactsByCompany(companyId);
+        console.log(`[GET /api/company/profile] contacts loaded: ${companyContacts.length}`);
+      } catch (contactsErr) {
+        console.warn(`[GET /api/company/profile] getContactsByCompany failed (non-fatal):`, contactsErr);
+      }
+
       res.json({ ...company, profile, contacts: companyContacts });
     } catch (error) {
-      console.error("Error fetching company profile:", error);
+      console.error(`[GET /api/company/profile] fatal error for companyId=${companyId}:`, error);
       res.status(500).json({ message: "Failed to fetch company profile" });
     }
   });
