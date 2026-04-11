@@ -168,12 +168,14 @@ function CompanyDashboard() {
   if (error) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center px-4">
-        <div className="max-w-md text-center space-y-3">
+        <div className="max-w-md w-full text-center space-y-3">
           <p className="text-gray-700 font-medium">Kunde inte ladda företagsprofil.</p>
-          <p className="text-sm text-gray-500 font-mono bg-gray-100 px-3 py-2 rounded text-left break-all">
-            {(error as Error).message}
-          </p>
-          <p className="text-sm text-gray-500">Kontakta support om problemet kvarstår.</p>
+          <div className="text-xs font-mono bg-gray-100 px-3 py-2 rounded text-left break-all space-y-1">
+            <p><span className="text-gray-500">error:</span> {(error as Error).message}</p>
+            <p><span className="text-gray-500">companyId:</span> {companyUser?.companyId ?? 'none'}</p>
+            <p><span className="text-gray-500">userId:</span> {companyUser?.id ?? 'none'}</p>
+            <p><span className="text-gray-500">role:</span> {companyUser?.role ?? 'none'}</p>
+          </div>
           <button onClick={() => window.location.reload()} className="text-sm text-blue-600 hover:underline">
             Försök igen
           </button>
