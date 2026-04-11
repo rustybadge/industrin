@@ -2,7 +2,7 @@
 // Pings the Render backend every 14 minutes to prevent the free-tier cold-start
 // (Render spins down services after 15 minutes of inactivity).
 
-import { Config } from "@netlify/functions";
+import type { Config } from "@netlify/functions";
 
 const RENDER_BASE_URL =
   process.env.API_URL ||
