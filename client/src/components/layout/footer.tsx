@@ -1,6 +1,3 @@
-import { Facebook, Linkedin, Twitter, Youtube, Instagram, Mail } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import logoImage from "@/assets/images/logo.png";
 
 export default function Footer() {
@@ -9,99 +6,47 @@ export default function Footer() {
       <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Logo and Tagline Section */}
         <div className="flex items-center justify-between py-12 mb-16 border-b border-gray-200">
-          <img 
-            src={logoImage} 
-            alt="Industrin.net Logo" 
+          <img
+            src={logoImage}
+            alt="Industrin.net Logo"
             className="h-8 w-auto"
           />
-          <span className="text-gray-900 font-medium" style={{ fontSize: '24px' }}>Keep Industry Moving.</span>
+          <span className="text-gray-900 font-medium" style={{ fontSize: '24px' }}>Hitta rätt serviceföretag, snabbt.</span>
         </div>
 
-        {/* Main Footer Content - Two Column Layout */}
-        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-8">
-          {/* Left Side - Three Columns of Links */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:flex-1 lg:max-w-4xl">
-            {/* Get Support Column */}
-            <div>
-              <h4 className="font-bold text-gray-900 mb-4">Hitta service</h4>
-              <ul className="space-y-2 text-gray-600">
-                <li><a href="/begar-offert" className="hover:text-gray-900 transition-colors">Begär offert</a></li>
-                <li><a href="/companies" className="hover:text-gray-900 transition-colors">Hitta företag A–Ö</a></li>
-              </ul>
-            </div>
-
-            {/* Provide Support Column */}
-            <div>
-              <h4 className="font-bold text-gray-900 mb-4">Bli leverantör</h4>
-              <ul className="space-y-2 text-gray-600">
-                <li>
-                  <a href="#" className="hover:text-gray-900 transition-colors">
-                    Registrera företag gratis
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-gray-900 transition-colors">
-                    Erbjud era tjänster
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-gray-900 transition-colors">
-                    Gör anspråk på ert företag
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            {/* About Us Column */}
-            <div>
-              <h4 className="font-bold text-gray-900 mb-4">Om oss</h4>
-              <ul className="space-y-2 text-gray-600">
-                <li>
-                  <a href="#" className="hover:text-gray-900 transition-colors">
-                    Kontakta oss
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-gray-900 transition-colors">
-                    Om Industrin.net
-                  </a>
-                </li>
-              </ul>
-            </div>
+        {/* Main Footer Content - Three Link Columns */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl">
+          {/* Hitta service */}
+          <div>
+            <h4 className="font-bold text-gray-900 mb-4">Hitta service</h4>
+            <ul className="space-y-2 text-gray-600">
+              <li><a href="/begar-offert" className="hover:text-gray-900 transition-colors">Begär offert</a></li>
+              <li><a href="/companies" className="hover:text-gray-900 transition-colors">Hitta företag A–Ö</a></li>
+            </ul>
           </div>
 
-          {/* Right Side - Social Media and Email Subscription */}
-          <div className="flex flex-col items-end space-y-6">
-            {/* Social Media Icons */}
-            <div className="flex items-center space-x-4">
-              <a href="#" className="text-gray-400 hover:text-gray-600 transition-colors">
-                <Twitter className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-gray-600 transition-colors">
-                <Instagram className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-gray-600 transition-colors">
-                <Linkedin className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-gray-600 transition-colors">
-                <Youtube className="h-5 w-5" />
-              </a>
-            </div>
+          {/* Bli leverantör */}
+          <div>
+            <h4 className="font-bold text-gray-900 mb-4">Bli leverantör</h4>
+            <ul className="space-y-2 text-gray-600">
+              <li>
+                <a href="/companies" className="hover:text-gray-900 transition-colors">
+                  Sök upp ditt företag
+                </a>
+              </li>
+            </ul>
+          </div>
 
-            {/* Email Subscription */}
-            <div className="flex items-center space-x-2">
-              <Input 
-                type="email" 
-                placeholder="Enter your email" 
-                className="w-48 h-9 text-sm border-gray-300 focus:border-gray-400 focus:ring-gray-400"
-              />
-              <Button 
-                size="sm" 
-                className="h-9 px-4 bg-gray-900 hover:bg-gray-800 text-white text-sm"
-              >
-                Subscribe
-              </Button>
-            </div>
+          {/* Om oss */}
+          <div>
+            <h4 className="font-bold text-gray-900 mb-4">Om oss</h4>
+            <ul className="space-y-2 text-gray-600">
+              <li>
+                <a href="mailto:info@industrin.net" className="hover:text-gray-900 transition-colors">
+                  Kontakta oss
+                </a>
+              </li>
+            </ul>
           </div>
         </div>
 
@@ -109,9 +54,8 @@ export default function Footer() {
         <div className="border-t border-gray-200 pt-8 mt-8 text-center text-gray-500 text-sm">
           <p className="space-x-4">
             <span>&copy; Industrin.net. Alla rättigheter förbehållna.</span>
-            <a href="#" className="hover:text-gray-700">Terms &amp; Conditions</a>
-            <a href="/integritetspolicy" className="hover:text-gray-700">Privacy Policy</a>
-            <a href="#" className="hover:text-gray-700">Cookies</a>
+            <a href="/villkor" className="hover:text-gray-700">Användarvillkor</a>
+            <a href="/integritetspolicy" className="hover:text-gray-700">Integritetspolicy</a>
           </p>
         </div>
       </div>

@@ -190,10 +190,10 @@ export default function ClaimRequest() {
           <Card className="border border-gray-200 shadow-sm text-center" data-testid="claim-success-message">
             <CardContent className="p-8">
               <CheckCircle className="h-16 w-16 text-green-600 mx-auto mb-6" />
-              <h1 className="text-2xl font-bold text-gray-900 mb-4">Ansökan skickad!</h1>
+              <h1 className="text-2xl font-bold text-gray-900 mb-4">Ansökan mottagen</h1>
               <p className="text-gray-600 mb-6 leading-relaxed max-w-2xl mx-auto">
-                Tack för din ansökan om kontroll över <strong>{company?.name}</strong>. 
-                Vi granskar din ansökan och återkommer till dig via e-post.
+                Bra jobbat. Vi har tagit emot din ansökan för <strong>{company?.name}</strong> och
+                granskar den inom kort. Du hör från oss via e-post så snart den är behandlad.
               </p>
               <Button 
                 onClick={() => navigate(`/companies/${companySlug || ''}`)}
@@ -230,7 +230,7 @@ export default function ClaimRequest() {
               <h1 className="font-bold mb-3 tracking-tight text-[42px] text-[#171717]">
                 Äger du detta företag?
               </h1>
-              <p className="text-gray-600">Ansök om kontroll över {company?.name}</p>
+              <p className="text-gray-600">Ta hand om företagsprofilen för {company?.name}</p>
             </CardHeader>
           
             <CardContent className="px-0">
@@ -384,7 +384,7 @@ export default function ClaimRequest() {
                       <FormLabel className="text-sm font-medium">Beskriv din relation till företaget</FormLabel>
                       <FormControl>
                         <Textarea 
-                          placeholder="T.ex. Ägare, VD, Ansvarig för marknadsföring..."
+                          placeholder="T.ex. jag är ägare och grundare av företaget."
                           className="min-h-[80px] text-sm border-gray-300 focus:border-primary focus:ring-primary resize-none"
                           {...field} 
                         />

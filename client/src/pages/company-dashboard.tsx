@@ -169,7 +169,7 @@ function CompanyDashboard() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <Building className="h-6 w-6 text-blue-600 mr-3" />
-              <h1 className="text-2xl font-bold text-gray-900">Företagspanel</h1>
+              <h1 className="text-2xl font-bold text-gray-900">Min företagssida</h1>
               <Badge variant="outline" className="ml-3 bg-blue-50 text-blue-700 border-blue-200">
                 {company?.name || 'Company'}
               </Badge>
@@ -313,7 +313,7 @@ function CompanyDashboard() {
                     value={formData.description_sv || formData.description || ''}
                     onChange={(e) => handleChange('description_sv', e.target.value)}
                     rows={6}
-                    placeholder="Beskriv ert företag och era tjänster..."
+                    placeholder="Beskriv ditt företag och dina tjänster..."
                   />
                 ) : (
                   <p className="text-gray-700 whitespace-pre-wrap">
@@ -330,7 +330,7 @@ function CompanyDashboard() {
               <CardTitle>Offertförfrågningar</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-600">Hantering av offertförfrågningar kommer snart...</p>
+              <p className="text-gray-600">Offertförfrågningar samlas här. Funktionen är under uppbyggnad.</p>
             </CardContent>
           </Card>
         </div>

@@ -20,16 +20,16 @@ export default function Villkor() {
         <div className="text-gray-700 space-y-8">
           <p className="text-lg leading-relaxed">
             Industrin.net är ett svenskt B2B-företagsregister för serviceföretag inom industrin.
-            Dessa villkor gäller för dig som använder tjänsten, i synnerhet för dig som ansöker om
-            kontroll över en företagsprofil.
+            Dessa villkor gäller för dig som använder tjänsten — framför allt för dig som ansöker
+            om att förvalta en företagsprofil.
           </p>
 
           <section>
             <h2 className="text-3xl font-bold text-[#1f2937] mb-4">Ägaranspråk</h2>
             <p className="leading-relaxed mb-4">
-              Genom att ansöka om kontroll över en företagsprofil på Industrin.net bekräftar du att
-              du är behörig att representera det aktuella företaget — exempelvis som ägare, VD eller
-              annan person med fullmakt att agera å företagets vägnar.
+              Genom att ansöka om att förvalta en företagsprofil på Industrin.net bekräftar du att
+              du är behörig att representera företaget — till exempel som ägare, VD eller
+              en person som har rätt att agera för företagets räkning.
             </p>
             <p className="leading-relaxed">
               Ett godkänt ägaranspråk ger dig möjlighet att uppdatera företagets profilinformation
@@ -59,8 +59,8 @@ export default function Villkor() {
             <h2 className="text-3xl font-bold text-[#1f2937] mb-4">Ansvar</h2>
             <p className="leading-relaxed mb-4">
               Industrin.net förbehåller sig rätten att neka, återkalla eller avsluta åtkomst till
-              en företagsprofil om vi bedömer att villkoren inte uppfylls eller att information på
-              plattformen är felaktig eller vilseledande.
+              en företagsprofil om villkoren inte uppfylls eller om information på plattformen
+              är felaktig eller missvisande.
             </p>
             <p className="leading-relaxed">
               Du ansvarar för att information du publicerar eller uppdaterar i din företagsprofil är
