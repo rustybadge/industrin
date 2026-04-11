@@ -11,6 +11,7 @@ import CompanyProfile from "@/pages/company-profile";
 import ClaimRequest from "@/pages/claim-request";
 import QuoteRequest from "@/pages/quote-request";
 import Integritetspolicy from "@/pages/integritetspolicy";
+import Villkor from "@/pages/villkor";
 import AdminLogin from "@/pages/admin-login";
 import AdminDashboard from "@/pages/admin-dashboard";
 import AdminSettings from "@/pages/admin-settings";
@@ -36,9 +37,9 @@ function Router() {
         <Route path="/admin/login/:splat*" component={AdminLogin} />
         <Route path="/admin/" component={AdminDashboard} />
         <Route path="/admin" component={AdminDashboard} />
-        <Route path="/admin/:splat*" component={AdminDashboard} />
         <Route path="/admin/settings" component={AdminSettings} />
         <Route path="/admin/settings/*" component={AdminSettings} />
+        <Route path="/admin/:splat*" component={AdminDashboard} />
         
         {/* Company admin routes - no header/footer */}
         <Route path="/company/login" component={CompanyLogin} />
@@ -128,7 +129,17 @@ function Router() {
             <Footer />
           </div>
         </Route>
-        
+
+        <Route path="/villkor">
+          <div className="min-h-screen flex flex-col">
+            <Header />
+            <main className="flex-1">
+              <Villkor />
+            </main>
+            <Footer />
+          </div>
+        </Route>
+
         <Route>
           <div className="min-h-screen flex flex-col">
             <Header />

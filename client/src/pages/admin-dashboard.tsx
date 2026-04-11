@@ -4,12 +4,22 @@ import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Users, 
-  Building, 
-  FileText, 
-  CheckCircle, 
-  XCircle, 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
+  Users,
+  Building,
+  FileText,
+  CheckCircle,
+  XCircle,
   Clock,
   LogOut,
   Settings,
@@ -61,6 +71,8 @@ export default function AdminDashboard() {
   const { toast } = useToast();
   const [selectedTab, setSelectedTab] = useState<'overview' | 'claims'>('overview');
   const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [resetConfirmId, setResetConfirmId] = useState<string | null>(null);
 
   const fetchWithAdminAuth = useCallback(
     async (input: RequestInfo, init?: RequestInit) => {
@@ -83,7 +95,7 @@ export default function AdminDashboard() {
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
+          <p className="text-gray-600">Laddar...</p>
         </div>
       </div>
     );
@@ -171,24 +183,24 @@ export default function AdminDashboard() {
         const data = await response.json();
         refetchClaims();
         toast({
-          title: "Claim approved",
+          title: "Ansökan godkänd",
           description: data.status === 'membership'
-            ? `${companyName} already had a Clerk account. Access granted automatically.`
-            : `Invitation sent via Clerk${data.invitationEmail ? ` to ${data.invitationEmail}` : ''}.`,
+            ? `${companyName} hade redan ett konto. Tillgång beviljad automatiskt. Bekräftelsemail skickat till sökanden.`
+            : `Inbjudan skickad via e-post till ${data.invitationEmail ?? 'sökanden'}. Bekräftelsemail skickat till sökanden.`,
         });
       } else {
         const errorData = await response.json();
         toast({
-          title: "Failed to approve claim",
-          description: errorData.message || 'Unknown error',
+          title: "Kunde inte godkänna ansökan",
+          description: errorData.message || 'Okänt fel',
           variant: "destructive"
         });
       }
     } catch (error) {
       console.error('Failed to approve claim:', error);
       toast({
-        title: "Error",
-        description: 'Failed to approve claim. Please try again.',
+        title: "Fel",
+        description: 'Kunde inte godkänna ansökan. Försök igen.',
         variant: "destructive"
       });
     }
@@ -207,22 +219,22 @@ export default function AdminDashboard() {
         refetchCompanyUsers();
         refetchClaims();
         toast({
-          title: "Access revoked",
-          description: "Company user access has been revoked."
+          title: "Åtkomst återkallad",
+          description: "Användarens åtkomst har återkallats."
         });
       } else {
         const errorData = await response.json();
         toast({
-          title: "Failed to revoke access",
-          description: errorData.message || 'Unknown error',
+          title: "Kunde inte återkalla åtkomst",
+          description: errorData.message || 'Okänt fel',
           variant: "destructive"
         });
       }
     } catch (error) {
       console.error('Failed to revoke access:', error);
       toast({
-        title: "Error",
-        description: 'Failed to revoke access. Please try again.',
+        title: "Fel",
+        description: 'Kunde inte återkalla åtkomst. Försök igen.',
         variant: "destructive"
       });
     }
@@ -241,22 +253,22 @@ export default function AdminDashboard() {
         refetchCompanyUsers();
         refetchClaims();
         toast({
-          title: "Access reactivated",
-          description: "Company user access has been reactivated."
+          title: "Åtkomst återaktiverad",
+          description: "Användarens åtkomst har återaktiverats."
         });
       } else {
         const errorData = await response.json();
         toast({
-          title: "Failed to reactivate access",
-          description: errorData.message || 'Unknown error',
+          title: "Kunde inte återaktivera åtkomst",
+          description: errorData.message || 'Okänt fel',
           variant: "destructive"
         });
       }
     } catch (error) {
       console.error('Failed to reactivate access:', error);
       toast({
-        title: "Error",
-        description: 'Failed to reactivate access. Please try again.',
+        title: "Fel",
+        description: 'Kunde inte återaktivera åtkomst. Försök igen.',
         variant: "destructive"
       });
     }
@@ -274,49 +286,44 @@ export default function AdminDashboard() {
       if (response.ok) {
         refetchClaims();
         toast({
-          title: "Claim rejected",
-          description: "The claim request has been rejected."
+          title: "Ansökan avvisad",
+          description: "Ansökan har avvisats."
         });
       } else {
         const errorData = await response.json();
         toast({
-          title: "Failed to reject claim",
-          description: errorData.message || 'Unknown error',
+          title: "Kunde inte avvisa ansökan",
+          description: errorData.message || 'Okänt fel',
           variant: "destructive"
         });
       }
     } catch (error) {
       console.error('Failed to reject claim:', error);
       toast({
-        title: "Error",
-        description: 'Failed to reject claim. Please try again.',
+        title: "Fel",
+        description: 'Kunde inte avvisa ansökan. Försök igen.',
         variant: "destructive"
       });
     }
   };
 
   const handleDeleteClaim = async (claimId: string) => {
-    if (!confirm('Delete this claim request permanently?')) return;
     try {
       const response = await fetchWithAdminAuth(`/api/admin/claim-requests/${claimId}/delete`, {
         method: 'POST',
       });
       if (response.ok) {
         refetchClaims();
-        toast({ title: "Deleted", description: "Claim request removed." });
+        toast({ title: "Raderad", description: "Ansökan har tagits bort." });
       } else {
-        toast({ title: "Error", description: "Failed to delete.", variant: "destructive" });
+        toast({ title: "Fel", description: "Kunde inte radera.", variant: "destructive" });
       }
     } catch (error) {
-      toast({ title: "Error", description: "Failed to delete.", variant: "destructive" });
+      toast({ title: "Fel", description: "Kunde inte radera.", variant: "destructive" });
     }
   };
 
   const handleResetClaim = async (claimId: string) => {
-    if (!confirm('Are you sure you want to reset this claim to pending? This will allow you to approve it again.')) {
-      return;
-    }
-
     try {
       const response = await fetchWithAdminAuth(`/api/admin/claim-requests/${claimId}/reset`, {
         method: 'POST',
@@ -328,22 +335,22 @@ export default function AdminDashboard() {
       if (response.ok) {
         refetchClaims();
         toast({
-          title: "Claim reset",
-          description: "The claim has been reset to pending. You can now approve it again."
+          title: "Ansökan återställd",
+          description: "Ansökan har återställts till väntande. Du kan nu godkänna den igen."
         });
       } else {
         const errorData = await response.json();
         toast({
-          title: "Failed to reset claim",
-          description: errorData.message || 'Unknown error',
+          title: "Kunde inte återställa ansökan",
+          description: errorData.message || 'Okänt fel',
           variant: "destructive"
         });
       }
     } catch (error) {
       console.error('Failed to reset claim:', error);
       toast({
-        title: "Error",
-        description: 'Failed to reset claim. Please try again.',
+        title: "Fel",
+        description: 'Kunde inte återställa ansökan. Försök igen.',
         variant: "destructive"
       });
     }
@@ -352,11 +359,11 @@ export default function AdminDashboard() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'pending':
-        return <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200"><Clock className="h-3 w-3 mr-1" />Pending</Badge>;
+        return <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200"><Clock className="h-3 w-3 mr-1" />Väntar</Badge>;
       case 'approved':
-        return <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200"><CheckCircle className="h-3 w-3 mr-1" />Approved</Badge>;
+        return <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200"><CheckCircle className="h-3 w-3 mr-1" />Godkänd</Badge>;
       case 'rejected':
-        return <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200"><XCircle className="h-3 w-3 mr-1" />Rejected</Badge>;
+        return <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200"><XCircle className="h-3 w-3 mr-1" />Avvisad</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -369,7 +376,7 @@ export default function AdminDashboard() {
         <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
+              <h1 className="text-2xl font-bold text-gray-900">Adminsida</h1>
               <Badge variant="outline" className="ml-3 bg-blue-50 text-blue-700 border-blue-200">
                 {admin?.username}
               </Badge>
@@ -377,11 +384,11 @@ export default function AdminDashboard() {
             <div className="flex items-center space-x-4">
               <Button variant="outline" size="sm" onClick={() => navigate('/admin/settings')}>
                 <Settings className="h-4 w-4 mr-2" />
-                Settings
+                Inställningar
               </Button>
               <Button variant="outline" size="sm" onClick={logout}>
                 <LogOut className="h-4 w-4 mr-2" />
-                Logout
+                Logga ut
               </Button>
             </div>
           </div>
@@ -400,7 +407,7 @@ export default function AdminDashboard() {
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              Overview
+              Översikt
             </button>
             <button
               onClick={() => setSelectedTab('claims')}
@@ -410,7 +417,7 @@ export default function AdminDashboard() {
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              Claim Requests
+              Ägaransökningar
             </button>
           </div>
         </div>
@@ -420,22 +427,22 @@ export default function AdminDashboard() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {selectedTab === 'overview' && (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-900">Dashboard Overview</h2>
-            
+            <h2 className="text-2xl font-bold text-gray-900">Översikt</h2>
+
             {!admin ? (
               <div className="text-center py-8">
-                <p className="text-red-600 mb-4">You must be logged in to view the dashboard.</p>
-                <Button onClick={() => navigate('/admin/login')}>Go to Login</Button>
+                <p className="text-red-600 mb-4">Du måste vara inloggad för att se adminsidan.</p>
+                <Button onClick={() => navigate('/admin/login')}>Gå till inloggning</Button>
               </div>
             ) : statsError ? (
               <div className="text-center py-8">
                 <p className="text-red-600 mb-4">Error loading stats: {statsError.message}</p>
                 <p className="text-sm text-gray-600 mb-4">
-                  {statsError.message.includes('401') || statsError.message.includes('Unauthorized') 
-                    ? 'Your session may have expired. Please log in again.'
-                    : 'Please try refreshing the page.'}
+                  {statsError.message.includes('401') || statsError.message.includes('Unauthorized')
+                    ? 'Din session kan ha gått ut. Logga in igen.'
+                    : 'Prova att ladda om sidan.'}
                 </p>
-                <Button onClick={() => navigate('/admin/login')}>Go to Login</Button>
+                <Button onClick={() => navigate('/admin/login')}>Gå till inloggning</Button>
               </div>
             ) : (
               <>
@@ -443,7 +450,7 @@ export default function AdminDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Companies</CardTitle>
+                  <CardTitle className="text-sm font-medium">Totalt antal företag</CardTitle>
                   <Building className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
@@ -455,7 +462,7 @@ export default function AdminDashboard() {
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Pending Claims</CardTitle>
+                  <CardTitle className="text-sm font-medium">Väntande ansökningar</CardTitle>
                   <Clock className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
@@ -467,7 +474,7 @@ export default function AdminDashboard() {
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Approved Claims</CardTitle>
+                  <CardTitle className="text-sm font-medium">Godkända ansökningar</CardTitle>
                   <CheckCircle className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
@@ -479,7 +486,7 @@ export default function AdminDashboard() {
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Rejected Claims</CardTitle>
+                  <CardTitle className="text-sm font-medium">Avvisade ansökningar</CardTitle>
                   <XCircle className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
@@ -493,17 +500,17 @@ export default function AdminDashboard() {
             {/* Quick Actions */}
             <Card>
               <CardHeader>
-                <CardTitle>Quick Actions</CardTitle>
+                <CardTitle>Snabbåtgärder</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex space-x-4">
                   <Button onClick={() => setSelectedTab('claims')}>
                     <FileText className="h-4 w-4 mr-2" />
-                    Review Claims
+                    Granska ansökningar
                   </Button>
                   <Button variant="outline">
                     <TrendingUp className="h-4 w-4 mr-2" />
-                    View Analytics
+                    Visa statistik
                   </Button>
                 </div>
               </CardContent>
@@ -515,39 +522,39 @@ export default function AdminDashboard() {
 
         {selectedTab === 'claims' && (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-900">Claim Requests</h2>
-            
+            <h2 className="text-2xl font-bold text-gray-900">Ägaransökningar</h2>
+
             {!admin ? (
               <div className="text-center py-8">
-                <p className="text-red-600 mb-4">You must be logged in to view claim requests.</p>
-                <Button onClick={() => navigate('/admin/login')}>Go to Login</Button>
+                <p className="text-red-600 mb-4">Du måste vara inloggad för att se ansökningar.</p>
+                <Button onClick={() => navigate('/admin/login')}>Gå till inloggning</Button>
               </div>
             ) : claimsError ? (
               <div className="text-center py-8">
                 <p className="text-red-600 mb-4">Error loading claim requests: {claimsError.message}</p>
                 <p className="text-sm text-gray-600 mb-4">
                   {claimsError.message.includes('401') || claimsError.message.includes('Unauthorized')
-                    ? 'Your session may have expired. Please log in again.'
-                    : 'Please try refreshing the page.'}
+                    ? 'Din session kan ha gått ut. Logga in igen.'
+                    : 'Prova att ladda om sidan.'}
                 </p>
                 <div className="flex gap-2 justify-center">
-                  <Button onClick={() => refetchClaims()}>Retry</Button>
-                  <Button variant="outline" onClick={() => navigate('/admin/login')}>Go to Login</Button>
+                  <Button onClick={() => refetchClaims()}>Försök igen</Button>
+                  <Button variant="outline" onClick={() => navigate('/admin/login')}>Gå till inloggning</Button>
                 </div>
               </div>
             ) : claimsLoading ? (
               <div className="text-center py-8">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                <p className="text-gray-600">Loading claim requests...</p>
+                <p className="text-gray-600">Laddar ansökningar...</p>
               </div>
             ) : claimRequests && claimRequests.length === 0 ? (
               <div className="text-center py-8">
-                <p className="text-gray-600">No claim requests found.</p>
+                <p className="text-gray-600">Inga ansökningar hittades.</p>
               </div>
             ) : (
               <div className="space-y-4">
                 {claimRequests?.map((claim) => (
-                  <Card 
+                  <Card
                     key={claim.id}
                     data-testid="claim-card"
                     data-claim-id={claim.id}
@@ -563,19 +570,19 @@ export default function AdminDashboard() {
                             {getStatusBadge(claim.status)}
                           </div>
                           <div className="text-sm text-gray-600 space-y-1">
-                            <p><strong>Applicant:</strong> {claim.name}</p>
-                            <p><strong>Email:</strong> {claim.email}</p>
-                            {claim.phone && <p><strong>Phone:</strong> {claim.phone}</p>}
-                            <p><strong>Submitted:</strong> {new Date(claim.submittedAt).toLocaleDateString()}</p>
+                            <p><strong>Sökande:</strong> {claim.name}</p>
+                            <p><strong>E-post:</strong> {claim.email}</p>
+                            {claim.phone && <p><strong>Telefon:</strong> {claim.phone}</p>}
+                            <p><strong>Inlämnad:</strong> {new Date(claim.submittedAt).toLocaleDateString()}</p>
                             {claim.message && (
                               <div className="mt-2">
-                                <p><strong>Message:</strong></p>
+                                <p><strong>Meddelande:</strong></p>
                                 <p className="text-gray-700 bg-background p-2 rounded mt-1">{claim.message}</p>
                               </div>
                             )}
                             {claim.serviceCategories && claim.serviceCategories.length > 0 && (
                               <div className="mt-2">
-                                <p><strong>Service Categories:</strong></p>
+                                <p><strong>Tjänstekategorier:</strong></p>
                                 <div className="flex flex-wrap gap-1 mt-1">
                                   {claim.serviceCategories.map((category, index) => (
                                     <Badge key={index} variant="secondary" className="text-xs">
@@ -588,7 +595,7 @@ export default function AdminDashboard() {
                             {claim.status === 'approved' && (
                               <div className="mt-4 pt-4 border-t border-gray-200">
                                 <div className="flex items-center justify-between mb-3">
-                                  <p className="font-semibold text-gray-900">Company Users:</p>
+                                  <p className="font-semibold text-gray-900">Företagsanvändare:</p>
                                   <Button
                                     size="sm"
                                     variant="outline"
@@ -602,7 +609,7 @@ export default function AdminDashboard() {
                                     }}
                                   >
                                     <UserCheck className="h-4 w-4 mr-1" />
-                                    {selectedCompanyId === claim.companyId ? 'Hide Users' : 'View Users'}
+                                    {selectedCompanyId === claim.companyId ? 'Dölj användare' : 'Visa användare'}
                                   </Button>
                                 </div>
                                 {selectedCompanyId === claim.companyId && (
@@ -610,11 +617,11 @@ export default function AdminDashboard() {
                                     {companyUsersLoading ? (
                                       <div className="flex items-center gap-2 p-3">
                                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                                        <p className="text-sm text-gray-500">Loading users...</p>
+                                        <p className="text-sm text-gray-500">Laddar användare...</p>
                                       </div>
                                     ) : companyUsers && companyUsers.length === 0 ? (
                                       <p className="text-sm text-gray-500 p-3 bg-yellow-50 border border-yellow-200 rounded">
-                                        No company users found. This might mean the claim was approved but no user account was created.
+                                        Inga företagsanvändare hittades. Ansökan kan ha godkänts utan att ett användarkonto skapades.
                                       </p>
                                     ) : companyUsers ? (
                                       companyUsers.map((user) => (
@@ -622,11 +629,11 @@ export default function AdminDashboard() {
                                           <div className="flex-1">
                                             <p className="text-sm font-medium text-gray-900">{user.name}</p>
                                             <p className="text-xs text-gray-600">{user.email}</p>
-                                            <p className="text-xs text-gray-500 mt-1">Role: {user.role}</p>
+                                            <p className="text-xs text-gray-500 mt-1">Roll: {user.role}</p>
                                           </div>
                                           <div className="flex items-center gap-3 ml-4">
                                             <Badge variant={user.isActive ? "default" : "secondary"} className="min-w-[70px] justify-center">
-                                              {user.isActive ? 'Active' : 'Inactive'}
+                                              {user.isActive ? 'Aktiv' : 'Inaktiv'}
                                             </Badge>
                                             {user.isActive ? (
                                               <Button
@@ -636,7 +643,7 @@ export default function AdminDashboard() {
                                                 className="text-red-600 border-red-300 hover:bg-red-50 hover:border-red-400"
                                               >
                                                 <Ban className="h-3 w-3 mr-1" />
-                                                Revoke Access
+                                                Återkalla åtkomst
                                               </Button>
                                             ) : (
                                               <Button
@@ -646,14 +653,14 @@ export default function AdminDashboard() {
                                                 className="text-green-600 border-green-300 hover:bg-green-50 hover:border-green-400"
                                               >
                                                 <UserCheck className="h-3 w-3 mr-1" />
-                                                Activate
+                                                Aktivera
                                               </Button>
                                             )}
                                           </div>
                                         </div>
                                       ))
                                     ) : (
-                                      <p className="text-sm text-gray-500">Click "View Users" to load company users.</p>
+                                      <p className="text-sm text-gray-500">Klicka på 'Visa användare' för att ladda användare.</p>
                                     )}
                                   </div>
                                 )}
@@ -671,7 +678,7 @@ export default function AdminDashboard() {
                                 data-testid="approve-claim-button"
                               >
                                 <CheckCircle className="h-4 w-4 mr-1" />
-                                Approve
+                                Godkänn
                               </Button>
                               <Button
                                 size="sm"
@@ -680,7 +687,7 @@ export default function AdminDashboard() {
                                 className="border-red-300 text-red-600 hover:bg-red-50"
                               >
                                 <XCircle className="h-4 w-4 mr-1" />
-                                Reject
+                                Avvisa
                               </Button>
                             </>
                           )}
@@ -688,22 +695,22 @@ export default function AdminDashboard() {
                             <Button
                               size="sm"
                               variant="outline"
-                              onClick={() => handleResetClaim(claim.id)}
+                              onClick={() => setResetConfirmId(claim.id)}
                               className="border-orange-300 text-orange-600 hover:bg-orange-50"
                             >
                               <Clock className="h-4 w-4 mr-1" />
-                              Reset to Pending
+                              Återställ till väntande
                             </Button>
                           )}
                           {claim.status === 'rejected' && (
                             <Button
                               size="sm"
                               variant="outline"
-                              onClick={() => handleResetClaim(claim.id)}
+                              onClick={() => setResetConfirmId(claim.id)}
                               className="border-blue-300 text-blue-600 hover:bg-blue-50"
                             >
                               <Clock className="h-4 w-4 mr-1" />
-                              Reset to Pending
+                              Återställ till väntande
                             </Button>
                           )}
                           <Button
@@ -711,28 +718,28 @@ export default function AdminDashboard() {
                             variant="ghost"
                             onClick={() => window.open(`/companies/${claim.company?.slug}`, '_blank')}
                           >
-                            View Company
+                            Visa företag
                           </Button>
                           <Button
                             size="sm"
                             variant="ghost"
-                            onClick={() => handleDeleteClaim(claim.id)}
+                            onClick={() => setDeleteConfirmId(claim.id)}
                             className="text-red-500 hover:text-red-700 hover:bg-red-50"
                           >
-                            Delete
+                            Radera
                           </Button>
                         </div>
                       </div>
                     </CardContent>
                   </Card>
                 ))}
-                
+
                 {claimRequests?.length === 0 && (
                   <Card>
                     <CardContent className="p-8 text-center">
                       <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">No claim requests</h3>
-                      <p className="text-gray-600">There are no claim requests to review at the moment.</p>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">Inga ansökningar</h3>
+                      <p className="text-gray-600">Det finns inga ägaransökningar att granska just nu.</p>
                     </CardContent>
                   </Card>
                 )}
@@ -741,6 +748,58 @@ export default function AdminDashboard() {
           </div>
         )}
       </main>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog
+        open={deleteConfirmId !== null}
+        onOpenChange={(open) => { if (!open) setDeleteConfirmId(null); }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Radera ansökan</AlertDialogTitle>
+            <AlertDialogDescription>
+              Är du säker på att du vill radera denna ansökan permanent? Åtgärden kan inte ångras.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDeleteConfirmId(null)}>Avbryt</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                handleDeleteClaim(deleteConfirmId!);
+                setDeleteConfirmId(null);
+              }}
+            >
+              Radera
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Reset Confirmation Dialog */}
+      <AlertDialog
+        open={resetConfirmId !== null}
+        onOpenChange={(open) => { if (!open) setResetConfirmId(null); }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Återställ ansökan</AlertDialogTitle>
+            <AlertDialogDescription>
+              Är du säker på att du vill återställa ansökan till väntande? Du kan sedan godkänna den igen.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setResetConfirmId(null)}>Avbryt</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                handleResetClaim(resetConfirmId!);
+                setResetConfirmId(null);
+              }}
+            >
+              Återställ
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
     </div>
   );

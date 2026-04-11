@@ -28,6 +28,7 @@ function CompanyDashboard() {
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<any>({});
+  const [setupError, setSetupError] = useState(false);
   const setupAttempted = useRef(false);
 
   const fetchWithCompanyAuth = useCallback(
@@ -55,10 +56,10 @@ function CompanyDashboard() {
             // Metadata updated — reload to pick up new Clerk session
             window.location.reload();
           } else {
-            navigate('/company/login');
+            setSetupError(true);
           }
         } catch {
-          navigate('/company/login');
+          setSetupError(true);
         }
       });
     } else if (!authLoading && !companyUser && !isSignedIn) {
@@ -109,6 +110,29 @@ function CompanyDashboard() {
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Laddar...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (setupError) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center px-4">
+        <div className="max-w-md w-full text-center space-y-4">
+          <h1 className="text-xl font-bold text-gray-900">Kunde inte verifiera åtkomst</h1>
+          <p className="text-gray-600">
+            Vi kunde inte koppla ditt konto till ett godkänt företag. Kontakta oss på{" "}
+            <a href="mailto:info@industrin.net" className="text-blue-600 hover:underline">
+              info@industrin.net
+            </a>{" "}
+            om du tror att detta är ett misstag.
+          </p>
+          <button
+            onClick={() => window.location.href = '/'}
+            className="text-sm text-gray-500 hover:text-gray-700 underline"
+          >
+            Tillbaka till startsidan
+          </button>
         </div>
       </div>
     );

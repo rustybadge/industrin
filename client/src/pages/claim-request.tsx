@@ -193,7 +193,7 @@ export default function ClaimRequest() {
               <h1 className="text-2xl font-bold text-gray-900 mb-4">Ansökan skickad!</h1>
               <p className="text-gray-600 mb-6 leading-relaxed max-w-2xl mx-auto">
                 Tack för din ansökan om kontroll över <strong>{company?.name}</strong>. 
-                Vi kommer att granska din ansökan och återkomma via e-post inom 2-3 arbetsdagar.
+                Vi granskar din ansökan och återkommer till dig via e-post.
               </p>
               <Button 
                 onClick={() => navigate(`/companies/${companySlug || ''}`)}
@@ -410,7 +410,7 @@ export default function ClaimRequest() {
                       <div className="space-y-1 leading-none">
                         <FormLabel className="text-sm font-medium text-gray-900 leading-relaxed cursor-pointer">
                           Jag bekräftar att jag är behörig att representera detta företag och godkänner{" "}
-                          <a href="#" className="text-primary hover:underline font-medium">
+                          <a href="/villkor" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">
                             användarvillkoren
                           </a>
                           .
