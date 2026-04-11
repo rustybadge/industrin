@@ -68,12 +68,16 @@ function CompanyDashboard() {
   }, [authLoading, companyUser, isSignedIn, getToken, navigate]);
 
   // Fetch company profile — hooks must be before any early returns
-  const { data: company, isLoading } = useQuery({
+  const { data: company, isLoading, error } = useQuery({
     queryKey: ['/api/company/profile'],
     enabled: !!companyUser,
     queryFn: async () => {
       const response = await fetchWithCompanyAuth('/api/company/profile');
-      if (!response.ok) throw new Error('Failed to fetch company profile');
+      if (!response.ok) {
+        const body = await response.text().catch(() => '');
+        console.error('[company-dashboard] /api/company/profile failed:', response.status, body);
+        throw new Error(`Failed to fetch company profile: ${response.status}`);
+      }
       const data = await response.json();
       setFormData(data);
       return data;
@@ -156,6 +160,20 @@ function CompanyDashboard() {
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Laddar...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center px-4">
+        <div className="max-w-md text-center space-y-3">
+          <p className="text-gray-700 font-medium">Kunde inte ladda företagsprofil.</p>
+          <p className="text-sm text-gray-500">Kontakta support om problemet kvarstår.</p>
+          <button onClick={() => window.location.reload()} className="text-sm text-blue-600 hover:underline">
+            Försök igen
+          </button>
         </div>
       </div>
     );

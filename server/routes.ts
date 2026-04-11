@@ -79,20 +79,39 @@ const ensureCompanyMember: RequestHandler = async (req, res, next) => {
   const claims = (auth?.sessionClaims || {}) as JwtPayload;
   const metadata = claimsToMetadata(claims);
 
-  // If companyId missing but org_id present, resolve company by org id
   let companyId = metadata.companyId;
+  let role = metadata.role;
+
+  // Fallback 1: org_id present in JWT → resolve company via Clerk org
   if (!companyId && metadata.orgId) {
     const company = await storage.getCompanyByClerkOrgId(metadata.orgId);
-    if (company) {
-      companyId = company.id;
+    if (company) companyId = company.id;
+  }
+
+  // Fallback 2: JWT has no publicMetadata claims → hit Clerk API directly
+  if ((!role || !companyId) && auth.userId) {
+    try {
+      const clerkUser = await clerkClient.users.getUser(auth.userId);
+      const userMeta = (clerkUser.publicMetadata || {}) as Record<string, unknown>;
+      if (!role && userMeta.role) role = userMeta.role as string;
+      if (!companyId && userMeta.companyId) companyId = userMeta.companyId as string;
+    } catch (err) {
+      console.warn('[ensureCompanyMember] Clerk API fallback failed:', err);
     }
   }
 
   const hasCompanyRole =
-    metadata.role === "company" ||
+    role === "company" ||
     metadata.orgRole === COMPANY_MEMBER_ROLE;
 
   if (!hasCompanyRole || !companyId) {
+    console.warn('[ensureCompanyMember] 403 - missing company role or companyId', {
+      userId: auth.userId,
+      role,
+      companyId,
+      orgId: metadata.orgId,
+      orgRole: metadata.orgRole,
+    });
     return res.status(403).json({ message: "Company access required" });
   }
 
