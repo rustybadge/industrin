@@ -71,7 +71,7 @@ interface CompanyUser {
 }
 
 export default function AdminDashboard() {
-  const { admin, logout, isLoading: authLoading, getAdminToken } = useAdminAccess();
+  const { admin, logout, isLoading: authLoading, isSignedIn, getAdminToken } = useAdminAccess();
   const [, navigate] = useLocation();
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -92,10 +92,10 @@ export default function AdminDashboard() {
   );
 
   useEffect(() => {
-    if (!authLoading && !admin) {
+    if (!authLoading && !admin && isSignedIn === false) {
       navigate('/admin/login');
     }
-  }, [admin, authLoading, navigate]);
+  }, [admin, authLoading, isSignedIn, navigate]);
 
   if (authLoading) {
     return (
@@ -103,6 +103,26 @@ export default function AdminDashboard() {
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Laddar...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Signed in but not as admin — show access-denied instead of redirect loop
+  if (!admin && isSignedIn) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background px-4">
+        <div className="max-w-md w-full text-center space-y-4">
+          <h1 className="text-xl font-bold text-gray-900">Ingen adminåtkomst</h1>
+          <p className="text-gray-600">
+            Det inloggade kontot har inte administratörsbehörighet. Logga ut och logga in med ett adminkonto.
+          </p>
+          <button
+            onClick={logout}
+            className="inline-flex items-center px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded hover:bg-gray-700 transition-colors"
+          >
+            Logga ut
+          </button>
         </div>
       </div>
     );

@@ -56,6 +56,7 @@ export function useAdminAccess() {
   return {
     admin,
     isLoading,
+    isSignedIn: isLoaded ? !!user : null,
     logout,
     getAdminToken,
   };

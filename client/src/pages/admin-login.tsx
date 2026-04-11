@@ -1,8 +1,31 @@
 import { Link } from "wouter";
 import { SignIn } from "@clerk/clerk-react";
+import { useAdminAccess } from "@/hooks/use-admin-access";
 import IndustrinLogo from "@/components/ui/industrin-logo";
 
 export default function AdminLogin() {
+  const { admin, isSignedIn, isLoading, logout } = useAdminAccess();
+
+  // Already signed in but wrong role — offer sign-out so they don't get stuck
+  if (!isLoading && isSignedIn && !admin) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background px-4">
+        <div className="max-w-md w-full text-center space-y-4">
+          <h1 className="text-xl font-bold text-gray-900">Ingen adminåtkomst</h1>
+          <p className="text-gray-600">
+            Du är inloggad men har inte administratörsbehörighet. Logga ut och logga in med ett adminkonto.
+          </p>
+          <button
+            onClick={logout}
+            className="inline-flex items-center px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded hover:bg-gray-700 transition-colors"
+          >
+            Logga ut
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex">
       {/* Left panel — dark brand */}
