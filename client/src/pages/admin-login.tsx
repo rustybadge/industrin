@@ -6,8 +6,18 @@ import IndustrinLogo from "@/components/ui/industrin-logo";
 export default function AdminLogin() {
   const { admin, isSignedIn, isLoading, logout } = useAdminAccess();
 
-  // Already signed in but wrong role — offer sign-out so they don't get stuck
-  if (!isLoading && isSignedIn && !admin) {
+  // While Clerk is loading, show nothing — prevents <SignIn> from mounting
+  // and firing its auto-redirect before we know the session state.
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
+      </div>
+    );
+  }
+
+  // Signed in but not as admin — break the redirect loop with a sign-out screen.
+  if (isSignedIn && !admin) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background px-4">
         <div className="max-w-md w-full text-center space-y-4">
@@ -26,6 +36,16 @@ export default function AdminLogin() {
     );
   }
 
+  // Already signed in as admin — nothing to do here, /admin will pick them up.
+  if (isSignedIn && admin) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
+      </div>
+    );
+  }
+
+  // Not signed in — render the Clerk sign-in form.
   return (
     <div className="min-h-screen flex">
       {/* Left panel — dark brand */}
