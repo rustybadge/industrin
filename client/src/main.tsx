@@ -1,5 +1,6 @@
 import { createRoot } from "react-dom/client";
 import { ClerkProvider } from "@clerk/clerk-react";
+import { svSE } from "@clerk/localizations";
 import App from "./App";
 import "./index.css";
 
@@ -15,6 +16,7 @@ if (!clerkPublishableKey) {
 createRoot(document.getElementById("root")!).render(
   <ClerkProvider
     publishableKey={clerkPublishableKey}
+    localization={svSE}
     appearance={{
       layout: {
         socialButtonsPlacement: "bottom",
