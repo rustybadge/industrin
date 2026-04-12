@@ -154,6 +154,5 @@ export default function AdminLogin() {
         </div>
       </div>
     </div>
-  </div>
   );
 }
