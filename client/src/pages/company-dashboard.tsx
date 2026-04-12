@@ -19,6 +19,90 @@ import {
 } from 'lucide-react';
 import { useCompanyAccess } from '@/hooks/use-company-access';
 import { useAuth } from '@clerk/clerk-react';
+import { SERVICE_CATEGORIES } from '@/data/service-categories';
+
+function ServicesSection({
+  company,
+  fetchWithCompanyAuth,
+}: {
+  company: any;
+  fetchWithCompanyAuth: (input: RequestInfo, init?: RequestInit) => Promise<Response>;
+}) {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const [selected, setSelected] = useState<string[]>(company.categories ?? []);
+
+  useEffect(() => {
+    setSelected(company.categories ?? []);
+  }, [company.categories]);
+
+  const toggle = (subcategory: string) => {
+    setSelected((prev) =>
+      prev.includes(subcategory)
+        ? prev.filter((s) => s !== subcategory)
+        : [...prev, subcategory]
+    );
+  };
+
+  const mutation = useMutation({
+    mutationFn: async (categories: string[]) => {
+      const response = await fetchWithCompanyAuth('/api/company/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ categories }),
+      });
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({})) as { message?: string };
+        throw new Error(err.message ?? `Serverfel ${response.status}`);
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/company/profile'] });
+      toast({ title: 'Sparat', description: 'Era valda tjänster har sparats.' });
+    },
+    onError: (error: Error) => {
+      toast({ title: 'Kunde inte spara', description: error.message, variant: 'destructive' });
+    },
+  });
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Tjänster</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="space-y-4">
+          {Object.values(SERVICE_CATEGORIES).map((category) => (
+            <div key={category.id} className="border rounded-lg p-4">
+              <p className="text-sm font-semibold text-blue-700 mb-3">{category.name}</p>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                {category.subcategories.map((sub) => (
+                  <label key={sub} className="flex items-center gap-2 text-sm cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={selected.includes(sub)}
+                      onChange={() => toggle(sub)}
+                      className="rounded border-gray-300 text-blue-600"
+                    />
+                    {sub}
+                  </label>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+        <button
+          onClick={() => mutation.mutate(selected)}
+          disabled={mutation.isPending}
+          className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        >
+          {mutation.isPending ? 'Sparar...' : 'Spara tjänster'}
+        </button>
+      </CardContent>
+    </Card>
+  );
+}
 
 function CompanyDashboard() {
   const { companyUser, logout, isLoading: authLoading, getCompanyToken } = useCompanyAccess();
@@ -353,6 +437,11 @@ function CompanyDashboard() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Services Card */}
+          {company && (
+            <ServicesSection company={company} fetchWithCompanyAuth={fetchWithCompanyAuth} />
+          )}
 
           {/* Quote Requests Card */}
           <Card>

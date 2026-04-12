@@ -40,7 +40,7 @@ export const SERVICE_CATEGORIES: Record<string, ServiceCategory> = {
     subcategories: [
       'Elektrisk reparation', 'Automation', 'Robotikservice',
       'Elkonstruktion', 'Automationsinstallation', 'PLC-programmering',
-      'Frequensomriktare', 'Annat elektrisk service'
+      'Frekvensomriktare', 'Annat elektrisk service'
     ]
   },
   'svetsning-montage': {

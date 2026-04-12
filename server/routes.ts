@@ -1,6 +1,7 @@
 import type { Express, Request, RequestHandler } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { pool } from "./db";
 import { insertQuoteRequestSchema, insertClaimRequestSchema, insertContactSchema } from "@shared/schema";
 import type { Company } from "@shared/schema";
 import multer from "multer";
@@ -273,6 +274,27 @@ async function addUserToOrganizationOrInvite({
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // One-time startup migration: fix misspelled service category name
+  try {
+    await pool.query(
+      `UPDATE companies
+         SET categories = array_replace(categories, 'Frequensomriktare', 'Frekvensomriktare')
+         WHERE 'Frequensomriktare' = ANY(categories)`
+    );
+    await pool.query(
+      `UPDATE claim_requests
+         SET service_categories = replace(service_categories::text, 'Frequensomriktare', 'Frekvensomriktare')::json
+         WHERE service_categories::text LIKE '%Frequensomriktare%'`
+    );
+    await pool.query(
+      `UPDATE service_categories
+         SET name = 'Frekvensomriktare'
+         WHERE name = 'Frequensomriktare'`
+    );
+  } catch (err) {
+    console.warn('[startup] Frekvensomriktare spelling migration skipped or failed:', err);
+  }
+
   // Health / keep-alive — no auth required, must stay first
   app.get("/api/ping", (_req, res) => {
     res.json({ ok: true, ts: Date.now() });
