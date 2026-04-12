@@ -884,7 +884,7 @@ function CompanyEdit() {
       </header>
 
       {/* Content */}
-      <main className="max-w-4xl mx-auto px-6 py-8">
+      <main className="max-w-5xl mx-auto px-6 py-8">
         <AboutSection company={company} fetchWithCompanyAuth={fetchWithCompanyAuth} isFirst />
         <ContactInfoSection company={company} fetchWithCompanyAuth={fetchWithCompanyAuth} />
         <AddressSection company={company} fetchWithCompanyAuth={fetchWithCompanyAuth} />
