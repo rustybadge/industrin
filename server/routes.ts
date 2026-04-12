@@ -295,6 +295,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     console.warn('[startup] Frekvensomriktare spelling migration skipped or failed:', err);
   }
 
+  // One-time startup migration: add tier column to companies
+  try {
+    await pool.query(
+      `ALTER TABLE companies ADD COLUMN IF NOT EXISTS tier VARCHAR DEFAULT 'free'`
+    );
+  } catch (err) {
+    console.warn('[startup] tier column migration skipped or failed:', err);
+  }
+
   // Health / keep-alive — no auth required, must stay first
   app.get("/api/ping", (_req, res) => {
     res.json({ ok: true, ts: Date.now() });

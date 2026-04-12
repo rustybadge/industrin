@@ -158,6 +158,12 @@ export default function CompanyProfile() {
                       Utmärkt
                     </Badge>
                   )}
+                  {company.tier === 'premium' && (
+                    <Badge variant="secondary" className="bg-amber-50 text-amber-800 border border-amber-200 px-3 py-1">
+                      <Star className="h-3 w-3 mr-1" />
+                      Premium
+                    </Badge>
+                  )}
                 </div>
               </div>
             </div>

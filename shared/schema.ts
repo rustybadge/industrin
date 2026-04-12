@@ -39,6 +39,7 @@ export const companies = pgTable("companies", {
   isVerified: boolean("is_verified").default(false),
   clerkOrganizationId: text("clerk_organization_id").unique(),
   createdAt: timestamp("created_at").defaultNow(),
+  tier: varchar("tier").default('free'),
 });
 
 export const claimRequestStatusEnum = pgEnum('claim_request_status', ['pending', 'approved', 'rejected']);
