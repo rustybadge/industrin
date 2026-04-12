@@ -395,7 +395,7 @@ function CompanyDashboard() {
         </div>
 
         {/* Row 3: three analytics cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
 
           {/* Col 1: Synlighet per kanal */}
           <div className="rounded-lg border border-gray-200 bg-white p-5">
@@ -475,7 +475,7 @@ function CompanyDashboard() {
         </div>
 
         {/* Row 4: Snabb åtgärd */}
-        <div>
+        <div className="rounded-lg border border-gray-200 bg-white p-5">
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
             Snabb åtgärd
           </p>
