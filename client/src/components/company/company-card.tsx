@@ -43,9 +43,7 @@ export default function CompanyCard({ company }: CompanyCardProps) {
             <span>{company.city || company.location}</span>
           </div>
 
-          {!company.isClaimed && (
-            <p className="text-xs text-gray-400 mt-2">Ej hanterad — ta över profilen</p>
-          )}
+
         </CardContent>
       </Card>
     </Link>
