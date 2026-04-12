@@ -1084,7 +1084,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put("/api/company/profile", requireAuth(), ensureCompanyMember, async (req: any, res) => {
     try {
       const { id, slug, createdAt, clerkOrganizationId, profile: profileData, contacts: _c, ...companyFields } = req.body;
-      const company = await storage.updateCompany(req.companyId!, companyFields);
+      const company = Object.keys(companyFields).length > 0
+        ? await storage.updateCompany(req.companyId!, companyFields)
+        : await storage.getCompanyById(req.companyId!);
       if (!company) {
         return res.status(404).json({ message: 'Company not found' });
       }
