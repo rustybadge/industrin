@@ -77,8 +77,8 @@ export default function AdminLogin() {
           </Link>
         </div>
 
-        <div className="w-full max-w-sm border border-gray-200 rounded-xl p-8">
-          <div className="mb-8">
+        <div className="w-full max-w-sm border border-gray-200 rounded-xl overflow-hidden">
+          <div className="px-8 pt-8 pb-6">
             <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2">
               Admin
             </p>
@@ -110,7 +110,7 @@ export default function AdminLogin() {
                 card: {
                   boxShadow: "none",
                   border: "none",
-                  padding: "0",
+                  padding: "0 32px",
                   background: "transparent",
                 },
                 cardBox: {
@@ -144,7 +144,7 @@ export default function AdminLogin() {
             }}
           />
 
-          <div className="mt-8 pt-6 border-t border-gray-100">
+          <div className="px-8 pb-8 pt-6 border-t border-gray-100">
             <Link href="/">
               <span className="text-sm text-gray-400 hover:text-gray-700 cursor-pointer transition-colors">
                 ← Tillbaka till Industrin.net
@@ -154,5 +154,6 @@ export default function AdminLogin() {
         </div>
       </div>
     </div>
+  </div>
   );
 }
