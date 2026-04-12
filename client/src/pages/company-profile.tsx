@@ -120,7 +120,7 @@ export default function CompanyProfile() {
             <p className="text-sm text-gray-700">Det här företaget har inte tagits över ännu.</p>
             <a
               href={`/ansokkontroll/${company.slug}`}
-              className="shrink-0 text-sm font-medium border border-[#1D9E75] text-[#1D9E75] bg-white rounded px-4 py-2 hover:bg-[#F0FAF6] transition-colors"
+              className="shrink-0 text-sm font-medium border border-[#1D9E75] text-[#1D9E75] bg-white rounded-none px-4 py-2 hover:bg-[#F0FAF6] transition-colors"
             >
               Är det ditt företag? Ta över profilen.
             </a>
@@ -188,7 +188,7 @@ export default function CompanyProfile() {
             {company.phone ? (
               <a
                 href={`tel:${company.phone}`}
-                className="inline-flex items-center justify-center bg-white border-2 border-primary text-primary hover:bg-primary hover:text-white font-semibold px-6 py-3 h-12 text-sm rounded-md transition-colors"
+                className="inline-flex items-center justify-center bg-white border-2 border-primary text-primary hover:bg-primary hover:text-white font-semibold px-6 py-3 h-12 text-sm rounded-none transition-colors"
               >
                 Ring direkt
               </a>

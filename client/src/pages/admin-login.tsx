@@ -27,7 +27,7 @@ export default function AdminLogin() {
           </p>
           <button
             onClick={logout}
-            className="inline-flex items-center px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded hover:bg-gray-700 transition-colors"
+            className="inline-flex items-center px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-none hover:bg-gray-700 transition-colors"
           >
             Logga ut
           </button>
