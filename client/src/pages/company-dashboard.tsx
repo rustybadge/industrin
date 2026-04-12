@@ -19,41 +19,14 @@ import {
   Lock,
   ImageIcon,
   Play,
+  Users,
+  Briefcase,
+  Award,
 } from 'lucide-react';
 import { useCompanyAccess } from '@/hooks/use-company-access';
 import { useAuth } from '@clerk/clerk-react';
 import { SERVICE_CATEGORIES } from '@/data/service-categories';
 
-function PremiumLock({ isPremium, children }: { isPremium: boolean; children: React.ReactNode }) {
-  const { toast } = useToast();
-
-  if (isPremium) {
-    return <>{children}</>;
-  }
-
-  return (
-    <div className="relative">
-      <div className="filter blur-sm pointer-events-none select-none">
-        {children}
-      </div>
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-white/70 backdrop-blur-[2px] rounded-lg z-10">
-        <Lock className="h-5 w-5 text-gray-500" />
-        <span className="text-sm text-gray-600">Tillgänglig med Premium</span>
-        <button
-          onClick={() =>
-            toast({
-              title: 'Kommer snart',
-              description: 'Premiumfunktioner lanseras inom kort.',
-            })
-          }
-          className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-md bg-gray-900 text-white hover:bg-gray-700 transition-colors"
-        >
-          Uppgradera till Premium
-        </button>
-      </div>
-    </div>
-  );
-}
 
 function ServicesSection({
   company,
@@ -480,99 +453,42 @@ function CompanyDashboard() {
           )}
 
           {/* Premium section */}
-          <div className="space-y-6">
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900 mt-2">Premium-funktioner</h2>
-              <p className="text-sm text-gray-500 -mt-4 mb-2">Lås upp för att synas mer och nå fler kunder.</p>
+          <div className="space-y-5 pt-2">
+            <div className="space-y-1">
+              <h2 className="text-lg font-semibold text-gray-900">Premium-funktioner</h2>
+              <p className="text-sm text-gray-500">Lås upp för att synas mer och nå fler kunder.</p>
             </div>
 
-            {/* Logotyp */}
-            <PremiumLock isPremium={isPremium}>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Logotyp</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="w-24 h-24 rounded-xl bg-gray-100 flex items-center justify-center">
-                    <ImageIcon className="h-8 w-8 text-gray-400" />
+            <div className={!isPremium ? 'blur-[1.5px] pointer-events-none select-none' : ''}>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {([
+                  { Icon: ImageIcon, title: 'Logotyp', desc: 'Visa er logotyp på er företagssida' },
+                  { Icon: Users, title: 'Kontaktpersoner', desc: 'Lägg till namngivna kontakter med telefon' },
+                  { Icon: Play, title: 'Presentation via film', desc: 'Bädda in en YouTube-film om er verksamhet' },
+                  { Icon: FileText, title: 'Filer & PDF', desc: 'Ladda upp broschyrer och produktblad' },
+                  { Icon: Briefcase, title: 'Referensprojekt', desc: 'Visa upp era bästa uppdrag och kunder' },
+                  { Icon: Award, title: 'Certifieringar', desc: 'Lyft fram era certifieringar och godkännanden' },
+                ] as const).map(({ Icon, title, desc }) => (
+                  <div key={title} className="relative bg-white border border-gray-200 rounded-xl p-5">
+                    <Lock className="absolute top-3 right-3 h-3.5 w-3.5 text-gray-300" />
+                    <Icon className="h-5 w-5 text-gray-400 mb-3" />
+                    <p className="text-sm font-semibold text-gray-800 mb-1">{title}</p>
+                    <p className="text-xs text-gray-500 leading-relaxed">{desc}</p>
                   </div>
-                  <p className="text-sm text-gray-500">Ladda upp er logotyp för ett professionellt intryck.</p>
-                </CardContent>
-              </Card>
-            </PremiumLock>
+                ))}
+              </div>
+            </div>
 
-            {/* Kontaktpersoner */}
-            <PremiumLock isPremium={isPremium}>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Kontaktpersoner</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-gray-100 flex-shrink-0" />
-                      <span className="text-sm text-gray-300 italic">Kontaktperson</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-gray-100 flex-shrink-0" />
-                      <span className="text-sm text-gray-300 italic">Kontaktperson</span>
-                    </div>
-                  </div>
-                  <p className="text-sm text-gray-500">Lägg till namngivna kontaktpersoner på er sida.</p>
-                </CardContent>
-              </Card>
-            </PremiumLock>
-
-            {/* YouTube-film */}
-            <PremiumLock isPremium={isPremium}>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Presentation via film</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="w-full aspect-video bg-gray-100 rounded-lg flex flex-col items-center justify-center gap-2">
-                    <Play className="h-8 w-8 text-gray-400" />
-                    <span className="text-sm text-gray-400">Bädda in en YouTube-film om ert företag</span>
-                  </div>
-                </CardContent>
-              </Card>
-            </PremiumLock>
-
-            {/* Referensprojekt */}
-            <PremiumLock isPremium={isPremium}>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Referensprojekt</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-500">Visa upp genomförda uppdrag och projekt för att bygga förtroende.</p>
-                </CardContent>
-              </Card>
-            </PremiumLock>
-
-            {/* Certifieringar */}
-            <PremiumLock isPremium={isPremium}>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Certifieringar &amp; kvalitetsmärken</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-500">Lyft fram era certifieringar och branschgodkännanden.</p>
-                </CardContent>
-              </Card>
-            </PremiumLock>
-
-            {/* Svarstid */}
-            <PremiumLock isPremium={isPremium}>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Svarstid</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-500">Visa hur snabbt ni svarar på offertförfrågningar — ett viktigt signalvärde för köpare.</p>
-                </CardContent>
-              </Card>
-            </PremiumLock>
+            {!isPremium && (
+              <div className="flex justify-center pt-2">
+                <button
+                  onClick={() => toast({ title: 'Kommer snart', description: 'Premiumfunktioner lanseras inom kort.' })}
+                  className="inline-flex items-center px-6 py-2.5 text-sm font-medium rounded-lg bg-gray-900 text-white hover:bg-gray-700 transition-colors"
+                >
+                  Uppgradera till Premium
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Quote Requests Card */}
