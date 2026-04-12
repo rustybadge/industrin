@@ -115,7 +115,7 @@ export default function CompanyProfile() {
     <div className="min-h-screen bg-white py-8">
       {/* Unclaimed banner */}
       {!company.isClaimed && (
-        <div className="w-full bg-[#F0FAF6] border-b border-[#E5E7EB]">
+        <div className="w-full bg-[#F0FAF6] border-y border-[#E5E7EB]">
           <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
             <p className="text-sm text-gray-700">Det här företaget har inte tagits över ännu.</p>
             <a
