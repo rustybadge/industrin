@@ -107,15 +107,23 @@ export default function AdminLogin() {
                 fontFamily: "Inter Tight, sans-serif",
               },
               elements: {
+                rootBox: {
+                  width: "100%",
+                },
                 card: {
                   boxShadow: "none",
                   border: "none",
                   padding: "0 32px",
                   background: "transparent",
+                  width: "100%",
+                  maxWidth: "100%",
+                  boxSizing: "border-box",
                 },
                 cardBox: {
                   boxShadow: "none",
                   border: "none",
+                  width: "100%",
+                  maxWidth: "100%",
                 },
                 headerTitle: { display: "none" },
                 headerSubtitle: { display: "none" },
