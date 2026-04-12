@@ -8,7 +8,7 @@ export default function ForForetag() {
         <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
             <h1
-              className="text-white font-bold mb-6"
+              className="!text-white font-bold mb-6"
               style={{ fontSize: "clamp(28px, 4vw, 48px)", lineHeight: "1.15" }}
             >
               Ditt företag finns troligtvis redan här — stämmer uppgifterna?
@@ -208,7 +208,7 @@ export default function ForForetag() {
       {/* SECTION 6 — PREMIUM */}
       <section className="py-20" style={{ backgroundColor: "#111827" }}>
         <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-white mb-4">Syns mer med Premium</h2>
+          <h2 className="text-3xl font-bold !text-white mb-4">Syns mer med Premium</h2>
           <p className="text-gray-300 text-lg mb-12 max-w-2xl leading-relaxed">
             Med ett premiumkonto visas ditt företag tydligare i sökresultaten och du kan
             presentera din verksamhet mer utförligt.
@@ -233,7 +233,7 @@ export default function ForForetag() {
               },
             ].map((item, i) => (
               <div key={i}>
-                <h3 className="text-white font-bold mb-2">{item.title}</h3>
+                <h3 className="!text-white font-bold mb-2">{item.title}</h3>
                 <p className="text-gray-400 text-sm leading-relaxed">{item.desc}</p>
               </div>
             ))}
