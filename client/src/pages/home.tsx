@@ -48,17 +48,33 @@ export default function Home() {
                 <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>
+            <p className="mt-4 text-sm text-gray-500">
+              Driver du ett serviceföretag? Sök upp din profil och{" "}
+              <a href="#directory" style={{ color: '#1D9E75' }}>ta över den gratis</a>.
+            </p>
           </div>
         </div>
       </section>
 
+      {/* Credibility stat strip */}
+      <div className="w-full bg-[#F5F5F5] py-4">
+        <div className="max-w-7xl mx-auto px-4 flex items-center justify-center gap-8 text-sm font-medium text-[#171717]">
+          <span>1 200+ företag registrerade</span>
+          <span className="text-gray-300">|</span>
+          <span>Täcker alla 21 län</span>
+          <span className="text-gray-300">|</span>
+          <span>Kostnadsfri grundprofil</span>
+        </div>
+      </div>
+
       {/* Company Directory Section */}
-      <section className="py-16 bg-background">
+      <section id="directory" className="py-16 bg-background">
         <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-12">
-            <h3 className="text-3xl font-bold mb-4 text-[#171717]">
-              Sök bland företag som kan hjälpa dig med reparation, underhåll och service.
+            <h3 className="text-3xl font-bold text-[#171717]">
+              Serviceföretag i hela Sverige
             </h3>
+            <p className="text-sm text-gray-500 mt-1">Sök bland företag som kan hjälpa dig med reparation, underhåll och service.</p>
           </div>
 
           <div className="max-w-2xl mb-8">

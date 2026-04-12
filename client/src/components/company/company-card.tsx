@@ -14,7 +14,7 @@ export default function CompanyCard({ company }: CompanyCardProps) {
   
   return (
     <Link href={`/companies/${company.slug}`}>
-      <Card className="border-0 rounded-none cursor-pointer hover:border-gray-300 transition-colors h-full bg-[#FAFAFA]">
+      <Card className={`border-0 rounded-none cursor-pointer hover:border-gray-300 transition-colors h-full bg-[#FAFAFA] ${company.isVerified ? 'border-l-2 border-[#1D9E75]' : 'border-l-2 border-gray-200'}`}>
         <CardContent className="p-6 h-full flex flex-col">
           <div className="mb-4">
             <h4 className="font-medium hover:text-primary transition-colors text-[#171717] mb-2">{company.name}</h4>
@@ -42,6 +42,10 @@ export default function CompanyCard({ company }: CompanyCardProps) {
             <MapPin className="h-4 w-4 mr-1" />
             <span>{company.city || company.location}</span>
           </div>
+
+          {!company.isVerified && (
+            <p className="text-xs text-gray-400 mt-2">Ej hanterad — ta över profilen</p>
+          )}
         </CardContent>
       </Card>
     </Link>

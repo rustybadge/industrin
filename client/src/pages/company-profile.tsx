@@ -113,6 +113,18 @@ export default function CompanyProfile() {
 
   return (
     <div className="min-h-screen bg-white py-8">
+      {/* Unclaimed banner — full width, above all page content */}
+      {!company.isVerified && (
+        <div className="w-full border-l-4 border-[#1D9E75] bg-white px-6 py-4 flex items-center justify-between gap-4">
+          <p className="text-sm text-gray-700">Det här företaget har inte tagits över ännu.</p>
+          <a
+            href={`/ansokkontroll/${company.slug}`}
+            className="shrink-0 text-sm font-medium border border-[#1D9E75] text-[#1D9E75] rounded px-4 py-2 hover:bg-[#F0FAF6] transition-colors"
+          >
+            Är det ditt företag? Ta över profilen.
+          </a>
+        </div>
+      )}
       <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Back Button */}
         <div className="mb-6">
@@ -296,7 +308,6 @@ export default function CompanyProfile() {
             <div className="space-y-3">
               {/* Claim / update profile prompt above contact card */}
               <div className="flex items-center text-sm mb-3">
-                <span className="text-[#171717] mr-2">Äger du detta företag?</span>
                 <button
                   type="button"
                   onClick={() => navigate(`/ansokkontroll/${companySlug || companyId}`)}
@@ -306,7 +317,7 @@ export default function CompanyProfile() {
                   <span className="mr-1 inline-flex h-5 w-5 items-center justify-center rounded-full border border-[#3467FF]">
                     <UserCheck className="h-3 w-3" />
                   </span>
-                  Uppdatera din profil
+                  Äger du detta företag? Ta kontroll över din profil och nå fler kunder — kostnadsfritt.
                 </button>
               </div>
 

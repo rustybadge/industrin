@@ -71,7 +71,7 @@ export default function ScrollWall({ quality, companyName, onClaimClick, onDismi
             
             {/* Quality Status */}
             <p className="text-sm text-gray-600 mb-4">
-              Denna profil är ofullständig och skulle kunna förbättras med mer information.
+              Ditt företag syns — men profilen är halvfärdig.
             </p>
             
             {/* Stats */}
@@ -80,9 +80,9 @@ export default function ScrollWall({ quality, companyName, onClaimClick, onDismi
                 <span>Komplett information:</span>
                 <span className="font-medium">{quality.score}/{quality.maxScore} fält</span>
               </div>
-              <div className="w-full bg-gray-200 h-1">
-                <div 
-                  className="bg-gray-900 h-1 transition-all duration-500"
+              <div className="w-full bg-gray-200 h-2">
+                <div
+                  className="bg-gray-900 h-2 transition-all duration-500"
                   style={{ width: `${quality.percentage}%` }}
                 />
               </div>
@@ -99,9 +99,12 @@ export default function ScrollWall({ quality, companyName, onClaimClick, onDismi
                   Inte nu
                 </Button>
               )}
-              <Button 
+              <Button
                 onClick={onClaimClick}
-                className="bg-gray-900 hover:bg-gray-800 text-white font-medium px-6 py-2.5 transition-colors"
+                className="text-white font-medium px-6 py-2.5 transition-colors"
+                style={{ backgroundColor: '#1D9E75' }}
+                onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#178a65')}
+                onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#1D9E75')}
               >
                 Begär ägarskap
               </Button>
