@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Loader2, Trash2, Plus, Upload } from 'lucide-react';
+import { Building, LogOut, Loader2, Trash2, Plus, Upload } from 'lucide-react';
 import { useCompanyAccess } from '@/hooks/use-company-access';
 import { useAuth } from '@clerk/clerk-react';
 import { SERVICE_CATEGORIES } from '@/data/service-categories';
@@ -654,9 +654,9 @@ function ServicesSection({
 // ---- Main page component ---------------------------------------------------
 
 function CompanyEdit() {
-  const { companyUser, isLoading: authLoading, getCompanyToken } = useCompanyAccess();
+  const { companyUser, logout, isLoading: authLoading, getCompanyToken } = useCompanyAccess();
   const { isSignedIn, getToken } = useAuth();
-  const [, navigate] = useLocation();
+  const [location, navigate] = useLocation();
   const setupAttempted = useRef(false);
   const [setupError, setSetupError] = useState(false);
 
@@ -743,26 +743,60 @@ function CompanyEdit() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center h-16 gap-4">
-            <Button
-              variant="ghost"
-              size="sm"
+    <div className="min-h-screen bg-[#FAFAFA]">
+      {/* Top nav */}
+      <header className="bg-white border-b border-gray-200 h-14">
+        <div className="max-w-5xl mx-auto px-6 h-full flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Building className="h-4 w-4 text-gray-400" />
+            <span className="text-sm font-medium text-gray-700">
+              {company?.name ?? ''}
+            </span>
+          </div>
+          <nav className="flex items-center gap-1">
+            <span
+              className="text-sm text-gray-500 hover:text-gray-800 transition-colors cursor-pointer px-1"
               onClick={() => navigate('/company/dashboard')}
             >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Tillbaka
-            </Button>
-            <h1 className="text-xl font-bold text-gray-900">Redigera företagsprofil</h1>
-          </div>
+              Dashboard
+            </span>
+            <span className="text-gray-300 mx-2 select-none">|</span>
+            <span
+              className={
+                'text-sm px-1 transition-colors ' +
+                (location.startsWith('/company/edit')
+                  ? 'text-gray-900 font-semibold border-b-2 border-[#1D9E75] cursor-default'
+                  : 'text-gray-500 hover:text-gray-800 cursor-pointer')
+              }
+            >
+              Redigera profil
+            </span>
+            <span className="text-gray-300 mx-2 select-none">|</span>
+            <span
+              className={
+                'text-sm transition-colors px-1 ' +
+                (company?.slug
+                  ? 'text-gray-500 hover:text-gray-800 cursor-pointer'
+                  : 'text-gray-300 cursor-not-allowed')
+              }
+              onClick={() => company?.slug && navigate('/företag/' + company.slug)}
+            >
+              Visa publik profil
+            </span>
+            <span className="text-gray-300 mx-2 select-none">|</span>
+            <span
+              className="text-sm text-gray-500 hover:text-gray-800 transition-colors cursor-pointer px-1 flex items-center gap-1"
+              onClick={() => logout()}
+            >
+              <LogOut className="h-3.5 w-3.5" />
+              Logga ut
+            </span>
+          </nav>
         </div>
       </header>
 
       {/* Content */}
-      <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      <main className="max-w-5xl mx-auto px-6 py-8 space-y-6">
         <AboutSection company={company} fetchWithCompanyAuth={fetchWithCompanyAuth} />
         <ContactInfoSection company={company} fetchWithCompanyAuth={fetchWithCompanyAuth} />
         <AddressSection company={company} fetchWithCompanyAuth={fetchWithCompanyAuth} />
