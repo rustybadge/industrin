@@ -78,9 +78,7 @@ function CompanyDashboard() {
         console.error('[company-dashboard] /api/company/profile failed:', response.status, body);
         throw new Error(`HTTP ${response.status}: ${body || 'no body'}`);
       }
-      const data = await response.json();
-      setFormData(data);
-      return data;
+      return response.json();
     },
   });
 
@@ -232,7 +230,7 @@ function CompanyDashboard() {
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle>Företagsprofil</CardTitle>
               {!isEditing ? (
-                <Button onClick={() => setIsEditing(true)} variant="outline" size="sm">
+                <Button onClick={() => { setFormData(company); setIsEditing(true); }} variant="outline" size="sm">
                   Redigera profil
                 </Button>
               ) : (
