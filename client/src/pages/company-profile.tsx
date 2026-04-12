@@ -113,14 +113,14 @@ export default function CompanyProfile() {
 
   return (
     <div className="min-h-screen bg-white py-8">
-      {/* Unclaimed banner — full width bg + teal border, content max-width constrained */}
+      {/* Unclaimed banner */}
       {!company.isClaimed && (
-        <div className="w-full border-l-4 border-[#1D9E75] bg-white mb-2">
-          <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-4">
+        <div className="w-full bg-[#F0FAF6] border-b border-[#E5E7EB]">
+          <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
             <p className="text-sm text-gray-700">Det här företaget har inte tagits över ännu.</p>
             <a
               href={`/ansokkontroll/${company.slug}`}
-              className="shrink-0 text-sm font-medium border border-[#1D9E75] text-[#1D9E75] rounded px-4 py-2 hover:bg-[#F0FAF6] transition-colors"
+              className="shrink-0 text-sm font-medium border border-[#1D9E75] text-[#1D9E75] bg-white rounded px-4 py-2 hover:bg-[#F0FAF6] transition-colors"
             >
               Är det ditt företag? Ta över profilen.
             </a>
