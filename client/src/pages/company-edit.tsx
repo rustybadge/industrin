@@ -1,13 +1,8 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useLocation } from 'wouter';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Building, LogOut, Loader2, Trash2, Plus, Upload, Lock, ImageIcon, Play, Users, Briefcase, Award } from 'lucide-react';
+import { Building, LogOut, Loader2, Trash2, Plus, Upload, ImageIcon, Play, Users, Briefcase, Award } from 'lucide-react';
 import { useCompanyAccess } from '@/hooks/use-company-access';
 import { useAuth } from '@clerk/clerk-react';
 import { SERVICE_CATEGORIES } from '@/data/service-categories';
@@ -57,14 +52,26 @@ function Spinner() {
   );
 }
 
+// ---- Shared input class helpers --------------------------------------------
+
+const inputClass =
+  'w-full bg-white border border-[#E5E7EB] rounded-lg px-4 py-2.5 text-sm text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#1D9E75]/40';
+
+const labelClass = 'block text-sm font-medium text-[#4B5563] mb-1.5';
+
+const saveButtonClass =
+  'text-sm font-medium px-5 py-2 rounded-lg bg-[#1D9E75] text-white hover:bg-[#167A5A] transition-colors disabled:opacity-40';
+
 // ---- Section: Om företaget -------------------------------------------------
 
 function AboutSection({
   company,
   fetchWithCompanyAuth,
+  isFirst,
 }: {
   company: CompanyEditData;
   fetchWithCompanyAuth: (input: RequestInfo, init?: RequestInit) => Promise<Response>;
+  isFirst?: boolean;
 }) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -97,32 +104,31 @@ function AboutSection({
   });
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Om företaget</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
+    <div className={isFirst ? '' : 'border-t border-[#E5E7EB] pt-8 mt-8'}>
+      <h2 className="text-lg font-semibold text-[#111827] mb-1">Om företaget</h2>
+      <p className="text-sm text-[#9CA3AF] mb-5">Beskriv ert företag och era tjänster.</p>
+      <div className="space-y-4">
         <div>
-          <Label htmlFor="description_sv">Beskrivning</Label>
-          <Textarea
+          <label htmlFor="description_sv" className={labelClass}>Beskrivning</label>
+          <textarea
             id="description_sv"
             value={descriptionSv}
             onChange={(e) => setDescriptionSv(e.target.value)}
             rows={8}
-            className="mt-1"
+            className={`${inputClass} resize-none min-h-[120px]`}
             placeholder="Beskriv ert företag, era tjänster och vad som gör er unika inom branschen."
           />
         </div>
-        <Button
+        <button
           onClick={() => mutation.mutate({ description_sv: descriptionSv })}
           disabled={mutation.isPending}
-          size="sm"
+          className={saveButtonClass}
         >
-          {mutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+          {mutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin inline" />}
           Spara
-        </Button>
-      </CardContent>
-    </Card>
+        </button>
+      </div>
+    </div>
   );
 }
 
@@ -170,54 +176,53 @@ function ContactInfoSection({
   });
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Kontaktuppgifter</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
+    <div className="border-t border-[#E5E7EB] pt-8 mt-8">
+      <h2 className="text-lg font-semibold text-[#111827] mb-1">Kontaktuppgifter</h2>
+      <p className="text-sm text-[#9CA3AF] mb-5">Telefon, webbplats och e-post som visas på er profil.</p>
+      <div className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="phone">Telefon</Label>
-            <Input
+            <label htmlFor="phone" className={labelClass}>Telefon</label>
+            <input
               id="phone"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="010-123 45 67"
-              className="mt-1"
+              className={inputClass}
             />
           </div>
           <div>
-            <Label htmlFor="website">Webbplats</Label>
-            <Input
+            <label htmlFor="website" className={labelClass}>Webbplats</label>
+            <input
               id="website"
               value={website}
               onChange={(e) => setWebsite(e.target.value)}
               placeholder="www.ertforetag.se"
-              className="mt-1"
+              className={inputClass}
             />
           </div>
           <div>
-            <Label htmlFor="contactEmail">Kontakt-e-post</Label>
-            <Input
+            <label htmlFor="contactEmail" className={labelClass}>Kontakt-e-post</label>
+            <input
               id="contactEmail"
               type="email"
               value={contactEmail}
               onChange={(e) => setContactEmail(e.target.value)}
               placeholder="info@ertforetag.se"
-              className="mt-1"
+              className={inputClass}
             />
           </div>
         </div>
-        <Button
+        <button
           onClick={() => mutation.mutate({ phone, website, contactEmail })}
           disabled={mutation.isPending}
-          size="sm"
+          className={saveButtonClass}
         >
-          {mutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+          {mutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin inline" />}
           Spara
-        </Button>
-      </CardContent>
-    </Card>
+        </button>
+      </div>
+    </div>
   );
 }
 
@@ -265,59 +270,58 @@ function AddressSection({
   });
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Adress &amp; öppettider</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
+    <div className="border-t border-[#E5E7EB] pt-8 mt-8">
+      <h2 className="text-lg font-semibold text-[#111827] mb-1">Adress &amp; öppettider</h2>
+      <p className="text-sm text-[#9CA3AF] mb-5">Er besöksadress och öppettider visas på er profilsida.</p>
+      <div className="space-y-4">
         <div>
-          <Label htmlFor="visitingAddress">Besöksadress</Label>
-          <Input
+          <label htmlFor="visitingAddress" className={labelClass}>Besöksadress</label>
+          <input
             id="visitingAddress"
             value={visitingAddress}
             onChange={(e) => setVisitingAddress(e.target.value)}
             placeholder="Industrivägen 5, 123 45 Stad"
-            className="mt-1"
+            className={inputClass}
           />
         </div>
         <div>
-          <Label htmlFor="postalAddress">Postadress</Label>
-          <Input
+          <label htmlFor="postalAddress" className={labelClass}>Postadress</label>
+          <input
             id="postalAddress"
             value={postalAddress}
             onChange={(e) => setPostalAddress(e.target.value)}
             placeholder="Box 123, 123 45 Stad"
-            className="mt-1"
+            className={inputClass}
           />
-          <p className="text-xs text-gray-500 mt-1">Lämna tomt om samma som besöksadressen.</p>
+          <p className="text-xs text-[#9CA3AF] mt-1.5">Lämna tomt om samma som besöksadressen.</p>
         </div>
         <div>
-          <Label htmlFor="openingHours">Öppettider</Label>
-          <Input
+          <label htmlFor="openingHours" className={labelClass}>Öppettider</label>
+          <input
             id="openingHours"
             value={openingHours}
             onChange={(e) => setOpeningHours(e.target.value)}
             placeholder="Mån–Fre 07:00–16:00"
-            className="mt-1"
+            className={inputClass}
           />
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-[#9CA3AF] mt-1.5">
             Fyll i era vanliga öppettider. Exempel: Mån–Fre 07:00–16:00, Lör 08:00–12:00.
           </p>
         </div>
-        <Button
+        <button
           onClick={() =>
             mutation.mutate({
               profile: { visitingAddress, postalAddress, openingHours },
             })
           }
           disabled={mutation.isPending}
-          size="sm"
+          className={saveButtonClass}
         >
-          {mutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+          {mutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin inline" />}
           Spara
-        </Button>
-      </CardContent>
-    </Card>
+        </button>
+      </div>
+    </div>
   );
 }
 
@@ -390,92 +394,85 @@ function ContactsSection({
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Kontaktpersoner</CardTitle>
-        <CardDescription>
-          Lägg till namngivna kontakter som visas på er företagsprofil.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {company.contacts.length > 0 && (
-          <ul className="divide-y divide-gray-100">
-            {company.contacts.map((contact) => (
-              <li key={contact.id} className="flex items-center justify-between py-2">
-                <div>
-                  <p className="text-sm font-medium text-gray-900">{contact.name}</p>
-                  {contact.phone && (
-                    <p className="text-xs text-gray-500">{contact.phone}</p>
-                  )}
-                  {contact.email && (
-                    <p className="text-xs text-gray-500">{contact.email}</p>
-                  )}
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => deleteMutation.mutate(contact.id)}
-                  disabled={deleteMutation.isPending}
-                  aria-label={`Ta bort ${contact.name}`}
-                >
-                  <Trash2 className="h-4 w-4 text-red-500" />
-                </Button>
-              </li>
-            ))}
-          </ul>
-        )}
+    <div className="border-t border-[#E5E7EB] pt-8 mt-8">
+      <h2 className="text-lg font-semibold text-[#111827] mb-1">Kontaktpersoner</h2>
+      <p className="text-sm text-[#9CA3AF] mb-5">Lägg till namngivna kontakter som visas på er företagsprofil.</p>
 
-        <div className="border-t pt-4 space-y-3">
-          <p className="text-sm font-medium text-gray-700">Lägg till ny kontakt</p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <div>
-              <Label htmlFor="newContactName">Namn *</Label>
-              <Input
-                id="newContactName"
-                value={newName}
-                onChange={(e) => setNewName(e.target.value)}
-                placeholder="Anna Andersson"
-                className="mt-1"
-              />
-            </div>
-            <div>
-              <Label htmlFor="newContactPhone">Telefon</Label>
-              <Input
-                id="newContactPhone"
-                value={newPhone}
-                onChange={(e) => setNewPhone(e.target.value)}
-                placeholder="010-123 45 67"
-                className="mt-1"
-              />
-            </div>
-            <div>
-              <Label htmlFor="newContactEmail">E-post</Label>
-              <Input
-                id="newContactEmail"
-                type="email"
-                value={newEmail}
-                onChange={(e) => setNewEmail(e.target.value)}
-                placeholder="anna@ertforetag.se"
-                className="mt-1"
-              />
-            </div>
+      {company.contacts.length > 0 && (
+        <ul className="divide-y divide-[#F3F4F6] mb-6">
+          {company.contacts.map((contact) => (
+            <li key={contact.id} className="flex items-center justify-between py-3">
+              <div>
+                <p className="text-sm font-medium text-[#111827]">{contact.name}</p>
+                {contact.phone && (
+                  <p className="text-xs text-[#9CA3AF]">{contact.phone}</p>
+                )}
+                {contact.email && (
+                  <p className="text-xs text-[#9CA3AF]">{contact.email}</p>
+                )}
+              </div>
+              <button
+                onClick={() => deleteMutation.mutate(contact.id)}
+                disabled={deleteMutation.isPending}
+                aria-label={`Ta bort ${contact.name}`}
+                className="p-1.5 rounded hover:bg-[#F3F4F6] transition-colors"
+              >
+                <Trash2 className="h-4 w-4 text-red-400" />
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <div className="space-y-4">
+        <p className="text-sm font-medium text-[#4B5563]">Lägg till ny kontakt</p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div>
+            <label htmlFor="newContactName" className={labelClass}>Namn *</label>
+            <input
+              id="newContactName"
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              placeholder="Anna Andersson"
+              className={inputClass}
+            />
           </div>
-          <Button
-            onClick={handleAdd}
-            disabled={addMutation.isPending}
-            size="sm"
-            variant="outline"
-          >
-            {addMutation.isPending ? (
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-            ) : (
-              <Plus className="h-4 w-4 mr-2" />
-            )}
-            Lägg till kontakt
-          </Button>
+          <div>
+            <label htmlFor="newContactPhone" className={labelClass}>Telefon</label>
+            <input
+              id="newContactPhone"
+              value={newPhone}
+              onChange={(e) => setNewPhone(e.target.value)}
+              placeholder="010-123 45 67"
+              className={inputClass}
+            />
+          </div>
+          <div>
+            <label htmlFor="newContactEmail" className={labelClass}>E-post</label>
+            <input
+              id="newContactEmail"
+              type="email"
+              value={newEmail}
+              onChange={(e) => setNewEmail(e.target.value)}
+              placeholder="anna@ertforetag.se"
+              className={inputClass}
+            />
+          </div>
         </div>
-      </CardContent>
-    </Card>
+        <button
+          onClick={handleAdd}
+          disabled={addMutation.isPending}
+          className="inline-flex items-center text-sm font-medium px-5 py-2 rounded-lg border border-[#E5E7EB] bg-white text-[#4B5563] hover:border-[#9CA3AF] transition-colors disabled:opacity-40"
+        >
+          {addMutation.isPending ? (
+            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+          ) : (
+            <Plus className="h-4 w-4 mr-2" />
+          )}
+          Lägg till kontakt
+        </button>
+      </div>
+    </div>
   );
 }
 
@@ -521,47 +518,46 @@ function LogoSection({
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Logotyp</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {company.logoUrl && (
-          <div className="border rounded p-3 inline-block">
-            <img
-              src={company.logoUrl}
-              alt="Logotyp"
-              className="max-h-24 object-contain"
-            />
-          </div>
-        )}
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={handleFileChange}
-        />
-        <div className="flex items-center gap-3">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={isUploading}
-          >
-            {isUploading ? (
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-            ) : (
-              <Upload className="h-4 w-4 mr-2" />
-            )}
-            {isUploading ? 'Laddar upp...' : 'Välj bild'}
-          </Button>
+    <div className="border-t border-[#E5E7EB] pt-8 mt-8">
+      <h2 className="text-lg font-semibold text-[#111827] mb-1">Logotyp</h2>
+      <p className="text-sm text-[#9CA3AF] mb-5">Visas på er profilsida och i sökresultat.</p>
+
+      {company.logoUrl && (
+        <div className="border border-[#E5E7EB] rounded-lg p-3 inline-block mb-4">
+          <img
+            src={company.logoUrl}
+            alt="Logotyp"
+            className="max-h-24 object-contain"
+          />
         </div>
-        <p className="text-xs text-gray-500">
-          Max 2 MB. Rekommenderat format: PNG eller SVG med transparent bakgrund.
-        </p>
-      </CardContent>
-    </Card>
+      )}
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={handleFileChange}
+      />
+
+      <div
+        className="border-2 border-dashed border-[#E5E7EB] rounded-xl bg-white p-8 text-center hover:border-[#1D9E75]/50 transition-colors cursor-pointer"
+        onClick={() => fileInputRef.current?.click()}
+      >
+        {isUploading ? (
+          <div className="flex items-center justify-center gap-2">
+            <Loader2 className="h-4 w-4 animate-spin text-[#9CA3AF]" />
+            <span className="text-sm text-[#4B5563]">Laddar upp...</span>
+          </div>
+        ) : (
+          <>
+            <Upload className="h-5 w-5 text-[#9CA3AF] mx-auto mb-2" />
+            <p className="text-sm text-[#4B5563]">Dra och släpp eller klicka för att ladda upp</p>
+            <p className="text-xs text-[#9CA3AF] mt-1">Max 2 MB. PNG eller SVG med transparent bakgrund rekommenderas.</p>
+          </>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -577,6 +573,7 @@ function ServicesSection({
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [selected, setSelected] = useState<string[]>(company.categories ?? []);
+  const [openCategory, setOpenCategory] = useState<string | null>(null);
 
   useEffect(() => {
     setSelected(company.categories ?? []);
@@ -613,41 +610,78 @@ function ServicesSection({
   });
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Tjänster ni erbjuder</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="space-y-4">
-          {Object.values(SERVICE_CATEGORIES).map((category) => (
-            <div key={category.id}>
-              <p className="text-sm font-semibold text-gray-700 mb-2">{category.name}</p>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                {category.subcategories.map((sub) => (
-                  <label key={sub} className="flex items-center gap-2 text-sm cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={selected.includes(sub)}
-                      onChange={() => toggle(sub)}
-                      className="rounded border-gray-300 text-blue-600"
-                    />
-                    {sub}
-                  </label>
-                ))}
-              </div>
-            </div>
-          ))}
+    <div className="border-t border-[#E5E7EB] pt-8 mt-8">
+      <div className="flex items-baseline justify-between mb-5">
+        <div>
+          <h2 className="text-lg font-semibold text-[#111827] mb-1">Tjänster</h2>
+          <p className="text-sm text-[#9CA3AF]">Välj de tjänster ert företag erbjuder</p>
         </div>
-        <Button
+        <span className="text-sm text-[#9CA3AF]">{selected.length} valda</span>
+      </div>
+
+      <div className="border-t border-[#E5E7EB]">
+        {Object.values(SERVICE_CATEGORIES).map((category) => {
+          const selectedInCategory = category.subcategories.filter((s) => selected.includes(s)).length;
+          return (
+            <div key={category.id} className="border-b border-[#E5E7EB]">
+              <button
+                onClick={() => setOpenCategory(openCategory === category.id ? null : category.id)}
+                className="flex items-center justify-between w-full py-4 text-left"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-semibold text-[#111827]">{category.name}</span>
+                  {selectedInCategory > 0 && (
+                    <span className="bg-[#E8F7F2] text-[#1D9E75] text-xs font-semibold px-2 py-0.5 rounded-full">
+                      {selectedInCategory}
+                    </span>
+                  )}
+                </div>
+                <svg
+                  className={`w-4 h-4 text-[#9CA3AF] transition-transform duration-150 ${openCategory === category.id ? 'rotate-90' : ''}`}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+
+              {openCategory === category.id && (
+                <div className="pb-5">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-3">
+                    {category.subcategories.map((sub) => (
+                      <label key={sub} className="flex items-center gap-2.5 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={selected.includes(sub)}
+                          onChange={() => toggle(sub)}
+                          className="w-4 h-4 rounded border-[#E5E7EB] accent-[#1D9E75]"
+                        />
+                        <span className={`text-sm select-none ${selected.includes(sub) ? 'text-[#111827] font-medium' : 'text-[#4B5563]'}`}>
+                          {sub}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="mt-5">
+        <button
           onClick={() => mutation.mutate(selected)}
           disabled={mutation.isPending}
-          size="sm"
+          className={saveButtonClass}
         >
-          {mutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-          Spara
-        </Button>
-      </CardContent>
-    </Card>
+          {mutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin inline" />}
+          Spara tjänster
+        </button>
+      </div>
+    </div>
   );
 }
 
@@ -663,39 +697,45 @@ function PremiumSection({ company }: { company: CompanyEditData & { tier?: strin
     { Icon: Play,      title: 'Presentation via film',  desc: 'Bädda in en YouTube-film om er verksamhet' },
     { Icon: Briefcase, title: 'Filer & PDF',            desc: 'Ladda upp broschyrer och produktblad' },
     { Icon: Award,     title: 'Referensprojekt',        desc: 'Visa upp era bästa uppdrag och kunder' },
-    { Icon: Lock,      title: 'Certifieringar',         desc: 'Lyft fram era certifieringar och godkännanden' },
+    { Icon: Award,     title: 'Certifieringar',         desc: 'Lyft fram era certifieringar och godkännanden' },
   ] as const;
 
   return (
-    <div className="space-y-5 pt-2">
-      <div className="space-y-1">
-        <h2 className="text-base font-semibold text-gray-900">Premium-funktioner</h2>
-        <p className="text-sm text-gray-500">Lås upp för att synas mer och nå fler kunder.</p>
-      </div>
+    <div className="border-t border-[#E5E7EB] pt-8 mt-8">
+      <h2 className="text-lg font-semibold text-[#111827] mb-1">Premium-funktioner</h2>
+      <p className="text-sm text-[#9CA3AF] mb-5">Lås upp för att synas mer och nå fler kunder.</p>
 
-      <div className={!isPremium ? 'blur-[1.5px] pointer-events-none select-none' : ''}>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {features.map(({ Icon, title, desc }) => (
-            <div key={title} className="relative bg-white border border-gray-200 rounded-xl p-5">
-              <Lock className="absolute top-3 right-3 h-3.5 w-3.5 text-gray-300" />
-              <Icon className="h-5 w-5 text-gray-400 mb-3" />
-              <p className="text-sm font-semibold text-gray-800 mb-1">{title}</p>
-              <p className="text-xs text-gray-500 leading-relaxed">{desc}</p>
-            </div>
-          ))}
-        </div>
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
+        {features.map(({ Icon, title, desc }) => (
+          <div key={title} className="bg-white border border-[#E5E7EB] rounded-xl p-6 relative overflow-hidden">
+            {!isPremium && (
+              <>
+                <div className="filter blur-sm select-none pointer-events-none">
+                  <Icon className="h-5 w-5 text-[#9CA3AF] mb-3" />
+                  <p className="text-sm font-semibold text-[#111827] mb-1">{title}</p>
+                  <p className="text-xs text-[#4B5563] leading-relaxed">{desc}</p>
+                </div>
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/60">
+                  <span className="text-sm font-semibold text-[#111827]">Premium</span>
+                  <span
+                    className="text-sm text-[#1D9E75] font-medium mt-1 cursor-pointer hover:underline"
+                    onClick={() => toast({ title: 'Kommer snart', description: 'Premiumfunktioner lanseras inom kort.' })}
+                  >
+                    Uppgradera för åtkomst
+                  </span>
+                </div>
+              </>
+            )}
+            {isPremium && (
+              <>
+                <Icon className="h-5 w-5 text-[#9CA3AF] mb-3" />
+                <p className="text-sm font-semibold text-[#111827] mb-1">{title}</p>
+                <p className="text-xs text-[#4B5563] leading-relaxed">{desc}</p>
+              </>
+            )}
+          </div>
+        ))}
       </div>
-
-      {!isPremium && (
-        <div className="flex justify-center pt-2">
-          <button
-            onClick={() => toast({ title: 'Kommer snart', description: 'Premiumfunktioner lanseras inom kort.' })}
-            className="inline-flex items-center px-6 py-2.5 text-sm font-medium rounded-lg bg-gray-900 text-white hover:bg-gray-700 transition-colors"
-          >
-            Uppgradera till Premium
-          </button>
-        </div>
-      )}
     </div>
   );
 }
@@ -792,49 +832,48 @@ function CompanyEdit() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA]">
+    <div className="bg-[#F3F4F6] min-h-screen">
       {/* Top nav */}
-      <header className="bg-white border-b border-gray-200 h-14">
+      <header className="bg-white border-b border-[#E5E7EB] h-14">
         <div className="max-w-5xl mx-auto px-6 h-full flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Building className="h-4 w-4 text-gray-400" />
-            <span className="text-sm font-medium text-gray-700">
+            <Building className="h-4 w-4 text-[#9CA3AF]" />
+            <span className="text-sm font-medium text-[#4B5563]">
               {company?.name ?? ''}
             </span>
           </div>
           <nav className="flex items-center gap-1">
             <span
-              className="text-sm text-gray-500 hover:text-gray-800 transition-colors cursor-pointer px-1"
+              className="text-sm text-[#4B5563] hover:text-[#111827] transition-colors cursor-pointer px-1"
               onClick={() => navigate('/company/dashboard')}
             >
               Dashboard
             </span>
-            <span className="text-gray-300 mx-2 select-none">|</span>
+            <span className="text-[#E5E7EB] mx-2 select-none">|</span>
             <span
               className={
-                'text-sm px-1 transition-colors ' +
-                (location.startsWith('/company/edit')
-                  ? 'text-gray-900 font-semibold border-b-2 border-[#1D9E75] cursor-default'
-                  : 'text-gray-500 hover:text-gray-800 cursor-pointer')
+                location.startsWith('/company/edit')
+                  ? 'text-sm px-1 text-[#1D9E75] font-semibold cursor-default'
+                  : 'text-sm text-[#4B5563] hover:text-[#111827] transition-colors cursor-pointer px-1'
               }
             >
               Redigera profil
             </span>
-            <span className="text-gray-300 mx-2 select-none">|</span>
+            <span className="text-[#E5E7EB] mx-2 select-none">|</span>
             <span
               className={
                 'text-sm transition-colors px-1 ' +
                 (company?.slug
-                  ? 'text-gray-500 hover:text-gray-800 cursor-pointer'
-                  : 'text-gray-300 cursor-not-allowed')
+                  ? 'text-[#4B5563] hover:text-[#111827] cursor-pointer'
+                  : 'text-[#9CA3AF] cursor-not-allowed')
               }
               onClick={() => company?.slug && navigate('/företag/' + company.slug)}
             >
               Visa publik profil
             </span>
-            <span className="text-gray-300 mx-2 select-none">|</span>
+            <span className="text-[#E5E7EB] mx-2 select-none">|</span>
             <span
-              className="text-sm text-gray-500 hover:text-gray-800 transition-colors cursor-pointer px-1 flex items-center gap-1"
+              className="text-sm text-[#4B5563] hover:text-[#111827] transition-colors cursor-pointer px-1 flex items-center gap-1"
               onClick={() => logout()}
             >
               <LogOut className="h-3.5 w-3.5" />
@@ -845,8 +884,8 @@ function CompanyEdit() {
       </header>
 
       {/* Content */}
-      <main className="max-w-5xl mx-auto px-6 py-8 space-y-6">
-        <AboutSection company={company} fetchWithCompanyAuth={fetchWithCompanyAuth} />
+      <main className="max-w-4xl mx-auto px-6 py-8">
+        <AboutSection company={company} fetchWithCompanyAuth={fetchWithCompanyAuth} isFirst />
         <ContactInfoSection company={company} fetchWithCompanyAuth={fetchWithCompanyAuth} />
         <AddressSection company={company} fetchWithCompanyAuth={fetchWithCompanyAuth} />
         <ContactsSection company={company} fetchWithCompanyAuth={fetchWithCompanyAuth} />

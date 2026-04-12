@@ -6,25 +6,11 @@ import { Building, LogOut } from 'lucide-react';
 import { useCompanyAccess } from '@/hooks/use-company-access';
 import { useAuth } from '@clerk/clerk-react';
 
-// SVG ring constants — r=34, cx=cy=40
-const RING_RADIUS = 34;
-const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS; // ≈ 213.6
+// SVG ring constants — r=40, cx=cy=50
+const RING_RADIUS = 40;
+const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS; // ≈ 251.3
 const RING_SCORE = 74; // TODO: wire to real data
-const RING_DASHOFFSET = RING_CIRCUMFERENCE * (1 - RING_SCORE / 100); // ≈ 55.5
-
-function Sparkline({ heights }: { heights: string[] }) {
-  return (
-    <div className="h-8 flex items-end gap-0.5 mt-3">
-      {heights.map((h, i) => (
-        <div
-          key={i}
-          className="w-2 rounded-sm bg-gray-200"
-          style={{ height: h }}
-        />
-      ))}
-    </div>
-  );
-}
+const RING_DASHOFFSET = RING_CIRCUMFERENCE * (1 - RING_SCORE / 100); // ≈ 65.3
 
 function CompanyDashboard() {
   const { companyUser, logout, isLoading: authLoading, getCompanyToken } = useCompanyAccess();
@@ -155,15 +141,30 @@ function CompanyDashboard() {
 
   const isDashboard = location === '/company/dashboard';
 
+  // Inline sparkline points — 7 data points, max=80, SVG viewBox 0 0 80 32
+  const heroPoints = [40, 55, 45, 70, 60, 80, 65];
+  const standardPoints = [40, 55, 45, 70, 60, 80, 65];
+  const searchPoints = [30, 50, 40, 60, 55, 75, 70];
+  const maxVal = 80;
+  const svgH = 32;
+  const svgW = 80;
+
+  function toPolyline(pts: number[]) {
+    const step = svgW / (pts.length - 1);
+    return pts
+      .map((v, i) => `${(i * step).toFixed(1)},${(svgH - (v / maxVal) * svgH).toFixed(1)}`)
+      .join(' ');
+  }
+
   return (
-    <div className="min-h-screen bg-[#FAFAFA]">
+    <div className="bg-[#F3F4F6] min-h-screen">
       {/* Top nav */}
-      <header className="bg-white border-b border-gray-200 h-14">
+      <header className="bg-white border-b border-[#E5E7EB] h-14">
         <div className="max-w-5xl mx-auto px-6 h-full flex items-center justify-between">
           {/* Left: icon + company name */}
           <div className="flex items-center gap-2">
-            <Building className="h-4 w-4 text-gray-400" />
-            <span className="text-sm font-medium text-gray-700">
+            <Building className="h-4 w-4 text-[#9CA3AF]" />
+            <span className="text-sm font-medium text-[#4B5563]">
               {company?.name ?? ''} {/* TODO: wire to real data */}
             </span>
           </div>
@@ -172,42 +173,41 @@ function CompanyDashboard() {
           <nav className="flex items-center gap-1">
             <span
               className={
-                'text-sm px-1 transition-colors ' +
-                (isDashboard
-                  ? 'text-gray-900 font-semibold border-b-2 border-[#1D9E75] cursor-default'
-                  : 'text-gray-500 hover:text-gray-800 cursor-pointer')
+                isDashboard
+                  ? 'text-sm px-1 text-[#1D9E75] font-semibold cursor-default'
+                  : 'text-sm text-[#4B5563] hover:text-[#111827] transition-colors cursor-pointer px-1'
               }
             >
               Dashboard
             </span>
 
-            <span className="text-gray-300 mx-2 select-none">|</span>
+            <span className="text-[#E5E7EB] mx-2 select-none">|</span>
 
             <span
-              className="text-sm text-gray-500 hover:text-gray-800 transition-colors cursor-pointer px-1"
+              className="text-sm text-[#4B5563] hover:text-[#111827] transition-colors cursor-pointer px-1"
               onClick={() => navigate('/company/edit')}
             >
               Redigera profil
             </span>
 
-            <span className="text-gray-300 mx-2 select-none">|</span>
+            <span className="text-[#E5E7EB] mx-2 select-none">|</span>
 
             <span
               className={
                 'text-sm transition-colors px-1 ' +
                 (company?.slug
-                  ? 'text-gray-500 hover:text-gray-800 cursor-pointer'
-                  : 'text-gray-300 cursor-not-allowed')
+                  ? 'text-[#4B5563] hover:text-[#111827] cursor-pointer'
+                  : 'text-[#9CA3AF] cursor-not-allowed')
               }
               onClick={() => company?.slug && navigate('/företag/' + company.slug)}
             >
               Visa publik profil
             </span>
 
-            <span className="text-gray-300 mx-2 select-none">|</span>
+            <span className="text-[#E5E7EB] mx-2 select-none">|</span>
 
             <span
-              className="text-sm text-gray-500 hover:text-gray-800 transition-colors cursor-pointer px-1 flex items-center gap-1"
+              className="text-sm text-[#4B5563] hover:text-[#111827] transition-colors cursor-pointer px-1 flex items-center gap-1"
               onClick={() => logout()}
             >
               <LogOut className="h-3.5 w-3.5" />
@@ -218,133 +218,173 @@ function CompanyDashboard() {
       </header>
 
       {/* Main content */}
-      <main className="max-w-5xl mx-auto px-6 py-8 space-y-8">
+      <main className="max-w-5xl mx-auto px-6 py-8 space-y-6">
 
         {/* Row 1: four stat cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
 
-          {/* Card 1 — Profilvisningar */}
-          <div className="rounded-lg border border-gray-200 bg-white p-5">
-            <p className="text-xs text-gray-500 uppercase tracking-wide">Profilvisningar</p>
-            <p className="text-3xl font-semibold text-[#111] mt-1">312</p> {/* TODO: wire to real data */}
-            <p className="text-xs text-[#1D9E75] mt-1">↑ 18% vs förra veckan</p> {/* TODO: wire to real data */}
-            <Sparkline heights={['40%', '55%', '45%', '70%', '60%', '80%', '65%']} /> {/* TODO: wire to real data */}
-          </div>
-
-          {/* Card 2 — Nya förfrågningar (highlighted) */}
-          <div className="rounded-lg border border-[#1D9E75] bg-white p-5 relative">
-            <span className="absolute top-3 right-3 w-5 h-5 rounded-full bg-[#1D9E75] text-white text-xs flex items-center justify-center">
+          {/* Card 1 — Nya förfrågningar (HERO CARD) */}
+          <div className="bg-[#1D9E75] p-7 rounded-xl relative overflow-hidden">
+            <span className="absolute top-4 right-4 w-6 h-6 rounded-full bg-white/20 text-white text-xs flex items-center justify-center">
               7 {/* TODO: wire to real data */}
             </span>
-            <p className="text-xs text-gray-500 uppercase tracking-wide">Nya förfrågningar</p>
-            <p className="text-3xl font-semibold text-[#111] mt-1">7</p> {/* TODO: wire to real data */}
-            <p className="text-xs text-[#F0A500] mt-1">3 obesvarade</p> {/* TODO: wire to real data */}
+            <p className="text-xs font-semibold uppercase tracking-wide text-white/70">Nya förfrågningar</p>
+            <p className="text-4xl font-bold text-white mt-1">7</p> {/* TODO: wire to real data */}
+            <p className="text-sm text-white/80 mt-1">3 obesvarade</p> {/* TODO: wire to real data */}
+            <svg
+              viewBox="0 0 80 32"
+              width="80"
+              height="32"
+              className="absolute bottom-6 right-6"
+            >
+              <polyline
+                points={toPolyline(heroPoints)}
+                stroke="white"
+                strokeOpacity="0.7"
+                strokeWidth="1.5"
+                fill="none"
+              />
+            </svg>
           </div>
 
-          {/* Card 3 — Sökträffar */}
-          <div className="rounded-lg border border-gray-200 bg-white p-5">
-            <p className="text-xs text-gray-500 uppercase tracking-wide">Sökträffar</p>
-            <p className="text-3xl font-semibold text-[#111] mt-1">1 840</p> {/* TODO: wire to real data */}
-            <p className="text-xs text-[#1D9E75] mt-1">↑ 7% vs förra veckan</p> {/* TODO: wire to real data */}
-            <Sparkline heights={['30%', '50%', '40%', '60%', '55%', '75%', '70%']} /> {/* TODO: wire to real data */}
+          {/* Card 2 — Profilvisningar (STANDARD CARD) */}
+          <div className="bg-white border border-[#E5E7EB] p-6 rounded-xl relative overflow-hidden">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[#9CA3AF]">Profilvisningar</p>
+            <p className="text-3xl font-semibold text-[#111827] mt-1">312</p> {/* TODO: wire to real data */}
+            <p className="text-xs text-[#1D9E75] font-medium mt-1">↑ 18% vs förra veckan</p> {/* TODO: wire to real data */}
+            <svg
+              viewBox="0 0 80 32"
+              width="80"
+              height="32"
+              className="absolute bottom-6 right-6"
+            >
+              <polyline
+                points={toPolyline(standardPoints)}
+                stroke="#1D9E75"
+                strokeOpacity="0.6"
+                strokeWidth="1.5"
+                fill="none"
+              />
+            </svg>
           </div>
 
-          {/* Card 4 — Klick till hemsida */}
-          <div className="rounded-lg border border-gray-200 bg-white p-5">
-            <p className="text-xs text-gray-500 uppercase tracking-wide">Klick till hemsida</p>
-            <p className="text-3xl font-semibold text-[#111] mt-1">41</p> {/* TODO: wire to real data */}
-            <p className="text-xs text-gray-400 mt-1">Liknande förra veckan</p> {/* TODO: wire to real data */}
-            <Sparkline heights={['60%', '55%', '65%', '50%', '60%', '45%', '55%']} /> {/* TODO: wire to real data */}
+          {/* Card 3 — Sökträffar (STANDARD CARD) */}
+          <div className="bg-white border border-[#E5E7EB] p-6 rounded-xl relative overflow-hidden">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[#9CA3AF]">Sökträffar</p>
+            <p className="text-3xl font-semibold text-[#111827] mt-1">1 840</p> {/* TODO: wire to real data */}
+            <p className="text-xs text-[#1D9E75] font-medium mt-1">↑ 7% vs förra veckan</p> {/* TODO: wire to real data */}
+            <svg
+              viewBox="0 0 80 32"
+              width="80"
+              height="32"
+              className="absolute bottom-6 right-6"
+            >
+              <polyline
+                points={toPolyline(searchPoints)}
+                stroke="#1D9E75"
+                strokeOpacity="0.6"
+                strokeWidth="1.5"
+                fill="none"
+              />
+            </svg>
+          </div>
+
+          {/* Card 4 — Klick till hemsida (UTILITY CARD) */}
+          <div className="bg-[#F9FAFB] border border-[#E5E7EB] p-5 rounded-lg">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[#9CA3AF]">Klick till hemsida</p>
+            <p className="text-2xl font-semibold text-[#111827] mt-1">41</p> {/* TODO: wire to real data */}
+            <div className="h-1.5 bg-[#E5E7EB] rounded-full mt-3">
+              <div className="h-full bg-[#1D9E75] rounded-full" style={{ width: '41%' }} /> {/* TODO: wire to real data */}
+            </div>
           </div>
         </div>
 
         {/* Row 2: enquiries + profile strength */}
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
 
-          {/* Left (lg:col-span-3): Senaste förfrågningar */}
-          <div className="lg:col-span-3 rounded-lg border border-gray-200 bg-white p-5">
-            <p className="text-sm font-semibold text-gray-900 mb-4">Senaste förfrågningar</p>
+          {/* Left (lg:col-span-3): Senaste förfrågningar — STANDARD CARD */}
+          <div className="lg:col-span-3 bg-white border border-[#E5E7EB] p-6 rounded-xl">
+            <p className="text-lg font-semibold text-[#111827] mb-5">Senaste förfrågningar</p>
 
             <ul>
               {/* TODO: wire to real data */}
               {[
-                { unread: true,  sender: 'AB Volvo Components · Begäran om offert på hydraulikservice', time: '2 tim' },
-                { unread: true,  sender: 'Sandvik Machining · Underhållskontrakt CNC',                  time: '5 tim' },
-                { unread: true,  sender: 'Scania CV AB · Akut reparation växellåda',                    time: 'igår'  },
-                { unread: false, sender: 'SKF Sverige · Ny samarbetsförfrågan',                         time: '3 d'   },
-                { unread: false, sender: 'Atlas Copco · Kompressorservice',                             time: '5 d'   },
+                { unread: true,  sender: 'AB Volvo Components', subject: 'Begäran om offert på hydraulikservice', time: '2 tim' },
+                { unread: true,  sender: 'Sandvik Machining',   subject: 'Underhållskontrakt CNC',               time: '5 tim' },
+                { unread: true,  sender: 'Scania CV AB',        subject: 'Akut reparation växellåda',            time: 'igår'  },
+                { unread: false, sender: 'SKF Sverige',         subject: 'Ny samarbetsförfrågan',                time: '3 d'   },
+                { unread: false, sender: 'Atlas Copco',         subject: 'Kompressorservice',                    time: '5 d'   },
               ].map((row, i) => (
-                <li key={i} className="flex items-center gap-3 py-3 border-b border-gray-100 last:border-0">
-                  <span
-                    className="w-2 h-2 rounded-full flex-shrink-0"
-                    style={{ backgroundColor: row.unread ? '#1D9E75' : '#D1D5DB' }}
-                  />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-gray-800 truncate">{row.sender}</p>
-                    <p className="text-xs text-gray-400">{row.time}</p>
+                <li key={i} className="flex items-center justify-between py-3 border-b border-[#F3F4F6] last:border-0">
+                  <div className="flex-1 min-w-0 mr-3">
+                    <p className="text-sm font-medium text-[#111827]">{row.sender}</p>
+                    <p className="text-xs text-[#9CA3AF] mt-0.5 truncate">{row.subject}</p>
                   </div>
-                  {row.unread ? (
-                    <span className="bg-[#1D9E75]/10 text-[#1D9E75] text-xs px-2 py-0.5 rounded flex-shrink-0">
-                      Ny
-                    </span>
-                  ) : (
-                    <span className="bg-gray-100 text-gray-400 text-xs px-2 py-0.5 rounded flex-shrink-0">
-                      Läst
-                    </span>
-                  )}
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    {row.unread ? (
+                      <span className="bg-[#E8F7F2] text-[#1D9E75] text-xs font-medium px-2 py-0.5 rounded-full">
+                        Ny
+                      </span>
+                    ) : (
+                      <span className="bg-[#F3F4F6] text-[#9CA3AF] text-xs font-medium px-2 py-0.5 rounded-full">
+                        Läst
+                      </span>
+                    )}
+                    <span className="text-xs text-[#1D9E75] font-medium cursor-pointer ml-1">Visa</span>
+                  </div>
                 </li>
               ))}
             </ul>
 
-            <button className="text-sm text-[#1D9E75] hover:underline cursor-pointer mt-3">
-              Visa alla förfrågningar →
-            </button>
+            <a className="block w-full text-center text-sm text-[#9CA3AF] hover:text-[#4B5563] mt-4 pt-4 border-t border-[#F3F4F6] cursor-pointer">
+              Visa alla förfrågningar
+            </a>
           </div>
 
-          {/* Right (lg:col-span-2): Profilstyrka */}
-          <div className="lg:col-span-2 rounded-lg border border-gray-200 bg-white p-5">
-            <p className="text-sm font-semibold text-gray-900">Profilstyrka</p>
-            <p className="text-xs text-gray-400 mb-4 mt-1 leading-relaxed">
+          {/* Right (lg:col-span-2): Profilstyrka — STANDARD CARD */}
+          <div className="lg:col-span-2 bg-white border border-[#E5E7EB] p-6 rounded-xl">
+            <p className="text-lg font-semibold text-[#111827] mb-1">Profilstyrka</p>
+            <p className="text-xs text-[#9CA3AF] mb-5 leading-relaxed">
               Profilstyrka visar hur komplett din företagsprofil är på industrin.net. En starkare profil syns bättre i sökresultat och skapar förtroende hos potentiella kunder.
             </p>
 
             {/* Circular progress ring */}
             <div className="flex justify-center mb-4">
-              <svg width="80" height="80" viewBox="0 0 80 80">
+              <svg width="100" height="100" viewBox="0 0 100 100">
                 {/* Background circle */}
                 <circle
-                  cx="40"
-                  cy="40"
+                  cx="50"
+                  cy="50"
                   r={RING_RADIUS}
                   fill="none"
                   stroke="#E5E7EB"
-                  strokeWidth="6"
+                  strokeWidth="8"
                 />
                 {/* Progress circle — 74% TODO: wire to real data */}
                 <circle
-                  cx="40"
-                  cy="40"
+                  cx="50"
+                  cy="50"
                   r={RING_RADIUS}
                   fill="none"
                   stroke="#1D9E75"
-                  strokeWidth="6"
+                  strokeWidth="8"
                   strokeLinecap="round"
                   strokeDasharray={RING_CIRCUMFERENCE}
                   strokeDashoffset={RING_DASHOFFSET}
-                  transform="rotate(-90 40 40)"
+                  transform="rotate(-90 50 50)"
                 />
                 {/* Center text */}
-                <text x="40" y="37" textAnchor="middle" fontSize="16" fontWeight="600" fill="#111">
+                <text x="50" y="46" textAnchor="middle" fontSize="18" fontWeight="700" fill="#111827">
                   {RING_SCORE} {/* TODO: wire to real data */}
                 </text>
-                <text x="40" y="50" textAnchor="middle" fontSize="10" fill="#6B7280">
+                <text x="50" y="58" textAnchor="middle" fontSize="10" fill="#9CA3AF">
                   / 100
                 </text>
               </svg>
             </div>
 
             {/* Sub-metrics */}
-            <div className="space-y-2 text-xs">
+            <div className="text-xs">
               {/* TODO: wire to real data */}
               {[
                 { label: 'Profil komplett',       value: '82%',    color: 'text-[#1D9E75]' },
@@ -352,27 +392,27 @@ function CompanyDashboard() {
                 { label: 'Org.nummer verifierat',  value: 'Ja',     color: 'text-[#1D9E75]' },
                 { label: 'Certifieringar',         value: 'Saknas', color: 'text-[#F0A500]' },
               ].map((m) => (
-                <div key={m.label} className="flex justify-between">
-                  <span className="text-gray-500">{m.label}</span>
+                <div key={m.label} className="flex justify-between py-1.5 border-b border-[#F3F4F6] last:border-0">
+                  <span className="text-[#4B5563]">{m.label}</span>
                   <span className={m.color}>{m.value}</span>
                 </div>
               ))}
             </div>
 
             {/* Checklist */}
-            <div className="space-y-2 mt-4 text-xs">
+            <div className="mt-4">
               {/* TODO: wire to real data */}
-              <div className="flex items-center gap-1.5">
-                <span className="text-[#1D9E75] font-medium">&#10003;</span>
-                <span className="text-gray-600">Kontaktpersoner tillagda</span>
+              <div className="flex items-center gap-2 text-sm text-[#4B5563] py-1">
+                <span className="w-3 h-3 rounded-full bg-[#1D9E75] flex-shrink-0" />
+                <span>Kontaktpersoner tillagda</span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-[#1D9E75] font-medium">&#10003;</span>
-                <span className="text-gray-600">Agenturer listade</span>
+              <div className="flex items-center gap-2 text-sm text-[#4B5563] py-1">
+                <span className="w-3 h-3 rounded-full bg-[#1D9E75] flex-shrink-0" />
+                <span>Agenturer listade</span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-[#F0A500] font-medium">!</span>
-                <span className="text-gray-600">Ladda upp certifikat</span>
+              <div className="flex items-center gap-2 text-sm text-[#4B5563] py-1">
+                <span className="w-3 h-3 rounded-full border-2 border-[#E5E7EB] flex-shrink-0" />
+                <span>Ladda upp certifikat</span>
                 <span
                   className="text-[#1D9E75] text-xs cursor-pointer hover:underline ml-1"
                   onClick={() => navigate('/company/edit')}
@@ -380,9 +420,9 @@ function CompanyDashboard() {
                   Lägg till →
                 </span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-[#F0A500] font-medium">!</span>
-                <span className="text-gray-600">Kontaktfotos saknas</span>
+              <div className="flex items-center gap-2 text-sm text-[#4B5563] py-1">
+                <span className="w-3 h-3 rounded-full border-2 border-[#E5E7EB] flex-shrink-0" />
+                <span>Kontaktfotos saknas</span>
                 <span
                   className="text-[#1D9E75] text-xs cursor-pointer hover:underline ml-1"
                   onClick={() => navigate('/company/edit')}
@@ -395,11 +435,11 @@ function CompanyDashboard() {
         </div>
 
         {/* Row 3: three analytics cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-stretch">
 
-          {/* Col 1: Synlighet per kanal */}
-          <div className="rounded-lg border border-gray-200 bg-white p-5">
-            <p className="text-sm font-semibold text-gray-900 mb-4">Synlighet per kanal</p>
+          {/* Col 1: Synlighet per kanal — STANDARD CARD */}
+          <div className="bg-white border border-[#E5E7EB] p-6 rounded-xl">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[#9CA3AF] mb-4">Synlighet per kanal</p>
             <div className="space-y-4">
               {/* TODO: wire to real data */}
               {[
@@ -408,11 +448,11 @@ function CompanyDashboard() {
                 { label: 'Nyhetsbrev',        pct: 10 },
               ].map((bar) => (
                 <div key={bar.label}>
-                  <div className="text-xs text-gray-500 mb-1 flex justify-between">
-                    <span>{bar.label}</span>
-                    <span className="text-gray-700">{bar.pct}%</span>
+                  <div className="mb-1 flex justify-between">
+                    <span className="text-xs text-[#4B5563]">{bar.label}</span>
+                    <span className="text-xs font-medium text-[#111827]">{bar.pct}%</span>
                   </div>
-                  <div className="h-1.5 bg-gray-100 rounded-full">
+                  <div className="h-2 bg-[#E5E7EB] rounded-full">
                     <div
                       className="h-full bg-[#1D9E75] rounded-full"
                       style={{ width: `${bar.pct}%` }}
@@ -423,15 +463,15 @@ function CompanyDashboard() {
             </div>
           </div>
 
-          {/* Col 2: Heta sökord */}
-          <div className="rounded-lg border border-gray-200 bg-white p-5">
-            <p className="text-sm font-semibold text-gray-900 mb-4">Heta sökord</p>
+          {/* Col 2: Heta sökord — STANDARD CARD */}
+          <div className="bg-white border border-[#E5E7EB] p-6 rounded-xl">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[#9CA3AF] mb-4">Heta sökord</p>
             <div className="flex flex-wrap gap-2">
               {/* TODO: wire to real data */}
               {['stångmatare', 'LNS magasin', 'magnetbord'].map((kw) => (
                 <span
                   key={kw}
-                  className="text-xs px-3 py-1.5 rounded-full bg-[#1D9E75]/10 text-[#1D9E75] border border-[#1D9E75]/20"
+                  className="bg-[#E8F7F2] text-[#1D9E75] border border-[#1D9E75]/20 text-xs px-3 py-1.5 rounded-full"
                 >
                   {kw}
                 </span>
@@ -439,7 +479,7 @@ function CompanyDashboard() {
               {['AMF spännverktyg', 'rhenus skärvätska', 'kärnborrmaskin', 'CNC tillbehör'].map((kw) => (
                 <span
                   key={kw}
-                  className="text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-500 border border-gray-200"
+                  className="bg-[#F3F4F6] text-[#4B5563] border border-[#E5E7EB] text-xs px-3 py-1.5 rounded-full"
                 >
                   {kw}
                 </span>
@@ -447,22 +487,22 @@ function CompanyDashboard() {
             </div>
           </div>
 
-          {/* Col 3: Branschjämförelse */}
-          <div className="rounded-lg border border-gray-200 bg-white p-5">
-            <p className="text-sm font-semibold text-gray-900 mb-4">Branschjämförelse</p>
+          {/* Col 3: Branschjämförelse — UTILITY CARD */}
+          <div className="bg-[#F9FAFB] border border-[#E5E7EB] p-5 rounded-lg">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[#9CA3AF] mb-4">Branschjämförelse</p>
             <div className="space-y-4">
               {/* TODO: wire to real data */}
               {[
                 { label: 'Detta företag',     value: 21, width: '70%',  textColor: 'text-[#1D9E75]', barColor: 'bg-[#1D9E75]' },
-                { label: 'Snitt i kategorin', value: 11, width: '37%',  textColor: 'text-gray-400',  barColor: 'bg-gray-400'  },
-                { label: 'Topp i kategorin',  value: 30, width: '100%', textColor: 'text-gray-400',  barColor: 'bg-gray-400'  },
+                { label: 'Snitt i kategorin', value: 11, width: '37%',  textColor: 'text-[#9CA3AF]', barColor: 'bg-[#E5E7EB]' },
+                { label: 'Topp i kategorin',  value: 30, width: '100%', textColor: 'text-[#9CA3AF]', barColor: 'bg-[#E5E7EB]' },
               ].map((row) => (
                 <div key={row.label}>
-                  <div className="text-xs text-gray-500 mb-1 flex justify-between">
-                    <span>{row.label}</span>
-                    <span className={row.textColor}>{row.value}</span>
+                  <div className="mb-1 flex justify-between">
+                    <span className="text-xs text-[#4B5563]">{row.label}</span>
+                    <span className={`text-xs font-medium ${row.textColor}`}>{row.value}</span>
                   </div>
-                  <div className="h-1.5 bg-gray-100 rounded-full">
+                  <div className="h-2 bg-[#E5E7EB] rounded-full">
                     <div
                       className={`h-full rounded-full ${row.barColor}`}
                       style={{ width: row.width }}
@@ -474,30 +514,33 @@ function CompanyDashboard() {
           </div>
         </div>
 
-        {/* Row 4: Snabb åtgärd */}
-        <div className="rounded-lg border border-gray-200 bg-white p-5">
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
-            Snabb åtgärd
-          </p>
-          <div className="flex gap-3 flex-wrap">
-            <button
-              className="text-sm px-4 py-2 rounded-md border border-gray-200 bg-white text-gray-700 hover:border-gray-400 transition-colors cursor-pointer"
-              onClick={() => toast({ title: 'Kommer snart' })}
-            >
-              Förbättra beskrivning med AI
-            </button>
-            <button
-              className="text-sm px-4 py-2 rounded-md border border-gray-200 bg-white text-gray-700 hover:border-gray-400 transition-colors cursor-pointer"
-              onClick={() => navigate('/company/edit')}
-            >
-              Lägg till certifieringar
-            </button>
-            <button
-              className="text-sm px-4 py-2 rounded-md border border-gray-200 bg-white text-gray-700 hover:border-gray-400 transition-colors cursor-pointer"
-              onClick={() => toast({ title: 'Kommer snart' })}
-            >
-              Öka synligheten
-            </button>
+        {/* Row 4: Snabb åtgärd — UTILITY CARD */}
+        <div className="bg-[#F9FAFB] border border-[#E5E7EB] p-5 rounded-lg">
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div>
+              <p className="text-sm font-semibold text-[#111827]">Snabb åtgärd</p>
+              <p className="text-sm text-[#9CA3AF] mt-0.5">Nästa steg för att förbättra er profil</p>
+            </div>
+            <div className="flex gap-3 flex-wrap">
+              <button
+                className="text-sm px-4 py-2 rounded-lg border border-[#E5E7EB] bg-white text-[#4B5563] hover:border-[#9CA3AF] transition-colors"
+                onClick={() => toast({ title: 'Kommer snart' })}
+              >
+                Förbättra beskrivning med AI
+              </button>
+              <button
+                className="text-sm px-4 py-2 rounded-lg border border-[#E5E7EB] bg-white text-[#4B5563] hover:border-[#9CA3AF] transition-colors"
+                onClick={() => navigate('/company/edit')}
+              >
+                Lägg till certifieringar
+              </button>
+              <button
+                className="text-sm px-4 py-2 rounded-lg border border-[#E5E7EB] bg-white text-[#4B5563] hover:border-[#9CA3AF] transition-colors"
+                onClick={() => toast({ title: 'Kommer snart' })}
+              >
+                Öka synligheten
+              </button>
+            </div>
           </div>
         </div>
 
