@@ -1,124 +1,36 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useLocation } from 'wouter';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import {
-  Building,
-  LogOut,
-  Save,
-  Mail,
-  Phone,
-  Globe,
-  MapPin,
-  FileText,
-  Lock,
-  ImageIcon,
-  Play,
-  Users,
-  Briefcase,
-  Award,
-} from 'lucide-react';
+import { Building, LogOut } from 'lucide-react';
 import { useCompanyAccess } from '@/hooks/use-company-access';
 import { useAuth } from '@clerk/clerk-react';
-import { SERVICE_CATEGORIES } from '@/data/service-categories';
 
+// SVG ring constants — r=34, cx=cy=40
+const RING_RADIUS = 34;
+const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS; // ≈ 213.6
+const RING_SCORE = 74; // TODO: wire to real data
+const RING_DASHOFFSET = RING_CIRCUMFERENCE * (1 - RING_SCORE / 100); // ≈ 55.5
 
-function ServicesSection({
-  company,
-  fetchWithCompanyAuth,
-}: {
-  company: any;
-  fetchWithCompanyAuth: (input: RequestInfo, init?: RequestInit) => Promise<Response>;
-}) {
-  const queryClient = useQueryClient();
-  const { toast } = useToast();
-  const [selected, setSelected] = useState<string[]>(company.categories ?? []);
-
-  useEffect(() => {
-    setSelected(company.categories ?? []);
-  }, [company.categories]);
-
-  const toggle = (subcategory: string) => {
-    setSelected((prev) =>
-      prev.includes(subcategory)
-        ? prev.filter((s) => s !== subcategory)
-        : [...prev, subcategory]
-    );
-  };
-
-  const mutation = useMutation({
-    mutationFn: async (categories: string[]) => {
-      const response = await fetchWithCompanyAuth('/api/company/profile', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ categories }),
-      });
-      if (!response.ok) {
-        const err = await response.json().catch(() => ({})) as { message?: string };
-        throw new Error(err.message ?? `Serverfel ${response.status}`);
-      }
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/company/profile'] });
-      toast({ title: 'Sparat', description: 'Era valda tjänster har sparats.' });
-    },
-    onError: (error: Error) => {
-      toast({ title: 'Kunde inte spara', description: error.message, variant: 'destructive' });
-    },
-  });
-
+function Sparkline({ heights }: { heights: string[] }) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Tjänster</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="space-y-4">
-          {Object.values(SERVICE_CATEGORIES).map((category) => (
-            <div key={category.id} className="border rounded-lg p-4">
-              <p className="text-sm font-semibold text-blue-700 mb-3">{category.name}</p>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                {category.subcategories.map((sub) => (
-                  <label key={sub} className="flex items-center gap-2 text-sm cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={selected.includes(sub)}
-                      onChange={() => toggle(sub)}
-                      className="rounded border-gray-300 text-blue-600"
-                    />
-                    {sub}
-                  </label>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-        <button
-          onClick={() => mutation.mutate(selected)}
-          disabled={mutation.isPending}
-          className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          {mutation.isPending ? 'Sparar...' : 'Spara tjänster'}
-        </button>
-      </CardContent>
-    </Card>
+    <div className="h-8 flex items-end gap-0.5 mt-3">
+      {heights.map((h, i) => (
+        <div
+          key={i}
+          className="w-2 rounded-sm bg-gray-200"
+          style={{ height: h }}
+        />
+      ))}
+    </div>
   );
 }
 
 function CompanyDashboard() {
   const { companyUser, logout, isLoading: authLoading, getCompanyToken } = useCompanyAccess();
   const { isSignedIn, getToken } = useAuth();
-  const [, navigate] = useLocation();
-  const queryClient = useQueryClient();
+  const [location, navigate] = useLocation();
   const { toast } = useToast();
-  const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState<any>({});
   const [setupError, setSetupError] = useState(false);
   const setupAttempted = useRef(false);
 
@@ -173,30 +85,6 @@ function CompanyDashboard() {
     },
   });
 
-  // Update company mutation
-  const updateMutation = useMutation({
-    mutationFn: async (data: any) => {
-      const response = await fetchWithCompanyAuth('/api/company/profile/update', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) {
-        const err = await response.json().catch(() => ({}));
-        throw new Error(err.message || `Server error ${response.status}`);
-      }
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/company/profile'] });
-      setIsEditing(false);
-      toast({ title: 'Sparat', description: 'Ändringarna har sparats.' });
-    },
-    onError: (error: any) => {
-      toast({ title: 'Kunde inte spara', description: error.message, variant: 'destructive' });
-    },
-  });
-
   if (authLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -214,14 +102,14 @@ function CompanyDashboard() {
         <div className="max-w-md w-full text-center space-y-4">
           <h1 className="text-xl font-bold text-gray-900">Kunde inte verifiera åtkomst</h1>
           <p className="text-gray-600">
-            Vi kunde inte koppla ditt konto till ett godkänt företag. Kontakta oss på{" "}
+            Vi kunde inte koppla ditt konto till ett godkänt företag. Kontakta oss på{' '}
             <a href="mailto:info@industrin.net" className="text-blue-600 hover:underline">
               info@industrin.net
-            </a>{" "}
+            </a>{' '}
             om du tror att detta är ett misstag.
           </p>
           <button
-            onClick={() => window.location.href = '/'}
+            onClick={() => { window.location.href = '/'; }}
             className="text-sm text-gray-500 hover:text-gray-700 underline"
           >
             Tillbaka till startsidan
@@ -234,14 +122,6 @@ function CompanyDashboard() {
   if (!companyUser) {
     return null;
   }
-
-  const handleSave = () => {
-    updateMutation.mutate(formData);
-  };
-
-  const handleChange = (field: string, value: any) => {
-    setFormData((prev: any) => ({ ...prev, [field]: value }));
-  };
 
   if (isLoading) {
     return (
@@ -273,246 +153,355 @@ function CompanyDashboard() {
     );
   }
 
-  const isPremium = company?.tier === 'premium';
+  const isDashboard = location === '/company/dashboard';
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <Building className="h-6 w-6 text-blue-600 mr-3" />
-              <h1 className="text-2xl font-bold text-gray-900">
-                {company?.name ?? 'Min företagssida'} — Företagssida
-              </h1>
-              <Badge variant="outline" className="ml-3 bg-blue-50 text-blue-700 border-blue-200">
-                {company?.name || 'Company'}
-              </Badge>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigate('/company/edit')}
-              >
-                Redigera profil
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => company?.slug && navigate(`/företag/${company.slug}`)}
-                disabled={isLoading || !company?.slug}
-              >
-                Visa publik profil
-              </Button>
-              <Button variant="outline" size="sm" onClick={logout}>
-                <LogOut className="h-4 w-4 mr-2" />
-                Logga ut
-              </Button>
-            </div>
+    <div className="min-h-screen bg-[#FAFAFA]">
+      {/* Top nav */}
+      <header className="bg-white border-b border-gray-200 h-14">
+        <div className="max-w-5xl mx-auto px-6 h-full flex items-center justify-between">
+          {/* Left: icon + company name */}
+          <div className="flex items-center gap-2">
+            <Building className="h-4 w-4 text-gray-400" />
+            <span className="text-sm font-medium text-gray-700">
+              {company?.name ?? ''} {/* TODO: wire to real data */}
+            </span>
           </div>
+
+          {/* Right: nav items */}
+          <nav className="flex items-center gap-1">
+            <span
+              className={
+                'text-sm px-1 transition-colors ' +
+                (isDashboard
+                  ? 'text-gray-900 font-semibold border-b-2 border-[#1D9E75] cursor-default'
+                  : 'text-gray-500 hover:text-gray-800 cursor-pointer')
+              }
+            >
+              Dashboard
+            </span>
+
+            <span className="text-gray-300 mx-2 select-none">|</span>
+
+            <span
+              className="text-sm text-gray-500 hover:text-gray-800 transition-colors cursor-pointer px-1"
+              onClick={() => navigate('/company/edit')}
+            >
+              Redigera profil
+            </span>
+
+            <span className="text-gray-300 mx-2 select-none">|</span>
+
+            <span
+              className={
+                'text-sm transition-colors px-1 ' +
+                (company?.slug
+                  ? 'text-gray-500 hover:text-gray-800 cursor-pointer'
+                  : 'text-gray-300 cursor-not-allowed')
+              }
+              onClick={() => company?.slug && navigate('/företag/' + company.slug)}
+            >
+              Visa publik profil
+            </span>
+
+            <span className="text-gray-300 mx-2 select-none">|</span>
+
+            <span
+              className="text-sm text-gray-500 hover:text-gray-800 transition-colors cursor-pointer px-1 flex items-center gap-1"
+              onClick={() => logout()}
+            >
+              <LogOut className="h-3.5 w-3.5" />
+              Logga ut
+            </span>
+          </nav>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="space-y-6">
-          {/* Company Profile Card */}
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Företagsprofil</CardTitle>
-              {!isEditing ? (
-                <Button onClick={() => { setFormData(company); setIsEditing(true); }} variant="outline" size="sm">
-                  Redigera profil
-                </Button>
-              ) : (
-                <div className="flex space-x-2">
-                  <Button onClick={() => { setIsEditing(false); setFormData(company); }} variant="outline" size="sm">
-                    Avbryt
-                  </Button>
-                  <Button onClick={handleSave} size="sm" disabled={updateMutation.isPending}>
-                    <Save className="h-4 w-4 mr-2" />
-                    {updateMutation.isPending ? 'Sparar...' : 'Spara ändringar'}
-                  </Button>
-                </div>
-              )}
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Företagsnamn</label>
-                  {isEditing ? (
-                    <Input
-                      value={formData.name || ''}
-                      onChange={(e) => handleChange('name', e.target.value)}
-                    />
-                  ) : (
-                    <p className="text-gray-900">{company?.name}</p>
-                  )}
-                </div>
+      {/* Main content */}
+      <main className="max-w-5xl mx-auto px-6 py-8 space-y-8">
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Stad</label>
-                  {isEditing ? (
-                    <Input
-                      value={formData.city || ''}
-                      onChange={(e) => handleChange('city', e.target.value)}
-                    />
-                  ) : (
-                    <p className="text-gray-900">{company?.city || company?.location}</p>
-                  )}
-                </div>
+        {/* Row 1: four stat cards */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                    <Mail className="h-4 w-4 mr-1" />
-                    E-post
-                  </label>
-                  {isEditing ? (
-                    <Input
-                      type="email"
-                      value={formData.contactEmail || ''}
-                      onChange={(e) => handleChange('contactEmail', e.target.value)}
-                    />
-                  ) : (
-                    <p className="text-gray-900">{company?.contactEmail || 'Ej angivet'}</p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                    <Phone className="h-4 w-4 mr-1" />
-                    Telefon
-                  </label>
-                  {isEditing ? (
-                    <Input
-                      value={formData.phone || ''}
-                      onChange={(e) => handleChange('phone', e.target.value)}
-                    />
-                  ) : (
-                    <p className="text-gray-900">{company?.phone || 'Ej angivet'}</p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                    <Globe className="h-4 w-4 mr-1" />
-                    Webbplats
-                  </label>
-                  {isEditing ? (
-                    <Input
-                      value={formData.website || ''}
-                      onChange={(e) => handleChange('website', e.target.value)}
-                    />
-                  ) : (
-                    <p className="text-gray-900">{company?.website || 'Ej angivet'}</p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                    <MapPin className="h-4 w-4 mr-1" />
-                    Adress
-                  </label>
-                  {isEditing ? (
-                    <Input
-                      value={formData.address || ''}
-                      onChange={(e) => handleChange('address', e.target.value)}
-                    />
-                  ) : (
-                    <p className="text-gray-900">{company?.address || 'Ej angivet'}</p>
-                  )}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                  <FileText className="h-4 w-4 mr-1" />
-                  Beskrivning
-                </label>
-                {isEditing ? (
-                  <Textarea
-                    value={formData.description_sv || formData.description || ''}
-                    onChange={(e) => handleChange('description_sv', e.target.value)}
-                    rows={6}
-                    placeholder="Beskriv ditt företag och dina tjänster..."
-                  />
-                ) : (
-                  <p className="text-gray-700 whitespace-pre-wrap">
-                    {company?.description_sv || company?.description || 'Ingen beskrivning angiven'}
-                  </p>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Services Card */}
-          {company && (
-            <ServicesSection company={company} fetchWithCompanyAuth={fetchWithCompanyAuth} />
-          )}
-
-          {/* Premium section */}
-          <div className="space-y-5 pt-2">
-            <div className="space-y-1">
-              <h2 className="text-lg font-semibold text-gray-900">Premium-funktioner</h2>
-              <p className="text-sm text-gray-500">Lås upp för att synas mer och nå fler kunder.</p>
-            </div>
-
-            <div className={!isPremium ? 'blur-[1.5px] pointer-events-none select-none' : ''}>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {([
-                  { Icon: ImageIcon, title: 'Logotyp', desc: 'Visa er logotyp på er företagssida' },
-                  { Icon: Users, title: 'Kontaktpersoner', desc: 'Lägg till namngivna kontakter med telefon' },
-                  { Icon: Play, title: 'Presentation via film', desc: 'Bädda in en YouTube-film om er verksamhet' },
-                  { Icon: FileText, title: 'Filer & PDF', desc: 'Ladda upp broschyrer och produktblad' },
-                  { Icon: Briefcase, title: 'Referensprojekt', desc: 'Visa upp era bästa uppdrag och kunder' },
-                  { Icon: Award, title: 'Certifieringar', desc: 'Lyft fram era certifieringar och godkännanden' },
-                ] as const).map(({ Icon, title, desc }) => (
-                  <div key={title} className="relative bg-white border border-gray-200 rounded-xl p-5">
-                    <Lock className="absolute top-3 right-3 h-3.5 w-3.5 text-gray-300" />
-                    <Icon className="h-5 w-5 text-gray-400 mb-3" />
-                    <p className="text-sm font-semibold text-gray-800 mb-1">{title}</p>
-                    <p className="text-xs text-gray-500 leading-relaxed">{desc}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {!isPremium && (
-              <div className="flex justify-center pt-2">
-                <button
-                  onClick={() => toast({ title: 'Kommer snart', description: 'Premiumfunktioner lanseras inom kort.' })}
-                  className="inline-flex items-center px-6 py-2.5 text-sm font-medium rounded-lg bg-gray-900 text-white hover:bg-gray-700 transition-colors"
-                >
-                  Uppgradera till Premium
-                </button>
-              </div>
-            )}
+          {/* Card 1 — Profilvisningar */}
+          <div className="rounded-lg border border-gray-200 bg-white p-5">
+            <p className="text-xs text-gray-500 uppercase tracking-wide">Profilvisningar</p>
+            <p className="text-3xl font-semibold text-[#111] mt-1">312</p> {/* TODO: wire to real data */}
+            <p className="text-xs text-[#1D9E75] mt-1">↑ 18% vs förra veckan</p> {/* TODO: wire to real data */}
+            <Sparkline heights={['40%', '55%', '45%', '70%', '60%', '80%', '65%']} /> {/* TODO: wire to real data */}
           </div>
 
-          {/* Quote Requests Card */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Offertförfrågningar</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600">Offertförfrågningar samlas här. Funktionen är under uppbyggnad.</p>
-            </CardContent>
-          </Card>
-        </div>
-      </main>
+          {/* Card 2 — Nya förfrågningar (highlighted) */}
+          <div className="rounded-lg border border-[#1D9E75] bg-white p-5 relative">
+            <span className="absolute top-3 right-3 w-5 h-5 rounded-full bg-[#1D9E75] text-white text-xs flex items-center justify-center">
+              7 {/* TODO: wire to real data */}
+            </span>
+            <p className="text-xs text-gray-500 uppercase tracking-wide">Nya förfrågningar</p>
+            <p className="text-3xl font-semibold text-[#111] mt-1">7</p> {/* TODO: wire to real data */}
+            <p className="text-xs text-[#F0A500] mt-1">3 obesvarade</p> {/* TODO: wire to real data */}
+          </div>
 
-      <footer className="border-t border-gray-100 mt-8">
-        <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-end">
-          <button
-            onClick={logout}
-            className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            Logga ut
-          </button>
+          {/* Card 3 — Sökträffar */}
+          <div className="rounded-lg border border-gray-200 bg-white p-5">
+            <p className="text-xs text-gray-500 uppercase tracking-wide">Sökträffar</p>
+            <p className="text-3xl font-semibold text-[#111] mt-1">1 840</p> {/* TODO: wire to real data */}
+            <p className="text-xs text-[#1D9E75] mt-1">↑ 7% vs förra veckan</p> {/* TODO: wire to real data */}
+            <Sparkline heights={['30%', '50%', '40%', '60%', '55%', '75%', '70%']} /> {/* TODO: wire to real data */}
+          </div>
+
+          {/* Card 4 — Klick till hemsida */}
+          <div className="rounded-lg border border-gray-200 bg-white p-5">
+            <p className="text-xs text-gray-500 uppercase tracking-wide">Klick till hemsida</p>
+            <p className="text-3xl font-semibold text-[#111] mt-1">41</p> {/* TODO: wire to real data */}
+            <p className="text-xs text-gray-400 mt-1">Liknande förra veckan</p> {/* TODO: wire to real data */}
+            <Sparkline heights={['60%', '55%', '65%', '50%', '60%', '45%', '55%']} /> {/* TODO: wire to real data */}
+          </div>
         </div>
-      </footer>
+
+        {/* Row 2: enquiries + profile strength */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+
+          {/* Left (lg:col-span-3): Senaste förfrågningar */}
+          <div className="lg:col-span-3 rounded-lg border border-gray-200 bg-white p-5">
+            <p className="text-sm font-semibold text-gray-900 mb-4">Senaste förfrågningar</p>
+
+            <ul>
+              {/* TODO: wire to real data */}
+              {[
+                { unread: true,  sender: 'AB Volvo Components · Begäran om offert på hydraulikservice', time: '2 tim' },
+                { unread: true,  sender: 'Sandvik Machining · Underhållskontrakt CNC',                  time: '5 tim' },
+                { unread: true,  sender: 'Scania CV AB · Akut reparation växellåda',                    time: 'igår'  },
+                { unread: false, sender: 'SKF Sverige · Ny samarbetsförfrågan',                         time: '3 d'   },
+                { unread: false, sender: 'Atlas Copco · Kompressorservice',                             time: '5 d'   },
+              ].map((row, i) => (
+                <li key={i} className="flex items-center gap-3 py-3 border-b border-gray-100 last:border-0">
+                  <span
+                    className="w-2 h-2 rounded-full flex-shrink-0"
+                    style={{ backgroundColor: row.unread ? '#1D9E75' : '#D1D5DB' }}
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-gray-800 truncate">{row.sender}</p>
+                    <p className="text-xs text-gray-400">{row.time}</p>
+                  </div>
+                  {row.unread ? (
+                    <span className="bg-[#1D9E75]/10 text-[#1D9E75] text-xs px-2 py-0.5 rounded flex-shrink-0">
+                      Ny
+                    </span>
+                  ) : (
+                    <span className="bg-gray-100 text-gray-400 text-xs px-2 py-0.5 rounded flex-shrink-0">
+                      Läst
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
+
+            <button className="text-sm text-[#1D9E75] hover:underline cursor-pointer mt-3">
+              Visa alla förfrågningar →
+            </button>
+          </div>
+
+          {/* Right (lg:col-span-2): Profilstyrka */}
+          <div className="lg:col-span-2 rounded-lg border border-gray-200 bg-white p-5">
+            <p className="text-sm font-semibold text-gray-900">Profilstyrka</p>
+            <p className="text-xs text-gray-400 mb-4 mt-1 leading-relaxed">
+              Profilstyrka visar hur komplett din företagsprofil är på industrin.net. En starkare profil syns bättre i sökresultat och skapar förtroende hos potentiella kunder.
+            </p>
+
+            {/* Circular progress ring */}
+            <div className="flex justify-center mb-4">
+              <svg width="80" height="80" viewBox="0 0 80 80">
+                {/* Background circle */}
+                <circle
+                  cx="40"
+                  cy="40"
+                  r={RING_RADIUS}
+                  fill="none"
+                  stroke="#E5E7EB"
+                  strokeWidth="6"
+                />
+                {/* Progress circle — 74% TODO: wire to real data */}
+                <circle
+                  cx="40"
+                  cy="40"
+                  r={RING_RADIUS}
+                  fill="none"
+                  stroke="#1D9E75"
+                  strokeWidth="6"
+                  strokeLinecap="round"
+                  strokeDasharray={RING_CIRCUMFERENCE}
+                  strokeDashoffset={RING_DASHOFFSET}
+                  transform="rotate(-90 40 40)"
+                />
+                {/* Center text */}
+                <text x="40" y="37" textAnchor="middle" fontSize="16" fontWeight="600" fill="#111">
+                  {RING_SCORE} {/* TODO: wire to real data */}
+                </text>
+                <text x="40" y="50" textAnchor="middle" fontSize="10" fill="#6B7280">
+                  / 100
+                </text>
+              </svg>
+            </div>
+
+            {/* Sub-metrics */}
+            <div className="space-y-2 text-xs">
+              {/* TODO: wire to real data */}
+              {[
+                { label: 'Profil komplett',       value: '82%',    color: 'text-[#1D9E75]' },
+                { label: 'Svarsfrekvens',          value: '91%',    color: 'text-[#1D9E75]' },
+                { label: 'Org.nummer verifierat',  value: 'Ja',     color: 'text-[#1D9E75]' },
+                { label: 'Certifieringar',         value: 'Saknas', color: 'text-[#F0A500]' },
+              ].map((m) => (
+                <div key={m.label} className="flex justify-between">
+                  <span className="text-gray-500">{m.label}</span>
+                  <span className={m.color}>{m.value}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Checklist */}
+            <div className="space-y-2 mt-4 text-xs">
+              {/* TODO: wire to real data */}
+              <div className="flex items-center gap-1.5">
+                <span className="text-[#1D9E75] font-medium">&#10003;</span>
+                <span className="text-gray-600">Kontaktpersoner tillagda</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-[#1D9E75] font-medium">&#10003;</span>
+                <span className="text-gray-600">Agenturer listade</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-[#F0A500] font-medium">!</span>
+                <span className="text-gray-600">Ladda upp certifikat</span>
+                <span
+                  className="text-[#1D9E75] text-xs cursor-pointer hover:underline ml-1"
+                  onClick={() => navigate('/company/edit')}
+                >
+                  Lägg till →
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-[#F0A500] font-medium">!</span>
+                <span className="text-gray-600">Kontaktfotos saknas</span>
+                <span
+                  className="text-[#1D9E75] text-xs cursor-pointer hover:underline ml-1"
+                  onClick={() => navigate('/company/edit')}
+                >
+                  Lägg till →
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Row 3: three analytics cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+          {/* Col 1: Synlighet per kanal */}
+          <div className="rounded-lg border border-gray-200 bg-white p-5">
+            <p className="text-sm font-semibold text-gray-900 mb-4">Synlighet per kanal</p>
+            <div className="space-y-4">
+              {/* TODO: wire to real data */}
+              {[
+                { label: 'Organisk sökning', pct: 68 },
+                { label: 'Direktlänk',       pct: 22 },
+                { label: 'Nyhetsbrev',        pct: 10 },
+              ].map((bar) => (
+                <div key={bar.label}>
+                  <div className="text-xs text-gray-500 mb-1 flex justify-between">
+                    <span>{bar.label}</span>
+                    <span className="text-gray-700">{bar.pct}%</span>
+                  </div>
+                  <div className="h-1.5 bg-gray-100 rounded-full">
+                    <div
+                      className="h-full bg-[#1D9E75] rounded-full"
+                      style={{ width: `${bar.pct}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Col 2: Heta sökord */}
+          <div className="rounded-lg border border-gray-200 bg-white p-5">
+            <p className="text-sm font-semibold text-gray-900 mb-4">Heta sökord</p>
+            <div className="flex flex-wrap gap-2">
+              {/* TODO: wire to real data */}
+              {['stångmatare', 'LNS magasin', 'magnetbord'].map((kw) => (
+                <span
+                  key={kw}
+                  className="text-xs px-3 py-1.5 rounded-full bg-[#1D9E75]/10 text-[#1D9E75] border border-[#1D9E75]/20"
+                >
+                  {kw}
+                </span>
+              ))}
+              {['AMF spännverktyg', 'rhenus skärvätska', 'kärnborrmaskin', 'CNC tillbehör'].map((kw) => (
+                <span
+                  key={kw}
+                  className="text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-500 border border-gray-200"
+                >
+                  {kw}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Col 3: Branschjämförelse */}
+          <div className="rounded-lg border border-gray-200 bg-white p-5">
+            <p className="text-sm font-semibold text-gray-900 mb-4">Branschjämförelse</p>
+            <div className="space-y-4">
+              {/* TODO: wire to real data */}
+              {[
+                { label: 'Detta företag',     value: 21, width: '70%',  textColor: 'text-[#1D9E75]', barColor: 'bg-[#1D9E75]' },
+                { label: 'Snitt i kategorin', value: 11, width: '37%',  textColor: 'text-gray-400',  barColor: 'bg-gray-400'  },
+                { label: 'Topp i kategorin',  value: 30, width: '100%', textColor: 'text-gray-400',  barColor: 'bg-gray-400'  },
+              ].map((row) => (
+                <div key={row.label}>
+                  <div className="text-xs text-gray-500 mb-1 flex justify-between">
+                    <span>{row.label}</span>
+                    <span className={row.textColor}>{row.value}</span>
+                  </div>
+                  <div className="h-1.5 bg-gray-100 rounded-full">
+                    <div
+                      className={`h-full rounded-full ${row.barColor}`}
+                      style={{ width: row.width }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Row 4: Snabb åtgärd */}
+        <div>
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
+            Snabb åtgärd
+          </p>
+          <div className="flex gap-3 flex-wrap">
+            <button
+              className="text-sm px-4 py-2 rounded-md border border-gray-200 bg-white text-gray-700 hover:border-gray-400 transition-colors cursor-pointer"
+              onClick={() => toast({ title: 'Kommer snart' })}
+            >
+              Förbättra beskrivning med AI
+            </button>
+            <button
+              className="text-sm px-4 py-2 rounded-md border border-gray-200 bg-white text-gray-700 hover:border-gray-400 transition-colors cursor-pointer"
+              onClick={() => navigate('/company/edit')}
+            >
+              Lägg till certifieringar
+            </button>
+            <button
+              className="text-sm px-4 py-2 rounded-md border border-gray-200 bg-white text-gray-700 hover:border-gray-400 transition-colors cursor-pointer"
+              onClick={() => toast({ title: 'Kommer snart' })}
+            >
+              Öka synligheten
+            </button>
+          </div>
+        </div>
+
+      </main>
     </div>
   );
 }
