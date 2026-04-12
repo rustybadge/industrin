@@ -19,14 +19,14 @@ export default function CompanyCard({ company }: CompanyCardProps) {
           <div className="mb-4">
             <h4 className="font-medium hover:text-primary transition-colors text-[#171717] mb-2">{company.name}</h4>
             <div className="flex gap-2">
-              {company.isFeatured && (
-                <Badge variant="secondary" className="bg-[#D0FBE5] text-gray-900 border border-gray-300">
-                  Utmärkt
+              {company.tier === 'premium' && (
+                <Badge variant="secondary" className="bg-amber-50 text-amber-800 border border-amber-200">
+                  Premium
                 </Badge>
               )}
               {company.isVerified && (
                 <Badge variant="secondary" className="bg-[#D9E5FF] text-gray-900 border border-gray-300">
-                  Verifierat
+                  Verifierad
                 </Badge>
               )}
             </div>

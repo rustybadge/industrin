@@ -161,13 +161,7 @@ export default function CompanyProfile() {
                   {company.isVerified && (
                     <Badge variant="secondary" className="bg-[#D9E5FF] text-gray-900 border border-gray-300 px-3 py-1">
                       <Shield className="h-3 w-3 mr-1" />
-                      Verifierat företag
-                    </Badge>
-                  )}
-                  {company.isFeatured && (
-                    <Badge variant="secondary" className="bg-[#D0FBE5] text-gray-900 border border-gray-300 px-3 py-1">
-                      <Star className="h-3 w-3 mr-1" />
-                      Utmärkt
+                      Verifierad
                     </Badge>
                   )}
                   {company.tier === 'premium' && (
