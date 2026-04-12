@@ -13,7 +13,7 @@ import type { JwtPayload } from "@clerk/types";
 import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const ADMIN_EMAIL = "rus121@hotmail.com";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "rus121@hotmail.com";
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -123,7 +123,6 @@ const ensureCompanyMember: RequestHandler = async (req, res, next) => {
     return res.status(403).json({ message: "Company access required" });
   }
 
-  console.log(`[ensureCompanyMember] resolved userId=${auth.userId} → companyId=${companyId} via ${resolvedVia}`);
   req.companyId = companyId;
   next();
 };
@@ -322,9 +321,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         offset: parseInt(offset as string),
       };
 
-      console.log("Company search filters:", filters);
       const companies = await storage.getCompanies(filters);
-      console.log(`Found ${companies.length} companies for search: "${search}"`);
       res.json(companies);
     } catch (error) {
       console.error("Error fetching companies:", error);
@@ -1032,29 +1029,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get company profile (for company admin) — returns company + extended profile + contacts
   app.get("/api/company/profile", requireAuth(), ensureCompanyMember, async (req: any, res) => {
     const companyId = req.companyId!;
-    console.log(`[GET /api/company/profile] companyId=${companyId}`);
     try {
       const company = await storage.getCompanyById(companyId);
       if (!company) {
-        console.warn(`[GET /api/company/profile] company not found for id=${companyId}`);
         return res.status(404).json({ message: 'Company not found' });
       }
-      console.log(`[GET /api/company/profile] company found: ${company.name}`);
 
       let profile: any = {};
       try {
         profile = await storage.getCompanyProfile(companyId) ?? {};
-        console.log(`[GET /api/company/profile] profile loaded`);
       } catch (profileErr) {
-        console.warn(`[GET /api/company/profile] getCompanyProfile failed (non-fatal):`, profileErr);
+        console.error(`[GET /api/company/profile] getCompanyProfile failed for ${companyId}:`, profileErr);
       }
 
       let companyContacts: any[] = [];
       try {
         companyContacts = await storage.getContactsByCompany(companyId);
-        console.log(`[GET /api/company/profile] contacts loaded: ${companyContacts.length}`);
       } catch (contactsErr) {
-        console.warn(`[GET /api/company/profile] getContactsByCompany failed (non-fatal):`, contactsErr);
+        console.error(`[GET /api/company/profile] getContactsByCompany failed for ${companyId}:`, contactsErr);
       }
 
       res.json({ ...company, profile, contacts: companyContacts });
