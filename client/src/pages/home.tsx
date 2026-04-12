@@ -50,7 +50,7 @@ export default function Home() {
             </Link>
             <p className="mt-4 text-sm text-gray-500">
               Driver du ett serviceföretag? Sök upp din profil och{" "}
-              <a href="#directory" style={{ color: '#1D9E75' }}>ta över den gratis</a>.
+              <a href="/for-foretag" style={{ color: '#1D9E75' }}>ta över den gratis</a>.
             </p>
           </div>
         </div>

@@ -20,6 +20,8 @@ import GeneralQuoteRequest from "@/pages/general-quote-request";
 import CompanyLogin from "@/pages/company-login";
 import CompanyDashboard from "@/pages/company-dashboard";
 import CompanyEdit from "@/pages/company-edit";
+import ForForetag from "@/pages/for-foretag";
+import Registrera from "@/pages/registrera";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import { useScrollToTop } from "@/hooks/use-scroll-to-top";
@@ -151,6 +153,26 @@ function Router() {
             <Header />
             <main className="flex-1">
               <Villkor />
+            </main>
+            <Footer />
+          </div>
+        </Route>
+
+        <Route path="/for-foretag">
+          <div className="min-h-screen flex flex-col">
+            <Header />
+            <main className="flex-1">
+              <ForForetag />
+            </main>
+            <Footer />
+          </div>
+        </Route>
+
+        <Route path="/registrera">
+          <div className="min-h-screen flex flex-col">
+            <Header />
+            <main className="flex-1">
+              <Registrera />
             </main>
             <Footer />
           </div>

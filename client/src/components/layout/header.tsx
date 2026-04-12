@@ -23,7 +23,12 @@ export default function Header() {
           </div>
           
           <nav className="hidden md:block">
-            <div className="ml-10 flex items-center">
+            <div className="ml-10 flex items-center gap-6">
+              <Link href="/for-foretag">
+                <span className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors cursor-pointer">
+                  För företag
+                </span>
+              </Link>
               <Link href="/begar-offert">
                 <Button className="bg-primary hover:bg-primary-dark text-white font-semibold">
                   Hitta Service

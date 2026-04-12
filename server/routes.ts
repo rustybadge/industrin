@@ -303,9 +303,73 @@ export async function registerRoutes(app: Express): Promise<Server> {
     console.warn('[startup] tier column migration skipped or failed:', err);
   }
 
+  // One-time startup migration: create registrations table
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS registrations (
+        id SERIAL PRIMARY KEY,
+        company_name TEXT NOT NULL,
+        org_number TEXT NOT NULL,
+        contact_name TEXT NOT NULL,
+        email TEXT NOT NULL,
+        phone TEXT,
+        city TEXT,
+        description TEXT,
+        status VARCHAR DEFAULT 'pending',
+        created_at TIMESTAMP DEFAULT NOW()
+      )
+    `);
+  } catch (err) {
+    console.warn('[startup] registrations table migration skipped or failed:', err);
+  }
+
   // Health / keep-alive — no auth required, must stay first
   app.get("/api/ping", (_req, res) => {
     res.json({ ok: true, ts: Date.now() });
+  });
+
+  // New company registration — no auth required
+  app.post("/api/registrations", async (req, res) => {
+    try {
+      const { company_name, org_number, contact_name, email, phone, city, description } = req.body;
+
+      if (!company_name?.trim() || !org_number?.trim() || !contact_name?.trim() || !email?.trim()) {
+        return res.status(400).json({ message: "Obligatoriska fält saknas: company_name, org_number, contact_name, email" });
+      }
+
+      await pool.query(
+        `INSERT INTO registrations (company_name, org_number, contact_name, email, phone, city, description)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+        [company_name.trim(), org_number.trim(), contact_name.trim(), email.trim(), phone?.trim() || null, city?.trim() || null, description?.trim() || null]
+      );
+
+      if (process.env.RESEND_API_KEY) {
+        try {
+          await resend.emails.send({
+            from: "Industrin.net <noreply@industrin.net>",
+            to: ADMIN_EMAIL,
+            subject: `Ny företagsregistrering: ${company_name}`,
+            html: `
+              <h2>Ny registreringsansökan inkom</h2>
+              <p><strong>Företagsnamn:</strong> ${company_name}</p>
+              <p><strong>Organisationsnummer:</strong> ${org_number}</p>
+              <p><strong>Kontaktperson:</strong> ${contact_name}</p>
+              <p><strong>E-post:</strong> ${email}</p>
+              ${phone ? `<p><strong>Telefon:</strong> ${phone}</p>` : ""}
+              ${city ? `<p><strong>Stad:</strong> ${city}</p>` : ""}
+              ${description ? `<p><strong>Beskrivning:</strong> ${description}</p>` : ""}
+            `,
+          });
+        } catch (emailErr) {
+          console.warn("[registrations] Admin notification email failed:", emailErr);
+        }
+      }
+
+      return res.status(201).json({ success: true });
+    } catch (error) {
+      console.error("Error creating registration:", error);
+      return res.status(500).json({ message: "Failed to create registration" });
+    }
   });
 
   // Get companies with search and filtering

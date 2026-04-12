@@ -27,8 +27,18 @@ export default function Footer() {
 
           {/* Bli leverantör */}
           <div>
-            <h4 className="font-bold text-gray-900 mb-4">Bli leverantör</h4>
+            <h4 className="font-bold text-gray-900 mb-4">För företag</h4>
             <ul className="space-y-2 text-gray-600">
+              <li>
+                <a href="/for-foretag" className="hover:text-gray-900 transition-colors">
+                  För företag
+                </a>
+              </li>
+              <li>
+                <a href="/registrera" className="hover:text-gray-900 transition-colors">
+                  Registrera ditt företag
+                </a>
+              </li>
               <li>
                 <a href="/companies" className="hover:text-gray-900 transition-colors">
                   Sök upp ditt företag
