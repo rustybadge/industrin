@@ -43,7 +43,7 @@ export default function Companies() {
   const { data: pageData, isLoading, isFetching } = useQuery({
     queryKey: ['/api/companies', filters, offset],
     queryFn: () => api.companies.getAll({ ...filters, limit: PAGE_SIZE, offset }),
-    staleTime: 30_000,
+    staleTime: 0,
   });
 
   // Accumulate pages
@@ -59,7 +59,7 @@ export default function Companies() {
   const { data: countData } = useQuery({
     queryKey: ['/api/companies/count', filters],
     queryFn: () => api.companies.getCount(filters),
-    staleTime: 30_000,
+    staleTime: 0,
   });
   const totalCount = countData?.total ?? null;
 

@@ -38,6 +38,7 @@ export default function CompanyProfile() {
     queryKey: companyId ? ['/api/company-profile', companyId] : ['/api/companies', companySlug],
     queryFn: () => companyId ? api.companies.getById(companyId) : api.companies.getBySlug(companySlug!),
     enabled: !!(companyId || companySlug),
+    staleTime: 0,
   });
 
   if (isLoading) {

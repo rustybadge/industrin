@@ -22,7 +22,7 @@ export default function Home() {
   const { data: companies = [], isLoading } = useQuery({
     queryKey: ['/api/companies', { ...filters, limit: 18 }],
     queryFn: () => api.companies.getAll({ ...filters, limit: 18 }),
-    staleTime: 30_000,
+    staleTime: 0,
   });
 
   const handleSmartSearch = (query: string, tags: SearchTag[]) => {

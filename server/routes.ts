@@ -386,6 +386,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
 
       const companies = await storage.getCompanies(filters);
+      res.set("Cache-Control", "no-store");
       res.json(companies);
     } catch (error) {
       console.error("Error fetching companies:", error);
@@ -402,6 +403,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         region: region as string,
         categories: categories ? (categories as string).split(',') : undefined,
       });
+      res.set("Cache-Control", "no-store");
       res.json({ total });
     } catch (error) {
       console.error("Error counting companies:", error);
@@ -428,6 +430,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.warn("[company-profile/:id] Could not fetch profile/contacts — check migrations:", enrichErr);
       }
 
+      res.set("Cache-Control", "no-store");
       res.json({ ...company, profile, contacts });
     } catch (error) {
       console.error("Error fetching company by id:", error);
@@ -454,6 +457,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.warn("[companies/:slug] Could not fetch profile/contacts — check migrations:", enrichErr);
       }
 
+      res.set("Cache-Control", "no-store");
       res.json({ ...company, profile, contacts });
     } catch (error) {
       console.error("Error fetching company by slug:", error);
@@ -1113,6 +1117,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error(`[GET /api/company/profile] getContactsByCompany failed for ${companyId}:`, contactsErr);
       }
 
+      res.set("Cache-Control", "no-store");
       res.json({ ...company, profile, contacts: companyContacts });
     } catch (error) {
       console.error(`[GET /api/company/profile] fatal error for companyId=${companyId}:`, error);
