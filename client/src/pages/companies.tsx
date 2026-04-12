@@ -25,7 +25,7 @@ export default function Companies() {
   );
   const [sortBy, setSortBy] = useState('name-asc');
   const [offset, setOffset] = useState(0);
-  const [accumulatedCompanies, setAccumulatedCompanies] = useState<Company[]>([]);
+  const [accumulatedCompanies, setAccumulatedCompanies] = useState<(Company & { isClaimed: boolean })[]>([]);
 
   // Build filters object from state
   const filters = {
@@ -227,7 +227,7 @@ export default function Companies() {
         ) : (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {sortedCompanies.map((company: Company) => (
+              {sortedCompanies.map((company) => (
                 <CompanyCard key={company.id} company={company} />
               ))}
               {isFetching && offset > 0 && skeletonCards}

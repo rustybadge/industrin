@@ -12,6 +12,9 @@ import {
 import { db } from "./db";
 import { eq, and, ilike, inArray, desc, sql } from "drizzle-orm";
 
+// Company enriched with a computed claim status derived from company_users
+export type CompanyWithClaimed = Company & { isClaimed: boolean };
+
 export interface IStorage {
   // Users
   getUser(id: string): Promise<User | undefined>;
@@ -26,14 +29,14 @@ export interface IStorage {
     categories?: string[];
     limit?: number;
     offset?: number;
-  }): Promise<Company[]>;
+  }): Promise<CompanyWithClaimed[]>;
   getCompaniesCount(filters?: {
     search?: string;
     region?: string;
     categories?: string[];
   }): Promise<number>;
-  getCompanyById(id: string): Promise<Company | undefined>;
-  getCompanyBySlug(slug: string): Promise<Company | undefined>;
+  getCompanyById(id: string): Promise<CompanyWithClaimed | undefined>;
+  getCompanyBySlug(slug: string): Promise<CompanyWithClaimed | undefined>;
   getCompanyByClerkOrgId(orgId: string): Promise<Company | undefined>;
   createCompany(company: InsertCompany): Promise<Company>;
   updateCompany(id: string, company: Partial<InsertCompany>): Promise<Company | undefined>;
@@ -69,10 +72,18 @@ export interface IStorage {
   deleteContact(id: string, companyId: string): Promise<void>;
 
   // Admin
-  getAllCompaniesWithProfile(): Promise<(Company & { profile: CompanyProfile | null; contacts: Contact[] })[]>;
+  getAllCompaniesWithProfile(): Promise<(CompanyWithClaimed & { profile: CompanyProfile | null; contacts: Contact[] })[]>;
 }
 
 export class DatabaseStorage implements IStorage {
+  /** Returns a Set of company IDs that have at least one company_users row (i.e. have been claimed). */
+  private async getClaimedCompanyIds(): Promise<Set<string>> {
+    const rows = await db
+      .selectDistinct({ companyId: companyUsers.companyId })
+      .from(companyUsers);
+    return new Set(rows.map((r) => r.companyId));
+  }
+
   async getUser(id: string): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));
     return user || undefined;
@@ -104,7 +115,7 @@ export class DatabaseStorage implements IStorage {
     categories?: string[];
     limit?: number;
     offset?: number;
-  }): Promise<Company[]> {
+  }): Promise<CompanyWithClaimed[]> {
     let query = db.select().from(companies);
     
     const conditions = [];
@@ -206,8 +217,10 @@ export class DatabaseStorage implements IStorage {
     if (filters?.offset) {
       query = query.offset(filters.offset) as any;
     }
-    
-    return await query;
+
+    const rows = await query;
+    const claimedIds = await this.getClaimedCompanyIds();
+    return rows.map((c) => ({ ...c, isClaimed: claimedIds.has(c.id) }));
   }
 
   async getCompaniesCount(filters?: {
@@ -316,14 +329,26 @@ export class DatabaseStorage implements IStorage {
     return synonymMap[term] || [];
   }
 
-  async getCompanyById(id: string): Promise<Company | undefined> {
+  async getCompanyById(id: string): Promise<CompanyWithClaimed | undefined> {
     const [company] = await db.select().from(companies).where(eq(companies.id, id));
-    return company || undefined;
+    if (!company) return undefined;
+    const claimRows = await db
+      .select({ companyId: companyUsers.companyId })
+      .from(companyUsers)
+      .where(eq(companyUsers.companyId, company.id))
+      .limit(1);
+    return { ...company, isClaimed: claimRows.length > 0 };
   }
 
-  async getCompanyBySlug(slug: string): Promise<Company | undefined> {
+  async getCompanyBySlug(slug: string): Promise<CompanyWithClaimed | undefined> {
     const [company] = await db.select().from(companies).where(eq(companies.slug, slug));
-    return company || undefined;
+    if (!company) return undefined;
+    const claimRows = await db
+      .select({ companyId: companyUsers.companyId })
+      .from(companyUsers)
+      .where(eq(companyUsers.companyId, company.id))
+      .limit(1);
+    return { ...company, isClaimed: claimRows.length > 0 };
   }
 
   async getCompanyByClerkOrgId(orgId: string): Promise<Company | undefined> {
@@ -505,13 +530,14 @@ export class DatabaseStorage implements IStorage {
       .where(and(eq(contacts.id, id), eq(contacts.companyId, companyId)));
   }
 
-  async getAllCompaniesWithProfile(): Promise<(Company & { profile: CompanyProfile | null; contacts: Contact[] })[]> {
+  async getAllCompaniesWithProfile(): Promise<(CompanyWithClaimed & { profile: CompanyProfile | null; contacts: Contact[] })[]> {
     const allCompanies = await db.select().from(companies).orderBy(companies.name);
+    const claimedIds = await this.getClaimedCompanyIds();
     const results = await Promise.all(
       allCompanies.map(async (company) => {
         const profile = await this.getCompanyProfile(company.id) ?? null;
         const companyContacts = await this.getContactsByCompany(company.id);
-        return { ...company, profile, contacts: companyContacts };
+        return { ...company, isClaimed: claimedIds.has(company.id), profile, contacts: companyContacts };
       })
     );
     return results;

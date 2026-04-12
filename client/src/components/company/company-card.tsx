@@ -5,7 +5,7 @@ import { MapPin } from "lucide-react";
 import type { Company } from "@shared/schema";
 
 interface CompanyCardProps {
-  company: Company;
+  company: Company & { isClaimed: boolean };
 }
 
 export default function CompanyCard({ company }: CompanyCardProps) {
@@ -24,7 +24,7 @@ export default function CompanyCard({ company }: CompanyCardProps) {
                   Premium
                 </Badge>
               )}
-              {company.isVerified && (
+              {company.isClaimed && (
                 <Badge variant="secondary" className="bg-[#D9E5FF] text-gray-900 border border-gray-300">
                   Verifierad
                 </Badge>
@@ -43,7 +43,7 @@ export default function CompanyCard({ company }: CompanyCardProps) {
             <span>{company.city || company.location}</span>
           </div>
 
-          {!company.isVerified && (
+          {!company.isClaimed && (
             <p className="text-xs text-gray-400 mt-2">Ej hanterad — ta över profilen</p>
           )}
         </CardContent>

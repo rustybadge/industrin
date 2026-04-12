@@ -16,6 +16,7 @@ export interface CompanyContact {
 }
 
 export type CompanyDetail = Company & {
+  isClaimed: boolean;
   profile: CompanyProfile;
   contacts: CompanyContact[];
 };
@@ -28,7 +29,7 @@ export const api = {
       categories?: string[];
       limit?: number;
       offset?: number;
-    }): Promise<Company[]> => {
+    }): Promise<(Company & { isClaimed: boolean })[]> => {
       const params = new URLSearchParams();
 
       if (filters?.search) params.append('search', filters.search);

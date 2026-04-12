@@ -114,7 +114,7 @@ export default function CompanyProfile() {
   return (
     <div className="min-h-screen bg-white py-8">
       {/* Unclaimed banner — full width, above all page content */}
-      {!company.isVerified && (
+      {!company.isClaimed && (
         <div className="w-full border-l-4 border-[#1D9E75] bg-white px-6 py-4 flex items-center justify-between gap-4">
           <p className="text-sm text-gray-700">Det här företaget har inte tagits över ännu.</p>
           <a
@@ -158,7 +158,7 @@ export default function CompanyProfile() {
                 <h1 className="font-bold mb-3 tracking-tight text-[42px] text-[#171717]">{company.name}</h1>
                 <p className="text-xl text-gray-600 mb-3 font-medium">{company.city || company.location}</p>
                 <div className="flex items-center gap-3">
-                  {company.isVerified && (
+                  {company.isClaimed && (
                     <Badge variant="secondary" className="bg-[#D9E5FF] text-gray-900 border border-gray-300 px-3 py-1">
                       <Shield className="h-3 w-3 mr-1" />
                       Verifierad
@@ -282,7 +282,7 @@ export default function CompanyProfile() {
                 </div>
               )}
 
-              {company.isVerified && (
+              {company.isClaimed && (
                 <div>
                   <h3 className="text-xl font-bold text-primary mb-5 tracking-tight">Certifieringar</h3>
                   <div className="flex flex-wrap gap-4">
