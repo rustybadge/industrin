@@ -15,7 +15,6 @@ import {
   Globe,
   MapPin,
   Star,
-  Tag,
   Shield,
   Building,
   ArrowLeft,
@@ -283,21 +282,6 @@ export default function CompanyProfile() {
                 </div>
               )}
 
-              {company.isClaimed && (
-                <div>
-                  <h3 className="text-xl font-bold text-primary mb-5 tracking-tight">Certifieringar</h3>
-                  <div className="flex flex-wrap gap-4">
-                    <div className="flex items-center bg-[var(--primary-lightest)] border border-[var(--primary-lighter)] px-5 py-3 rounded-xl">
-                      <Tag className="h-5 w-5 text-primary mr-3" />
-                      <span className="text-[var(--primary-darker)] font-semibold">ISO 9001:2015</span>
-                    </div>
-                    <div className="flex items-center bg-[var(--secondary-lightest)] border border-[var(--secondary-lighter)] px-5 py-3 rounded-xl">
-                      <Shield className="h-5 w-5 text-secondary mr-3" />
-                      <span className="text-[var(--secondary-darker)] font-semibold">Kvalitetscertifierat</span>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
 
             <div className="space-y-3">
