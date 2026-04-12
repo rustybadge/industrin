@@ -17,7 +17,6 @@ import {
   Star,
   Tag,
   Shield,
-  UserCheck,
   Building,
   ArrowLeft,
   Clock,
@@ -303,17 +302,15 @@ export default function CompanyProfile() {
 
             <div className="space-y-3">
               {/* Claim / update profile prompt above contact card */}
-              <div className="flex items-center text-sm mb-3">
+              <div className="mb-4">
                 <button
                   type="button"
                   onClick={() => navigate(`/ansokkontroll/${companySlug || companyId}`)}
-                  className="inline-flex items-center text-[#3467FF] hover:text-[#1B43F5] font-medium"
+                  className="text-sm text-left text-gray-700 hover:text-gray-900 font-medium"
                   data-testid="company-claim-button"
                 >
-                  <span className="mr-1 inline-flex h-5 w-5 items-center justify-center rounded-full border border-[#3467FF]">
-                    <UserCheck className="h-3 w-3" />
-                  </span>
-                  Äger du detta företag? Ta kontroll över din profil och nå fler kunder — kostnadsfritt.
+                  Äger du detta företag? Ta kontroll över din profil och nå fler kunder —{" "}
+                  <span style={{ color: "#1D9E75" }}>kostnadsfritt.</span>
                 </button>
               </div>
 
