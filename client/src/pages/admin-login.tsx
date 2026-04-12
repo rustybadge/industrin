@@ -58,7 +58,7 @@ export default function AdminLogin() {
           <p className="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-4">
             Admin
           </p>
-          <h2 className="text-3xl font-semibold leading-snug" style={{ letterSpacing: '-0.02em', color: '#e5e5e5' }}>
+          <h2 className="text-3xl font-semibold leading-snug" style={{ letterSpacing: '-0.02em', color: '#ffffff' }}>
             Hantera listningar,<br />godkänn claims.
           </h2>
         </div>
@@ -77,7 +77,7 @@ export default function AdminLogin() {
           </Link>
         </div>
 
-        <div className="w-full max-w-sm">
+        <div className="w-full max-w-sm border border-gray-200 rounded-xl p-8">
           <div className="mb-8">
             <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2">
               Admin
