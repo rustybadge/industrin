@@ -58,7 +58,7 @@ export default function AdminLogin() {
           <p className="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-4">
             Admin
           </p>
-          <h2 className="text-3xl font-semibold leading-snug" style={{ letterSpacing: '-0.02em', color: '#ffffff' }}>
+          <h2 className="text-3xl font-semibold leading-snug !text-white" style={{ letterSpacing: '-0.02em' }}>
             Hantera listningar,<br />godkänn claims.
           </h2>
         </div>
