@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Building, LogOut, Loader2, Trash2, Plus, Upload } from 'lucide-react';
+import { Building, LogOut, Loader2, Trash2, Plus, Upload, Lock, ImageIcon, Play, Users, Briefcase, Award } from 'lucide-react';
 import { useCompanyAccess } from '@/hooks/use-company-access';
 import { useAuth } from '@clerk/clerk-react';
 import { SERVICE_CATEGORIES } from '@/data/service-categories';
@@ -651,6 +651,55 @@ function ServicesSection({
   );
 }
 
+// ---- Section: Premium features ---------------------------------------------
+
+function PremiumSection({ company }: { company: CompanyEditData & { tier?: string } }) {
+  const { toast } = useToast();
+  const isPremium = company.tier === 'premium';
+
+  const features = [
+    { Icon: ImageIcon, title: 'Logotyp',               desc: 'Visa er logotyp på er företagssida' },
+    { Icon: Users,     title: 'Kontaktpersoner',        desc: 'Lägg till namngivna kontakter med telefon' },
+    { Icon: Play,      title: 'Presentation via film',  desc: 'Bädda in en YouTube-film om er verksamhet' },
+    { Icon: Briefcase, title: 'Filer & PDF',            desc: 'Ladda upp broschyrer och produktblad' },
+    { Icon: Award,     title: 'Referensprojekt',        desc: 'Visa upp era bästa uppdrag och kunder' },
+    { Icon: Lock,      title: 'Certifieringar',         desc: 'Lyft fram era certifieringar och godkännanden' },
+  ] as const;
+
+  return (
+    <div className="space-y-5 pt-2">
+      <div className="space-y-1">
+        <h2 className="text-base font-semibold text-gray-900">Premium-funktioner</h2>
+        <p className="text-sm text-gray-500">Lås upp för att synas mer och nå fler kunder.</p>
+      </div>
+
+      <div className={!isPremium ? 'blur-[1.5px] pointer-events-none select-none' : ''}>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {features.map(({ Icon, title, desc }) => (
+            <div key={title} className="relative bg-white border border-gray-200 rounded-xl p-5">
+              <Lock className="absolute top-3 right-3 h-3.5 w-3.5 text-gray-300" />
+              <Icon className="h-5 w-5 text-gray-400 mb-3" />
+              <p className="text-sm font-semibold text-gray-800 mb-1">{title}</p>
+              <p className="text-xs text-gray-500 leading-relaxed">{desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {!isPremium && (
+        <div className="flex justify-center pt-2">
+          <button
+            onClick={() => toast({ title: 'Kommer snart', description: 'Premiumfunktioner lanseras inom kort.' })}
+            className="inline-flex items-center px-6 py-2.5 text-sm font-medium rounded-lg bg-gray-900 text-white hover:bg-gray-700 transition-colors"
+          >
+            Uppgradera till Premium
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ---- Main page component ---------------------------------------------------
 
 function CompanyEdit() {
@@ -803,6 +852,7 @@ function CompanyEdit() {
         <ContactsSection company={company} fetchWithCompanyAuth={fetchWithCompanyAuth} />
         <LogoSection company={company} fetchWithCompanyAuth={fetchWithCompanyAuth} />
         <ServicesSection company={company} fetchWithCompanyAuth={fetchWithCompanyAuth} />
+        <PremiumSection company={company} />
       </main>
     </div>
   );
