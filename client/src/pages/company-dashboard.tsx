@@ -5,12 +5,11 @@ import { useToast } from '@/hooks/use-toast';
 import { Building, LogOut } from 'lucide-react';
 import { useCompanyAccess } from '@/hooks/use-company-access';
 import { useAuth } from '@clerk/clerk-react';
+import { calculateDataQuality } from '@/utils/data-quality';
 
 // SVG ring constants — r=40, cx=cy=50
 const RING_RADIUS = 40;
 const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS; // ≈ 251.3
-const RING_SCORE = 74; // TODO: wire to real data
-const RING_DASHOFFSET = RING_CIRCUMFERENCE * (1 - RING_SCORE / 100); // ≈ 65.3
 
 function CompanyDashboard() {
   const { companyUser, logout, isLoading: authLoading, getCompanyToken } = useCompanyAccess();
@@ -138,6 +137,9 @@ function CompanyDashboard() {
       </div>
     );
   }
+
+  const ringScore = company ? Math.round(calculateDataQuality(company).percentage) : 0;
+  const ringDashoffset = RING_CIRCUMFERENCE * (1 - ringScore / 100);
 
   const isDashboard = location === '/company/dashboard';
 
@@ -360,7 +362,7 @@ function CompanyDashboard() {
                   stroke="#E5E7EB"
                   strokeWidth="8"
                 />
-                {/* Progress circle — 74% TODO: wire to real data */}
+                {/* Progress circle */}
                 <circle
                   cx="50"
                   cy="50"
@@ -370,12 +372,12 @@ function CompanyDashboard() {
                   strokeWidth="8"
                   strokeLinecap="round"
                   strokeDasharray={RING_CIRCUMFERENCE}
-                  strokeDashoffset={RING_DASHOFFSET}
+                  strokeDashoffset={ringDashoffset}
                   transform="rotate(-90 50 50)"
                 />
                 {/* Center text */}
                 <text x="50" y="46" textAnchor="middle" fontSize="18" fontWeight="700" fill="#111827">
-                  {RING_SCORE} {/* TODO: wire to real data */}
+                  {ringScore}
                 </text>
                 <text x="50" y="58" textAnchor="middle" fontSize="10" fill="#9CA3AF">
                   / 100

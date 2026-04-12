@@ -83,7 +83,7 @@ export default function ClaimRequest() {
       }).then(async (res) => {
         if (!res.ok) {
           const errorData = await res.json().catch(() => ({}));
-          throw new Error(errorData.message || 'Failed to submit claim');
+          throw new Error(errorData.message || 'Något gick fel. Försök igen senare.');
         }
         return res.json();
       });

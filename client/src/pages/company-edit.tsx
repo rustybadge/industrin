@@ -2,7 +2,7 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useLocation } from 'wouter';
 import { useToast } from '@/hooks/use-toast';
-import { Building, LogOut, Loader2, Trash2, Plus, Upload, ImageIcon, Play, Users, Briefcase, Award } from 'lucide-react';
+import { Building, LogOut, Loader2, Trash2, Plus, Upload, Play, Briefcase, Award, Lock } from 'lucide-react';
 import { useCompanyAccess } from '@/hooks/use-company-access';
 import { useAuth } from '@clerk/clerk-react';
 import { SERVICE_CATEGORIES } from '@/data/service-categories';
@@ -692,12 +692,10 @@ function PremiumSection({ company }: { company: CompanyEditData & { tier?: strin
   const isPremium = company.tier === 'premium';
 
   const features = [
-    { Icon: ImageIcon, title: 'Logotyp',               desc: 'Visa er logotyp på er företagssida' },
-    { Icon: Users,     title: 'Kontaktpersoner',        desc: 'Lägg till namngivna kontakter med telefon' },
     { Icon: Play,      title: 'Presentation via film',  desc: 'Bädda in en YouTube-film om er verksamhet' },
     { Icon: Briefcase, title: 'Filer & PDF',            desc: 'Ladda upp broschyrer och produktblad' },
     { Icon: Award,     title: 'Referensprojekt',        desc: 'Visa upp era bästa uppdrag och kunder' },
-    { Icon: Award,     title: 'Certifieringar',         desc: 'Lyft fram era certifieringar och godkännanden' },
+    { Icon: Lock,      title: 'Certifieringar',         desc: 'Lyft fram era certifieringar och godkännanden' },
   ] as const;
 
   return (

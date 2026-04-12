@@ -172,18 +172,26 @@ export default function CompanyProfile() {
           {/* Company Actions */}
           <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-10">
             <Button
-              onClick={() => navigate(`/companies/${companySlug}/quote`)}
+              onClick={() => navigate(`/companies/${companySlug || company.slug}/quote`)}
               className="bg-primary hover:bg-primary-dark text-white font-semibold px-6 py-3 h-12 text-sm"
             >
               Begär offert
             </Button>
-            <Button
-              variant="outline"
-              className="bg-white border-2 border-primary text-primary hover:bg-primary hover:text-white font-semibold px-6 py-3 h-12 text-sm"
-              disabled={!company.phone}
-            >
-              Ring direkt
-            </Button>
+            {company.phone ? (
+              <a
+                href={`tel:${company.phone}`}
+                className="inline-flex items-center justify-center bg-white border-2 border-primary text-primary hover:bg-primary hover:text-white font-semibold px-6 py-3 h-12 text-sm rounded-md transition-colors"
+              >
+                Ring direkt
+              </a>
+            ) : (
+              <button
+                disabled
+                className="inline-flex items-center justify-center bg-white border-2 border-gray-200 text-gray-300 font-semibold px-6 py-3 h-12 text-sm rounded-md cursor-not-allowed"
+              >
+                Ring direkt
+              </button>
+            )}
           </div>
 
           {/* Company Details */}
@@ -339,7 +347,7 @@ export default function CompanyProfile() {
                     <div className="group py-2 border-b border-gray-100">
                       {company.website ? (
                         <a
-                          href={`https://${company.website}`}
+                          href={/^https?:\/\//i.test(company.website) ? company.website : `https://${company.website}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-primary hover:underline font-medium break-all"

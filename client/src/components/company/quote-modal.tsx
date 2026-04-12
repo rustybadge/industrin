@@ -298,7 +298,7 @@ export default function QuoteModal({ isOpen, onClose, company }: QuoteModalProps
                 className="flex-1 bg-gray-900 hover:bg-black text-white"
                 disabled={createQuoteMutation.isPending}
               >
-                {createQuoteMutation.isPending ? "Skickar..." : "Nästa"}
+                {createQuoteMutation.isPending ? "Skickar..." : "Skicka förfrågan"}
               </Button>
             </div>
           </form>
