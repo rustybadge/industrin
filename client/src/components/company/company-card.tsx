@@ -14,7 +14,7 @@ export default function CompanyCard({ company }: CompanyCardProps) {
   
   return (
     <Link href={`/companies/${company.slug}`}>
-      <Card className={`border-0 rounded-none cursor-pointer hover:border-gray-300 transition-colors h-full bg-[#FAFAFA] ${company.isVerified ? 'border-l-2 border-[#1D9E75]' : 'border-l-2 border-gray-200'}`}>
+      <Card className="border-0 rounded-none cursor-pointer hover:border-gray-300 transition-colors h-full bg-[#FAFAFA]">
         <CardContent className="p-6 h-full flex flex-col">
           <div className="mb-4">
             <h4 className="font-medium hover:text-primary transition-colors text-[#171717] mb-2">{company.name}</h4>
