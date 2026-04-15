@@ -30,7 +30,7 @@ export default function Header() {
                 </span>
               </Link>
               <Link href="/begar-offert">
-                <Button className="bg-primary hover:bg-primary-dark text-white font-semibold">
+                <Button className="bg-primary hover:bg-primary-dark text-white font-medium">
                   Hitta Service
                 </Button>
               </Link>
