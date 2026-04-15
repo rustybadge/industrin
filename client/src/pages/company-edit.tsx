@@ -55,12 +55,12 @@ function Spinner() {
 // ---- Shared input class helpers --------------------------------------------
 
 const inputClass =
-  'w-full bg-white border border-[#E5E7EB] rounded-lg px-4 py-2.5 text-sm text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#1D9E75]/40';
+  'w-full bg-white border border-[#E5E7EB] rounded-none px-4 py-2.5 text-sm text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#1D9E75]/40';
 
 const labelClass = 'block text-sm font-medium text-[#4B5563] mb-1.5';
 
 const saveButtonClass =
-  'text-sm font-medium px-5 py-2 rounded-lg bg-[#1D9E75] text-white hover:bg-[#167A5A] transition-colors disabled:opacity-40';
+  'text-sm font-medium px-5 py-2 rounded-none bg-[#1D9E75] text-white hover:bg-[#167A5A] transition-colors disabled:opacity-40';
 
 // ---- Section: Om företaget -------------------------------------------------
 
@@ -462,7 +462,7 @@ function ContactsSection({
         <button
           onClick={handleAdd}
           disabled={addMutation.isPending}
-          className="inline-flex items-center text-sm font-medium px-5 py-2 rounded-lg border border-[#E5E7EB] bg-white text-[#4B5563] hover:border-[#9CA3AF] transition-colors disabled:opacity-40"
+          className="inline-flex items-center text-sm font-medium px-5 py-2 rounded-none border border-[#E5E7EB] bg-white text-[#4B5563] hover:border-[#9CA3AF] transition-colors disabled:opacity-40"
         >
           {addMutation.isPending ? (
             <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -523,7 +523,7 @@ function LogoSection({
       <p className="text-sm text-[#9CA3AF] mb-5">Visas på er profilsida och i sökresultat.</p>
 
       {company.logoUrl && (
-        <div className="border border-[#E5E7EB] rounded-lg p-3 inline-block mb-4">
+        <div className="border border-[#E5E7EB] rounded-none p-3 inline-block mb-4">
           <img
             src={company.logoUrl}
             alt="Logotyp"
@@ -541,7 +541,7 @@ function LogoSection({
       />
 
       <div
-        className="border-2 border-dashed border-[#E5E7EB] rounded-xl bg-white p-8 text-center hover:border-[#1D9E75]/50 transition-colors cursor-pointer"
+        className="border-2 border-dashed border-[#E5E7EB] rounded-none bg-white p-8 text-center hover:border-[#1D9E75]/50 transition-colors cursor-pointer"
         onClick={() => fileInputRef.current?.click()}
       >
         {isUploading ? (
@@ -705,7 +705,7 @@ function PremiumSection({ company }: { company: CompanyEditData & { tier?: strin
 
       <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
         {features.map(({ Icon, title, desc }) => (
-          <div key={title} className="bg-white border border-[#E5E7EB] rounded-xl p-6 relative overflow-hidden">
+          <div key={title} className="bg-white border border-[#E5E7EB] rounded-none p-6 relative overflow-hidden">
             {!isPremium && (
               <>
                 <div className="filter blur-sm select-none pointer-events-none">

@@ -124,7 +124,7 @@ function CompanyDashboard() {
       <div className="min-h-screen bg-background flex items-center justify-center px-4">
         <div className="max-w-md w-full text-center space-y-3">
           <p className="text-gray-700 font-medium">Kunde inte ladda företagsprofil.</p>
-          <div className="text-xs font-mono bg-gray-100 px-3 py-2 rounded text-left break-all space-y-1">
+          <div className="text-xs font-mono bg-gray-100 px-3 py-2 rounded-none text-left break-all space-y-1">
             <p><span className="text-gray-500">error:</span> {(error as Error).message}</p>
             <p><span className="text-gray-500">companyId:</span> {companyUser?.companyId ?? 'none'}</p>
             <p><span className="text-gray-500">userId:</span> {companyUser?.id ?? 'none'}</p>
@@ -226,7 +226,7 @@ function CompanyDashboard() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
 
           {/* Card 1 — Nya förfrågningar (HERO CARD) */}
-          <div className="bg-[#1D9E75] p-7 rounded-xl relative overflow-hidden">
+          <div className="bg-[#1D9E75] p-7 rounded-none relative overflow-hidden">
             <span className="absolute top-4 right-4 w-6 h-6 rounded-full bg-white/20 text-white text-xs flex items-center justify-center">
               7 {/* TODO: wire to real data */}
             </span>
@@ -250,7 +250,7 @@ function CompanyDashboard() {
           </div>
 
           {/* Card 2 — Profilvisningar (STANDARD CARD) */}
-          <div className="bg-white border border-[#E5E7EB] p-6 rounded-xl relative overflow-hidden">
+          <div className="bg-white border border-[#E5E7EB] p-6 rounded-none relative overflow-hidden">
             <p className="text-xs font-semibold uppercase tracking-wide text-[#9CA3AF]">Profilvisningar</p>
             <p className="text-3xl font-semibold text-[#111827] mt-1">312</p> {/* TODO: wire to real data */}
             <p className="text-xs text-[#1D9E75] font-medium mt-1">↑ 18% vs förra veckan</p> {/* TODO: wire to real data */}
@@ -271,7 +271,7 @@ function CompanyDashboard() {
           </div>
 
           {/* Card 3 — Sökträffar (STANDARD CARD) */}
-          <div className="bg-white border border-[#E5E7EB] p-6 rounded-xl relative overflow-hidden">
+          <div className="bg-white border border-[#E5E7EB] p-6 rounded-none relative overflow-hidden">
             <p className="text-xs font-semibold uppercase tracking-wide text-[#9CA3AF]">Sökträffar</p>
             <p className="text-3xl font-semibold text-[#111827] mt-1">1 840</p> {/* TODO: wire to real data */}
             <p className="text-xs text-[#1D9E75] font-medium mt-1">↑ 7% vs förra veckan</p> {/* TODO: wire to real data */}
@@ -292,7 +292,7 @@ function CompanyDashboard() {
           </div>
 
           {/* Card 4 — Klick till hemsida (UTILITY CARD) */}
-          <div className="bg-[#F9FAFB] border border-[#E5E7EB] p-5 rounded-lg">
+          <div className="bg-[#F9FAFB] border border-[#E5E7EB] p-5 rounded-none">
             <p className="text-xs font-semibold uppercase tracking-wide text-[#9CA3AF]">Klick till hemsida</p>
             <p className="text-2xl font-semibold text-[#111827] mt-1">41</p> {/* TODO: wire to real data */}
             <div className="h-1.5 bg-[#E5E7EB] rounded-full mt-3">
@@ -305,7 +305,7 @@ function CompanyDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
 
           {/* Left (lg:col-span-3): Senaste förfrågningar — STANDARD CARD */}
-          <div className="lg:col-span-3 bg-white border border-[#E5E7EB] p-6 rounded-xl">
+          <div className="lg:col-span-3 bg-white border border-[#E5E7EB] p-6 rounded-none">
             <p className="text-lg font-semibold text-[#111827] mb-5">Senaste förfrågningar</p>
 
             <ul>
@@ -344,7 +344,7 @@ function CompanyDashboard() {
           </div>
 
           {/* Right (lg:col-span-2): Profilstyrka — STANDARD CARD */}
-          <div className="lg:col-span-2 bg-white border border-[#E5E7EB] p-6 rounded-xl">
+          <div className="lg:col-span-2 bg-white border border-[#E5E7EB] p-6 rounded-none">
             <p className="text-lg font-semibold text-[#111827] mb-1">Profilstyrka</p>
             <p className="text-xs text-[#9CA3AF] mb-5 leading-relaxed">
               Profilstyrka visar hur komplett din företagsprofil är på industrin.net. En starkare profil syns bättre i sökresultat och skapar förtroende hos potentiella kunder.
@@ -440,7 +440,7 @@ function CompanyDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-stretch">
 
           {/* Col 1: Synlighet per kanal — STANDARD CARD */}
-          <div className="bg-white border border-[#E5E7EB] p-6 rounded-xl">
+          <div className="bg-white border border-[#E5E7EB] p-6 rounded-none">
             <p className="text-xs font-semibold uppercase tracking-wide text-[#9CA3AF] mb-4">Synlighet per kanal</p>
             <div className="space-y-4">
               {/* TODO: wire to real data */}
@@ -466,7 +466,7 @@ function CompanyDashboard() {
           </div>
 
           {/* Col 2: Heta sökord — STANDARD CARD */}
-          <div className="bg-white border border-[#E5E7EB] p-6 rounded-xl">
+          <div className="bg-white border border-[#E5E7EB] p-6 rounded-none">
             <p className="text-xs font-semibold uppercase tracking-wide text-[#9CA3AF] mb-4">Heta sökord</p>
             <div className="flex flex-wrap gap-2">
               {/* TODO: wire to real data */}
@@ -490,7 +490,7 @@ function CompanyDashboard() {
           </div>
 
           {/* Col 3: Branschjämförelse — UTILITY CARD */}
-          <div className="bg-[#F9FAFB] border border-[#E5E7EB] p-5 rounded-lg">
+          <div className="bg-[#F9FAFB] border border-[#E5E7EB] p-5 rounded-none">
             <p className="text-xs font-semibold uppercase tracking-wide text-[#9CA3AF] mb-4">Branschjämförelse</p>
             <div className="space-y-4">
               {/* TODO: wire to real data */}
@@ -517,7 +517,7 @@ function CompanyDashboard() {
         </div>
 
         {/* Row 4: Snabb åtgärd — UTILITY CARD */}
-        <div className="bg-[#F9FAFB] border border-[#E5E7EB] p-5 rounded-lg">
+        <div className="bg-[#F9FAFB] border border-[#E5E7EB] p-5 rounded-none">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
               <p className="text-sm font-semibold text-[#111827]">Snabb åtgärd</p>
@@ -525,19 +525,19 @@ function CompanyDashboard() {
             </div>
             <div className="flex gap-3 flex-wrap">
               <button
-                className="text-sm px-4 py-2 rounded-lg border border-[#E5E7EB] bg-white text-[#4B5563] hover:border-[#9CA3AF] transition-colors"
+                className="text-sm px-4 py-2 rounded-none border border-[#E5E7EB] bg-white text-[#4B5563] hover:border-[#9CA3AF] transition-colors"
                 onClick={() => toast({ title: 'Kommer snart' })}
               >
                 Förbättra beskrivning med AI
               </button>
               <button
-                className="text-sm px-4 py-2 rounded-lg border border-[#E5E7EB] bg-white text-[#4B5563] hover:border-[#9CA3AF] transition-colors"
+                className="text-sm px-4 py-2 rounded-none border border-[#E5E7EB] bg-white text-[#4B5563] hover:border-[#9CA3AF] transition-colors"
                 onClick={() => navigate('/company/edit')}
               >
                 Lägg till certifieringar
               </button>
               <button
-                className="text-sm px-4 py-2 rounded-lg border border-[#E5E7EB] bg-white text-[#4B5563] hover:border-[#9CA3AF] transition-colors"
+                className="text-sm px-4 py-2 rounded-none border border-[#E5E7EB] bg-white text-[#4B5563] hover:border-[#9CA3AF] transition-colors"
                 onClick={() => toast({ title: 'Kommer snart' })}
               >
                 Öka synligheten

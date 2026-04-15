@@ -140,8 +140,14 @@
     @apply font-sans antialiased bg-background text-foreground;
   }
 
-  /* Square corners on all buttons sitewide */
+  /* Square corners on all interactive elements sitewide */
   button {
+    border-radius: 0 !important;
+  }
+
+  input:not([type="checkbox"]):not([type="radio"]),
+  textarea,
+  select {
     border-radius: 0 !important;
   }
 
