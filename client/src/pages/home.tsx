@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "wouter";
+import heroBg from "@/assets/images/hero-pattern.png";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
@@ -40,8 +41,13 @@ export default function Home() {
       </div>
 
       {/* Hero Section */}
-      <section className="bg-white py-28 lg:py-36">
-        <div className="max-w-[1700px] mx-auto px-8">
+      <section className="relative bg-white py-28 lg:py-36 overflow-hidden">
+        {/* Background pattern */}
+        <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+          <img src={heroBg} alt="" className="absolute w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-white/[0.94] mix-blend-hard-light" />
+        </div>
+        <div className="relative max-w-[1700px] mx-auto px-8">
           <div className="max-w-[885px] flex flex-col gap-6">
             <div>
               <p
