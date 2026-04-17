@@ -73,8 +73,7 @@ export default function Home() {
       <div className="w-full bg-[#f7d046]">
         <div className="max-w-[1700px] mx-auto px-8 py-6 flex items-center justify-between gap-8">
           <p className="font-medium text-[#1d1d1d] text-xl tracking-tight m-0">
-            Driver du ett serviceföretag? Sök upp din profil och{" "}
-            <strong>ta över den gratis</strong>.
+            Driver du ett serviceföretag? Sök upp din profil och ta över den gratis.
           </p>
           <Link href="/for-foretag">
             <Button
