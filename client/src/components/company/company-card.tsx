@@ -18,18 +18,11 @@ export default function CompanyCard({ company }: CompanyCardProps) {
         <CardContent className="p-6 h-full flex flex-col">
           <div className="mb-4">
             <h4 className="font-medium hover:text-primary transition-colors text-[#171717] mb-2">{company.name}</h4>
-            <div className="flex gap-2">
-              {company.tier === 'premium' && (
-                <Badge variant="secondary" className="bg-amber-50 text-amber-800 border border-amber-200">
-                  Premium
-                </Badge>
-              )}
-              {company.isClaimed && (
-                <Badge variant="secondary" className="bg-[#cfd8fc] text-[#092490] border border-[#092490] rounded-full text-xs px-3">
-                  Verifierad
-                </Badge>
-              )}
-            </div>
+            {company.tier === 'premium' && (
+              <Badge variant="secondary" className="bg-amber-50 text-amber-800 border border-amber-200">
+                Premium
+              </Badge>
+            )}
           </div>
 
           <div className="flex-grow mb-6">
@@ -38,9 +31,16 @@ export default function CompanyCard({ company }: CompanyCardProps) {
             </p>
           </div>
 
-          <div className="flex items-center text-sm text-gray-500 mt-auto">
-            <MapPin className="h-4 w-4 mr-1" />
-            <span>{company.city || company.location}</span>
+          <div className="flex items-center justify-between mt-auto">
+            <div className="flex items-center text-sm text-[#505050]">
+              <MapPin className="h-4 w-4 mr-1" />
+              <span>{company.city || company.location}</span>
+            </div>
+            {company.isClaimed && (
+              <Badge variant="secondary" className="bg-[#cfd8fc] text-[#092490] border border-[#092490] rounded-full text-xs px-3">
+                Verifierad
+              </Badge>
+            )}
           </div>
 
 
