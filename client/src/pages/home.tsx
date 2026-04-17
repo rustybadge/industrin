@@ -32,87 +32,85 @@ export default function Home() {
 
   return (
     <div>
+      {/* Announcement bar */}
+      <div className="w-full bg-[#fdfdfd] border-b border-[#f2f2f2] py-3 px-4">
+        <p className="text-center text-sm font-medium text-[#092490] tracking-tight">
+          1 200+ företag registrerade | Täcker alla 21 län | Kostnadsfri grundprofil
+        </p>
+      </div>
+
       {/* Hero Section */}
-      <section className="py-24 lg:py-32 bg-white">
-        <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl">
-            <p className="font-medium mb-1 text-[#0A0A0A]" style={{ fontFamily: 'PP Neue Montreal, Inter Tight, sans-serif', fontSize: '42px', lineHeight: '1.1', fontWeight: 500, letterSpacing: '-0.01em' }}>
-              Service och support när maskinen stannar.
-            </p>
-
-            <p className="font-medium mb-12 text-[#A3A3A3]" style={{ fontFamily: 'PP Neue Montreal, Inter Tight, sans-serif', fontSize: '42px', lineHeight: '1.1', maxWidth: '900px', fontWeight: 500, letterSpacing: '-0.01em' }}>Hitta rätt företag, snabbt.</p>
-
+      <section className="bg-white py-28 lg:py-36">
+        <div className="max-w-[1700px] mx-auto px-8">
+          <div className="max-w-[885px] flex flex-col gap-6">
+            <div>
+              <p
+                className="font-medium text-[#1d1d1d] m-0"
+                style={{ fontFamily: 'PP Neue Montreal, Inter Tight, sans-serif', fontSize: '42px', lineHeight: '1.15', letterSpacing: '-1.26px' }}
+              >
+                Service och support när maskinen stannar.
+              </p>
+              <p
+                className="font-medium text-[#092490] m-0"
+                style={{ fontFamily: 'PP Neue Montreal, Inter Tight, sans-serif', fontSize: '42px', lineHeight: '1.15', letterSpacing: '-1.26px' }}
+              >
+                Hitta rätt företag, snabbt.
+              </p>
+            </div>
             <Link href="/begar-offert">
-              <Button className="inline-flex items-center bg-primary hover:bg-primary-dark text-white font-medium px-8 transition-colors group text-lg" style={{ height: '56px' }}>
-                Hitta Service
-                <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+              <Button
+                className="inline-flex items-center bg-primary hover:bg-primary-dark text-white font-medium px-8 text-sm tracking-tight"
+                style={{ height: '56px' }}
+              >
+                Hitta service →
               </Button>
             </Link>
-            <p className="mt-4 text-sm text-gray-500">
-              Driver du ett serviceföretag? Sök upp din profil och{" "}
-              <a href="/for-foretag" style={{ color: '#1D9E75' }}>ta över den gratis</a>.
-            </p>
           </div>
         </div>
       </section>
 
-      {/* Credibility stat strip */}
-      <div className="w-full bg-[#F5F5F5] py-4">
-        <div className="max-w-7xl mx-auto px-4 flex items-center justify-center gap-8 text-sm font-medium text-[#171717]">
-          <span>1 200+ företag registrerade</span>
-          <span className="text-gray-300">|</span>
-          <span>Täcker alla 21 län</span>
-          <span className="text-gray-300">|</span>
-          <span>Kostnadsfri grundprofil</span>
+      {/* Yellow CTA Banner */}
+      <div className="w-full bg-[#f7d046]">
+        <div className="max-w-[1700px] mx-auto px-8 py-6 flex items-center justify-between gap-8">
+          <p className="font-medium text-[#1d1d1d] text-xl tracking-tight m-0">
+            Driver du ett serviceföretag? Sök upp din profil och{" "}
+            <strong>ta över den gratis</strong>.
+          </p>
+          <Link href="/for-foretag">
+            <Button
+              variant="outline"
+              className="bg-white border border-[#dcdcdc] text-[#092490] font-medium px-5 text-sm tracking-tight hover:bg-gray-50 shrink-0"
+              style={{ height: '48px' }}
+            >
+              Sök efter ditt företag
+            </Button>
+          </Link>
         </div>
       </div>
 
       {/* Company Directory Section */}
       <section id="directory" className="py-16 bg-background">
-        <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-12">
-            <h3 className="text-3xl font-bold text-[#171717]">
+        <div className="max-w-[1700px] mx-auto px-8">
+          <div className="mb-6">
+            <h3 className="text-[#1d1d1d] custom-size" style={{ fontSize: '32px', lineHeight: '1.2', letterSpacing: '-0.96px', fontWeight: 500 }}>
               Serviceföretag i hela Sverige
             </h3>
-            <p className="text-sm text-gray-500 mt-1">Sök bland företag som kan hjälpa dig med reparation, underhåll och service.</p>
-          </div>
-
-          <div className="max-w-2xl mb-8">
-            <SmartSearch
-              onSearch={handleSmartSearch}
-              placeholder="Sök företag, ort eller specialområde..."
-            />
-          </div>
-
-          {searchQuery && (
-            <p className="text-sm text-gray-500 mb-8">
-              Sökning: "{searchQuery}"
+            <p className="text-xl text-[#666] mt-2 tracking-tight">
+              Sök bland företag som kan hjälpa dig med reparation, underhåll och service.
             </p>
-          )}
+          </div>
+
+          <div className="mb-8">
+            <SmartSearch onSearch={handleSmartSearch} />
+          </div>
 
           {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center">
-                      <Skeleton className="w-12 h-12 rounded-lg mr-3" />
-                      <div>
-                        <Skeleton className="h-4 w-32 mb-2" />
-                        <Skeleton className="h-3 w-24" />
-                      </div>
-                    </div>
-                    <Skeleton className="h-6 w-16" />
-                  </div>
+                <div key={i} className="bg-[#f7f7f7] p-6">
+                  <Skeleton className="h-5 w-40 mb-3" />
                   <Skeleton className="h-16 w-full mb-4" />
-                  <div className="flex gap-2 mb-4">
-                    <Skeleton className="h-6 w-20" />
-                    <Skeleton className="h-6 w-16" />
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <Skeleton className="h-4 w-16" />
-                    <Skeleton className="h-9 w-20" />
-                  </div>
+                  <Skeleton className="h-4 w-24" />
                 </div>
               ))}
             </div>

@@ -197,7 +197,7 @@ export default function SmartSearch({ onSearch, placeholder = "Sök företag, or
   };
 
   return (
-    <div className="relative w-full max-w-2xl">
+    <div className="relative w-full">
       {/* Search Input Container */}
       <div className="relative">
         <div className="flex items-center border border-gray-300 rounded-none bg-white">

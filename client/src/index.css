@@ -66,44 +66,44 @@
   --border: hsl(20, 5.9%, 90%);
   --input: hsl(20, 5.9%, 90%);
   
-  /* Primary Black/Grey Palette for Buttons */
-  --primary: #171717;
-  --primary-tint-1: #404040;
-  --primary-tint-2: #6B6B6B;
-  --primary-tint-3: #9E9E9E;
-  --primary-tint-4: #D0D0D0;
-  --primary-shade-1: #0A0A0A;
-  --primary-shade-2: #000000;
-  --primary-shade-3: #000000;
-  --primary-dark: #000000;
-  --primary-darker: #000000;
-  --primary-light: #404040;
-  --primary-lighter: #9E9E9E;
-  --primary-lightest: #D0D0D0;
+  /* Primary — brand navy blue */
+  --primary: #092490;
+  --primary-tint-1: #2d47a3;
+  --primary-tint-2: #6475c9;
+  --primary-tint-3: #9fb1f9;
+  --primary-tint-4: #cfd8fc;
+  --primary-shade-1: #071d74;
+  --primary-shade-2: #04124a;
+  --primary-shade-3: #020a2e;
+  --primary-dark: #071d74;
+  --primary-darker: #04124a;
+  --primary-light: #2d47a3;
+  --primary-lighter: #9fb1f9;
+  --primary-lightest: #cfd8fc;
   --primary-foreground: #ffffff;
-  
-  /* Secondary Blue Palette */
-  --secondary: #3467FF;
-  --secondary-tint-1: #598FFF;
-  --secondary-tint-2: #8EB6FF;
-  --secondary-tint-3: #BCD2FF;
-  --secondary-tint-4: #D9E5FF;
-  --secondary-shade-1: #141A57;
-  --secondary-shade-2: #1728B6;
-  --secondary-shade-3: #1B43F5;
-  --secondary-dark: #1B43F5;
-  --secondary-darker: #141A57;
-  --secondary-light: #8EB6FF;
-  --secondary-lighter: #BCD2FF;
-  --secondary-lightest: #D9E5FF;
-  --secondary-foreground: #ffffff;
-  
-  /* Accent colors */
-  --accent: #3467FF;
-  --accent-foreground: #ffffff;
+
+  /* Secondary — periwinkle */
+  --secondary: #9fb1f9;
+  --secondary-tint-1: #b5c3fb;
+  --secondary-tint-2: #cad3fc;
+  --secondary-tint-3: #dde4fd;
+  --secondary-tint-4: #eef1fe;
+  --secondary-shade-1: #7d96f7;
+  --secondary-shade-2: #5b7af4;
+  --secondary-shade-3: #3a5ff2;
+  --secondary-dark: #5b7af4;
+  --secondary-darker: #3a5ff2;
+  --secondary-light: #cad3fc;
+  --secondary-lighter: #dde4fd;
+  --secondary-lightest: #eef1fe;
+  --secondary-foreground: #092490;
+
+  /* Accent — yellow */
+  --accent: #f7d046;
+  --accent-foreground: #1d1d1d;
   --destructive: hsl(0, 84.2%, 60.2%);
   --destructive-foreground: hsl(60, 9.1%, 97.8%);
-  --ring: #171717;
+  --ring: #092490;
   --radius: 0.5rem;
 }
 

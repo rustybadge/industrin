@@ -25,7 +25,7 @@ export default function CompanyCard({ company }: CompanyCardProps) {
                 </Badge>
               )}
               {company.isClaimed && (
-                <Badge variant="secondary" className="bg-[#D9E5FF] text-gray-900 border border-gray-300">
+                <Badge variant="secondary" className="bg-[#cfd8fc] text-[#092490] border border-[#092490] rounded-full text-xs px-3">
                   Verifierad
                 </Badge>
               )}

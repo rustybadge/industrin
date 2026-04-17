@@ -7,7 +7,7 @@ export default function Header() {
   const [location] = useLocation();
 
   return (
-    <header className="shadow-sm sticky top-0 z-50 bg-white">
+    <header className="border-b border-[#e6e6e6] sticky top-0 z-50 bg-white/70 backdrop-blur-sm">
       <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
@@ -25,13 +25,13 @@ export default function Header() {
           <nav className="hidden md:block">
             <div className="ml-10 flex items-center gap-6">
               <Link href="/for-foretag">
-                <span className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors cursor-pointer">
+                <span className="text-sm font-medium text-[#092490] hover:text-[#071d74] transition-colors cursor-pointer">
                   För företag
                 </span>
               </Link>
               <Link href="/begar-offert">
                 <Button className="bg-primary hover:bg-primary-dark text-white font-medium">
-                  Hitta Service
+                  Hitta service
                 </Button>
               </Link>
             </div>
