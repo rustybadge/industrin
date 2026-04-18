@@ -1,4 +1,3 @@
-import logoImage from "@/assets/images/logo.png";
 
 export default function Footer() {
   return (
@@ -6,11 +5,16 @@ export default function Footer() {
       <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Logo and Tagline Section */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between py-12 mb-16 border-b border-gray-200">
-          <img
-            src={logoImage}
-            alt="Industrin.net Logo"
-            className="h-8 w-auto max-w-[160px]"
-          />
+          <svg
+            width={32}
+            height={32}
+            viewBox="0 0 265 300"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-label="Industrin.net"
+          >
+            <path d="M251.887 77.61L126.466 146.577V292.068L127.012 292.382L126.466 292.697L0.5 219.952V96.1042C0.5 84.8546 6.50092 74.4594 16.2427 68.8335L110.717 14.2744C120.462 8.6466 132.47 8.64661 142.215 14.2744L251.887 77.61Z" fill="currentColor"/>
+          </svg>
           <span className="text-gray-900 font-medium text-lg sm:text-2xl">Hitta rätt serviceföretag, snabbt.</span>
         </div>
 
