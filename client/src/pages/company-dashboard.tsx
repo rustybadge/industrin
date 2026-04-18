@@ -6,6 +6,8 @@ import { Building, LogOut } from 'lucide-react';
 import { useCompanyAccess } from '@/hooks/use-company-access';
 import { useAuth } from '@clerk/clerk-react';
 import { calculateDataQuality } from '@/utils/data-quality';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 // SVG ring constants — r=40, cx=cy=50
 const RING_RADIUS = 40;
@@ -225,80 +227,56 @@ function CompanyDashboard() {
         {/* Row 1: four stat cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
 
-          {/* Card 1 — Nya förfrågningar (HERO CARD) */}
-          <div className="bg-[#092490] p-7 rounded-none relative overflow-hidden">
-            <span className="absolute top-4 right-4 w-6 h-6 rounded-full bg-white/20 text-white text-xs flex items-center justify-center">
-              7 {/* TODO: wire to real data */}
-            </span>
-            <p className="text-sm font-medium text-white/80">Nya förfrågningar</p>
-            <p className="text-4xl font-medium text-white mt-1">7</p> {/* TODO: wire to real data */}
-            <p className="text-sm text-white/80 mt-1">3 obesvarade</p> {/* TODO: wire to real data */}
-            <svg
-              viewBox="0 0 80 32"
-              width="80"
-              height="32"
-              className="absolute bottom-6 right-6"
-            >
-              <polyline
-                points={toPolyline(heroPoints)}
-                stroke="white"
-                strokeOpacity="0.7"
-                strokeWidth="1.5"
-                fill="none"
-              />
-            </svg>
-          </div>
+          {/* Card 1 — Nya förfrågningar */}
+          <Card className="rounded-none bg-[#092490] border-[#092490]">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-white/80">Nya förfrågningar</CardTitle>
+              <Badge className="bg-white/20 text-white border-0 hover:bg-white/30">7 nya</Badge>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-medium text-white">7</div>{/* TODO: wire to real data */}
+              <p className="text-sm text-white/70 mt-1">3 obesvarade</p>{/* TODO: wire to real data */}
+            </CardContent>
+          </Card>
 
-          {/* Card 2 — Profilvisningar (STANDARD CARD) */}
-          <div className="bg-white border border-[#E5E7EB] p-6 rounded-none relative overflow-hidden">
-            <p className="text-sm font-medium text-[#111827]">Profilvisningar</p>
-            <p className="text-3xl font-medium text-[#111827] mt-1">312</p> {/* TODO: wire to real data */}
-            <p className="text-xs text-[#092490] font-medium mt-1">↑ 18% vs förra veckan</p> {/* TODO: wire to real data */}
-            <svg
-              viewBox="0 0 80 32"
-              width="80"
-              height="32"
-              className="absolute bottom-6 right-6"
-            >
-              <polyline
-                points={toPolyline(standardPoints)}
-                stroke="#092490"
-                strokeOpacity="0.6"
-                strokeWidth="1.5"
-                fill="none"
-              />
-            </svg>
-          </div>
+          {/* Card 2 — Profilvisningar */}
+          <Card className="rounded-none">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Profilvisningar</CardTitle>
+              <Badge variant="outline" className="text-[#092490] border-[#092490]/30 bg-[#cfd8fc]/40 font-medium">↑ 18%</Badge>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-medium">312</div>{/* TODO: wire to real data */}
+              <p className="text-sm text-muted-foreground mt-1">Jämfört med förra veckan</p>
+            </CardContent>
+          </Card>
 
-          {/* Card 3 — Sökträffar (STANDARD CARD) */}
-          <div className="bg-white border border-[#E5E7EB] p-6 rounded-none relative overflow-hidden">
-            <p className="text-sm font-medium text-[#111827]">Sökträffar</p>
-            <p className="text-3xl font-medium text-[#111827] mt-1">1 840</p> {/* TODO: wire to real data */}
-            <p className="text-xs text-[#092490] font-medium mt-1">↑ 7% vs förra veckan</p> {/* TODO: wire to real data */}
-            <svg
-              viewBox="0 0 80 32"
-              width="80"
-              height="32"
-              className="absolute bottom-6 right-6"
-            >
-              <polyline
-                points={toPolyline(searchPoints)}
-                stroke="#092490"
-                strokeOpacity="0.6"
-                strokeWidth="1.5"
-                fill="none"
-              />
-            </svg>
-          </div>
+          {/* Card 3 — Sökträffar */}
+          <Card className="rounded-none">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Sökträffar</CardTitle>
+              <Badge variant="outline" className="text-[#092490] border-[#092490]/30 bg-[#cfd8fc]/40 font-medium">↑ 7%</Badge>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-medium">1 840</div>{/* TODO: wire to real data */}
+              <p className="text-sm text-muted-foreground mt-1">Jämfört med förra veckan</p>
+            </CardContent>
+          </Card>
 
-          {/* Card 4 — Klick till hemsida (UTILITY CARD) */}
-          <div className="bg-[#F9FAFB] border border-[#E5E7EB] p-5 rounded-none">
-            <p className="text-sm font-medium text-[#111827]">Klick till hemsida</p>
-            <p className="text-2xl font-medium text-[#111827] mt-1">41</p> {/* TODO: wire to real data */}
-            <div className="h-1.5 bg-[#E5E7EB] rounded-full mt-3">
-              <div className="h-full bg-[#092490] rounded-full" style={{ width: '41%' }} /> {/* TODO: wire to real data */}
-            </div>
-          </div>
+          {/* Card 4 — Klick till hemsida */}
+          <Card className="rounded-none">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Klick till hemsida</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-medium">41</div>{/* TODO: wire to real data */}
+              <div className="h-1.5 bg-[#E5E7EB] rounded-full mt-3">
+                <div className="h-full bg-[#092490] rounded-full" style={{ width: '41%' }} />{/* TODO: wire to real data */}
+              </div>
+              <p className="text-sm text-muted-foreground mt-2">Den senaste månaden</p>
+            </CardContent>
+          </Card>
+
         </div>
 
         {/* Row 2: enquiries + profile strength */}
