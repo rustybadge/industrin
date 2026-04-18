@@ -6,8 +6,31 @@ import { Building, LogOut } from 'lucide-react';
 import { useCompanyAccess } from '@/hooks/use-company-access';
 import { useAuth } from '@clerk/clerk-react';
 import { calculateDataQuality } from '@/utils/data-quality';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart';
+import { AreaChart, Area, XAxis, CartesianGrid } from 'recharts';
+
+// ---- Placeholder visitor data (90 days) -----------------------------------
+
+function buildVisitorData() {
+  const data: { date: string; visitors: number }[] = [];
+  const base = new Date('2026-01-18');
+  // a gentle sine-wave pattern so the chart looks realistic
+  for (let i = 89; i >= 0; i--) {
+    const d = new Date(base);
+    d.setDate(d.getDate() - i);
+    const wave = Math.sin((i / 89) * Math.PI * 4) * 25;
+    const visitors = Math.round(40 + wave + (i % 7 === 0 ? -10 : 0));
+    data.push({ date: d.toISOString().split('T')[0], visitors: Math.max(visitors, 5) });
+  }
+  return data;
+}
+const ALL_VISITOR_DATA = buildVisitorData();
+
+const visitorChartConfig = {
+  visitors: { label: 'Besökare', color: '#092490' },
+} satisfies ChartConfig;
 
 // SVG ring constants — r=40, cx=cy=50
 const RING_RADIUS = 40;
@@ -19,6 +42,7 @@ function CompanyDashboard() {
   const [location, navigate] = useLocation();
   const { toast } = useToast();
   const [setupError, setSetupError] = useState(false);
+  const [activeRange, setActiveRange] = useState<'90d' | '30d' | '7d'>('30d');
   const setupAttempted = useRef(false);
 
   const fetchWithCompanyAuth = useCallback(
@@ -279,7 +303,83 @@ function CompanyDashboard() {
 
         </div>
 
-        {/* Row 2: enquiries + profile strength */}
+        {/* Row 2: visitor traffic chart */}
+        {(() => {
+          const days = activeRange === '90d' ? 90 : activeRange === '30d' ? 30 : 7;
+          const chartData = ALL_VISITOR_DATA.slice(-days);
+          const ranges = [
+            { key: '90d', label: '3 månader' },
+            { key: '30d', label: '30 dagar' },
+            { key: '7d',  label: '7 dagar'  },
+          ] as const;
+          return (
+            <Card className="rounded-none">
+              <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+                <div>
+                  <CardTitle className="text-base font-medium">Profilbesök</CardTitle>
+                  <CardDescription className="mt-0.5">Besökare på er profilsida</CardDescription>
+                </div>
+                <div className="flex gap-1">
+                  {ranges.map(({ key, label }) => (
+                    <button
+                      key={key}
+                      onClick={() => setActiveRange(key)}
+                      className={
+                        'text-xs px-3 py-1.5 border transition-colors ' +
+                        (activeRange === key
+                          ? 'bg-[#092490] text-white border-[#092490]'
+                          : 'bg-white text-[#4B5563] border-[#E5E7EB] hover:border-[#9CA3AF]')
+                      }
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </CardHeader>
+              <CardContent className="px-2 pt-4">
+                <ChartContainer config={visitorChartConfig} className="h-[180px] w-full">
+                  <AreaChart data={chartData} margin={{ left: 12, right: 12, top: 4, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="fillVisitors" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%"  stopColor="#092490" stopOpacity={0.35} />
+                        <stop offset="95%" stopColor="#092490" stopOpacity={0.02} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid vertical={false} stroke="#F3F4F6" />
+                    <XAxis
+                      dataKey="date"
+                      tickLine={false}
+                      axisLine={false}
+                      tickMargin={8}
+                      tick={{ fontSize: 11, fill: '#9CA3AF' }}
+                      tickFormatter={(v) => {
+                        const d = new Date(v);
+                        return d.toLocaleDateString('sv-SE', { month: 'short', day: 'numeric' });
+                      }}
+                      interval={Math.floor(chartData.length / 6)}
+                    />
+                    <ChartTooltip
+                      content={
+                        <ChartTooltipContent
+                          labelFormatter={(v) => new Date(v).toLocaleDateString('sv-SE', { weekday: 'short', month: 'short', day: 'numeric' })}
+                        />
+                      }
+                    />
+                    <Area
+                      dataKey="visitors"
+                      type="natural"
+                      fill="url(#fillVisitors)"
+                      stroke="#092490"
+                      strokeWidth={1.5}
+                    />
+                  </AreaChart>
+                </ChartContainer>
+              </CardContent>
+            </Card>
+          );
+        })()}
+
+        {/* Row 3: enquiries + profile strength */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
 
           {/* Left (lg:col-span-3): Senaste förfrågningar — STANDARD CARD */}
@@ -414,7 +514,7 @@ function CompanyDashboard() {
           </div>
         </div>
 
-        {/* Row 3: three analytics cards */}
+        {/* Row 4: three analytics cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
 
           {/* Col 1: Synlighet per kanal — STANDARD CARD */}
@@ -494,7 +594,7 @@ function CompanyDashboard() {
           </div>
         </div>
 
-        {/* Row 4: Snabb åtgärd — UTILITY CARD */}
+        {/* Row 5: Snabb åtgärd — UTILITY CARD */}
         <div className="bg-[#F9FAFB] border border-[#E5E7EB] p-5 rounded-none">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
