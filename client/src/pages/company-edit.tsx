@@ -833,7 +833,7 @@ function CompanyEdit() {
     <div className="bg-white min-h-screen">
       {/* Top nav */}
       <header className="bg-white border-b border-[#E5E7EB] h-14">
-        <div className="max-w-[600px] mx-auto px-6 h-full flex items-center justify-between">
+        <div className="max-w-5xl mx-auto px-6 h-full flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Building className="h-4 w-4 text-[#9CA3AF]" />
             <span className="text-sm font-medium text-[#4B5563]">
@@ -883,10 +883,6 @@ function CompanyEdit() {
 
       {/* Content */}
       <main className="max-w-[600px] mx-auto px-6 py-8">
-        <div className="mb-8 text-center">
-          <h1 className="text-xl font-medium text-[#111827]">{company.name}</h1>
-          <p className="text-sm text-[#9CA3AF] mt-1">Uppdatera er företagsprofil</p>
-        </div>
         <AboutSection company={company} fetchWithCompanyAuth={fetchWithCompanyAuth} isFirst />
         <ContactInfoSection company={company} fetchWithCompanyAuth={fetchWithCompanyAuth} />
         <AddressSection company={company} fetchWithCompanyAuth={fetchWithCompanyAuth} />
