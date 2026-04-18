@@ -10,6 +10,9 @@
       "cssVariables": true,
       "prefix": ""
     },
+    "registries": {
+      "@tailark": "https://tailark.com/r/{name}.json"
+    },
     "aliases": {
       "components": "@/components",
       "utils": "@/lib/utils",
