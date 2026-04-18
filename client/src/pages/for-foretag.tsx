@@ -41,7 +41,7 @@ export default function ForForetag() {
       {/* SECTION 2 — TRUST STRIP */}
       <div className="w-full bg-[#fdfdfd] border-b border-[#f2f2f2] py-3 px-4">
         <p className="text-center text-sm font-medium text-[#092490] tracking-tight">
-          Över 1 200 serviceföretag registrerade i hela Sverige.
+          1 200+ företag registrerade | Täcker alla 21 län | Kostnadsfri grundprofil
         </p>
       </div>
 
