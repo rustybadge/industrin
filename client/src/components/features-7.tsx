@@ -1,4 +1,5 @@
 import { BarChart2, Bell, CheckCircle, Settings } from 'lucide-react'
+import dashboardScreenshot from '@/assets/images/dashboard-screenshot.png'
 
 export default function Features7() {
     return (
@@ -11,6 +12,17 @@ export default function Features7() {
                     <p className="mt-6 text-lg text-[#666] leading-relaxed">
                         Din profil på Industrin.net arbetar för dig dygnet runt — oavsett om du precis kommit igång eller vill ta nästa steg.
                     </p>
+                </div>
+                <div className="mask-b-from-75% mask-l-from-75% mask-b-to-95% mask-l-to-95% relative -mx-4 pr-3 pt-3 md:-mx-12">
+                    <div className="perspective-midrange">
+                        <div className="rotate-x-6 -skew-2">
+                            <img
+                                src={dashboardScreenshot}
+                                alt="Instrumentpanel — Industrin.net"
+                                className="w-full rounded shadow-xl"
+                            />
+                        </div>
+                    </div>
                 </div>
                 <div className="relative mx-auto grid grid-cols-2 gap-x-3 gap-y-6 sm:gap-8 lg:grid-cols-4">
                     <div className="space-y-3">
