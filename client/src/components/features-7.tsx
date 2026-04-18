@@ -13,15 +13,24 @@ export default function Features7() {
                         Din profil på Industrin.net arbetar för dig dygnet runt — oavsett om du precis kommit igång eller vill ta nästa steg.
                     </p>
                 </div>
-                <div className="mask-b-from-75% mask-l-from-75% mask-b-to-95% mask-l-to-95% relative -mx-4 pr-3 pt-3 md:-mx-12">
-                    <div className="perspective-midrange">
-                        <div className="rotate-x-6 -skew-2">
-                            <img
-                                src={dashboardScreenshot}
-                                alt="Instrumentpanel — Industrin.net"
-                                className="w-full rounded shadow-xl"
-                            />
-                        </div>
+                <div
+                    className="relative -mx-4 pr-3 pt-3 md:-mx-12"
+                    style={{ perspective: '1200px' }}
+                >
+                    <div
+                        style={{
+                            transform: 'rotateX(6deg) skew(-2deg)',
+                            WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 22%), linear-gradient(to top, transparent 3%, black 18%)',
+                            WebkitMaskComposite: 'source-in',
+                            maskImage: 'linear-gradient(to right, transparent 0%, black 22%), linear-gradient(to top, transparent 3%, black 18%)',
+                            maskComposite: 'intersect',
+                        }}
+                    >
+                        <img
+                            src={dashboardScreenshot}
+                            alt="Instrumentpanel — Industrin.net"
+                            className="w-full rounded-lg shadow-2xl"
+                        />
                     </div>
                 </div>
                 <div className="relative mx-auto grid grid-cols-2 gap-x-3 gap-y-6 sm:gap-8 lg:grid-cols-4">
