@@ -9,7 +9,7 @@ import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import {
   Form,
   FormControl,
@@ -26,7 +26,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { apiRequest } from '@/lib/queryClient';
 
 const generalQuoteFormSchema = z.object({
   description: z.string().min(10, 'Beskrivningen måste vara minst 10 tecken'),
@@ -74,7 +73,6 @@ export default function GeneralQuoteRequest() {
 
   const createGeneralQuoteMutation = useMutation({
     mutationFn: async (data: GeneralQuoteFormData) => {
-      // Convert files to base64 for storage
       const fileData = await Promise.all(
         uploadedFiles.map(async (file) => ({
           name: file.name,
@@ -131,38 +129,36 @@ export default function GeneralQuoteRequest() {
     return (
       <div className="min-h-screen bg-background py-8">
         <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-2xl mx-auto">
-            <Card className="border border-gray-200 !rounded-none shadow-none">
-            <CardContent className="p-8 text-center">
-              <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-              <h1 className="text-2xl font-bold text-gray-900 mb-4">
-                Tack för din förfrågan!
-              </h1>
-              <p className="text-gray-600 mb-6">
-                Vi har skickat din förfrågan till relevanta företag inom reparation och service. 
-                Du kommer att få svar via e-post inom kort.
-              </p>
-              <div className="space-y-3">
-                <Button 
-                  onClick={() => navigate('/companies')}
-                  className="w-full bg-blue-600 hover:bg-blue-700"
-                >
-                  Sök fler företag
-                </Button>
-                <Button 
-                  onClick={() => {
-                    setIsSubmitted(false);
-                    form.reset();
-                    setUploadedFiles([]);
-                  }}
-                  variant="outline"
-                  className="w-full"
-                >
-                  Skicka en till förfrågan
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="max-w-3xl">
+            <Card className="border border-gray-200 shadow-sm text-center">
+              <CardContent className="p-8">
+                <CheckCircle className="h-16 w-16 text-green-600 mx-auto mb-6" />
+                <h1 className="text-2xl font-bold text-gray-900 mb-4">Förfrågan mottagen</h1>
+                <p className="text-gray-600 mb-6 leading-relaxed max-w-2xl mx-auto">
+                  Tack! Vi har skickat din förfrågan till relevanta företag inom reparation och service.
+                  Du kommer att få svar via e-post inom kort.
+                </p>
+                <div className="space-y-3">
+                  <Button
+                    onClick={() => navigate('/companies')}
+                    className="bg-primary hover:bg-primary-dark text-white px-6 py-2 text-sm"
+                  >
+                    Sök fler företag
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setIsSubmitted(false);
+                      form.reset();
+                      setUploadedFiles([]);
+                    }}
+                    variant="outline"
+                    className="block w-auto mx-auto border border-gray-300 hover:border-gray-400 text-gray-700 text-sm"
+                  >
+                    Skicka en till förfrågan
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
@@ -172,35 +168,62 @@ export default function GeneralQuoteRequest() {
   return (
     <div className="min-h-screen bg-background py-8">
       <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="mb-8">
-          <button
-            onClick={() => window.history.back()}
-            className="flex items-center text-gray-600 hover:text-gray-900 mb-4"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Tillbaka
-          </button>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Begär offert på reparation & service
-          </h1>
-          <p className="text-lg text-gray-600">
-            Få offerter från flera företag samtidigt. Helt kostnadsfritt.
-          </p>
-        </div>
+        <div className="max-w-3xl">
+          {/* Back Button */}
+          <div className="mb-6">
+            <Button
+              variant="ghost"
+              onClick={() => window.history.back()}
+              className="text-black hover:text-gray-700 hover:bg-transparent transition-colors flex items-center gap-2 px-3 py-2 group pl-[4px] pr-[4px]"
+            >
+              <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+              Tillbaka
+            </Button>
+          </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Form */}
-          <div className="lg:col-span-2">
-            <Card className="border border-gray-200 !rounded-none shadow-none">
-              <CardHeader>
-                <CardTitle className="text-xl">Beskriv vad du behöver hjälp med</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                    
-                    {/* Service Description */}
+          <Card className="border-0 shadow-none">
+            <CardHeader className="px-0 pt-0">
+              <h1 className="font-bold mb-3 tracking-tight text-[42px] text-[#171717]">
+                Begär offert på reparation & service
+              </h1>
+              <p className="text-gray-600">Få offerter från flera företag samtidigt. Helt kostnadsfritt.</p>
+            </CardHeader>
+
+            <CardContent className="px-0">
+              {/* Info sections */}
+              <div className="mb-6 space-y-4">
+                <div className="p-4 bg-blue-50 border border-blue-100 rounded-lg">
+                  <p className="text-blue-800 flex items-start leading-relaxed text-sm font-medium">
+                    <Info className="h-4 w-4 mr-2 mt-0.5 flex-shrink-0" />
+                    Tjänsten är helt kostnadsfri för dig. Företagen betalar en liten avgift när du anlitar dem.
+                  </p>
+                </div>
+                <div className="p-5 bg-gradient-to-br from-[#FBF7E4] to-[#F9F5E1] border border-[#E8E4D0] rounded-lg">
+                  <h4 className="font-semibold text-gray-900 mb-3 text-base">Hur fungerar det?</h4>
+                  <ul className="space-y-2 text-sm text-gray-700">
+                    <li className="flex items-start">
+                      <CheckCircle className="h-4 w-4 mr-2 mt-0.5 text-green-600 flex-shrink-0" />
+                      <span><strong>Beskriv vad du behöver</strong> - Fyll i formuläret med din förfrågan och kontaktuppgifter</span>
+                    </li>
+                    <li className="flex items-start">
+                      <CheckCircle className="h-4 w-4 mr-2 mt-0.5 text-green-600 flex-shrink-0" />
+                      <span><strong>Ta emot offerter gratis</strong> - Vi skickar ut förfrågan till relevanta företag</span>
+                    </li>
+                    <li className="flex items-start">
+                      <CheckCircle className="h-4 w-4 mr-2 mt-0.5 text-green-600 flex-shrink-0" />
+                      <span><strong>Jämför och välj</strong> - Anlita det bästa företaget för dig</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+
+                  {/* Request description section */}
+                  <div className="space-y-4">
+                    <h3 className="text-xl font-bold mb-5 text-[#171717]" style={{ letterSpacing: '-0.01em' }}>Beskriv din förfrågan</h3>
+
                     <FormField
                       control={form.control}
                       name="description"
@@ -210,7 +233,7 @@ export default function GeneralQuoteRequest() {
                           <FormControl>
                             <Textarea
                               placeholder="Tips: En bra och tydlig beskrivning möjliggör fler och bättre svar. Beskriv vad som behöver repareras, underhållas eller servas..."
-                              className="min-h-[120px]"
+                              className="min-h-[120px] text-sm border-gray-300 focus:border-primary focus:ring-primary resize-none"
                               {...field}
                             />
                           </FormControl>
@@ -219,7 +242,6 @@ export default function GeneralQuoteRequest() {
                       )}
                     />
 
-                    {/* Service Type */}
                     <FormField
                       control={form.control}
                       name="serviceType"
@@ -228,7 +250,7 @@ export default function GeneralQuoteRequest() {
                           <FormLabel className="text-sm font-medium">Typ av tjänst *</FormLabel>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
-                              <SelectTrigger>
+                              <SelectTrigger className="h-10 text-sm border-gray-300 focus:border-primary focus:ring-primary">
                                 <SelectValue placeholder="Välj typ av tjänst" />
                               </SelectTrigger>
                             </FormControl>
@@ -246,7 +268,6 @@ export default function GeneralQuoteRequest() {
                       )}
                     />
 
-                    {/* Timeframe */}
                     <FormField
                       control={form.control}
                       name="urgency"
@@ -255,7 +276,7 @@ export default function GeneralQuoteRequest() {
                           <FormLabel className="text-sm font-medium">Tidsram *</FormLabel>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
-                              <SelectTrigger>
+                              <SelectTrigger className="h-10 text-sm border-gray-300 focus:border-primary focus:ring-primary">
                                 <SelectValue placeholder="Välj tidsram" />
                               </SelectTrigger>
                             </FormControl>
@@ -273,7 +294,7 @@ export default function GeneralQuoteRequest() {
                     {/* File Upload */}
                     <div className="space-y-2">
                       <label className="text-sm font-medium">Bifoga filer (valfritt)</label>
-                      <div className="border-2 border-dashed border-gray-300 !rounded-none p-6 text-center">
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
                         <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
                         <p className="text-sm text-gray-600 mb-2">
                           Ritningar, dokument, bilder m.m.
@@ -287,7 +308,7 @@ export default function GeneralQuoteRequest() {
                         />
                         <label
                           htmlFor="file-upload"
-                          className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-none text-sm font-medium text-gray-700 bg-white hover:bg-background cursor-pointer"
+                          className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer"
                         >
                           Välj filer
                         </label>
@@ -295,7 +316,7 @@ export default function GeneralQuoteRequest() {
                       {uploadedFiles.length > 0 && (
                         <div className="space-y-2">
                           {uploadedFiles.map((file, index) => (
-                            <div key={index} className="flex items-center justify-between bg-background p-2 !rounded-none">
+                            <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded-lg border border-gray-200">
                               <span className="text-sm text-gray-700">{file.name}</span>
                               <button
                                 type="button"
@@ -309,169 +330,132 @@ export default function GeneralQuoteRequest() {
                         </div>
                       )}
                     </div>
-
-                    {/* Contact Information */}
-                    <div className="space-y-4 pt-6 border-t">
-                      <h3 className="text-lg font-semibold">Kontaktuppgifter</h3>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <FormField
-                          control={form.control}
-                          name="name"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-sm font-medium">Namn *</FormLabel>
-                              <FormControl>
-                                <Input placeholder="Ditt namn" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        <FormField
-                          control={form.control}
-                          name="email"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-sm font-medium">E-post *</FormLabel>
-                              <FormControl>
-                                <Input placeholder="din@email.se" type="email" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        <FormField
-                          control={form.control}
-                          name="phone"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-sm font-medium">Telefon</FormLabel>
-                              <FormControl>
-                                <Input placeholder="08-123 45 67" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        <FormField
-                          control={form.control}
-                          name="company"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-sm font-medium">Företag</FormLabel>
-                              <FormControl>
-                                <Input placeholder="Företagsnamn (valfritt)" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-
-                      <FormField
-                        control={form.control}
-                        name="preferredContact"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-sm font-medium">Önskas via *</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Välj kontaktmetod" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                <SelectItem value="email">E-post</SelectItem>
-                                <SelectItem value="phone">Telefon</SelectItem>
-                                <SelectItem value="both">Både e-post och telefon</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    {/* Submit Buttons */}
-                    <div className="flex space-x-3 pt-6">
-                      <Button 
-                        type="button" 
-                        variant="outline" 
-                        onClick={() => navigate('/companies')}
-                        className="flex-1 h-10 text-sm border border-gray-300 hover:border-gray-400 text-gray-700"
-                        disabled={createGeneralQuoteMutation.isPending}
-                      >
-                        Avbryt
-                      </Button>
-                      <Button 
-                        type="submit" 
-                        className="flex-1 h-10 text-sm bg-primary hover:bg-primary-dark text-white font-medium"
-                        disabled={createGeneralQuoteMutation.isPending}
-                      >
-                        {createGeneralQuoteMutation.isPending ? "Skickar..." : "Skicka förfrågan"}
-                      </Button>
-                    </div>
-                  </form>
-                </Form>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Sidebar */}
-          <div className="lg:col-span-1">
-            <Card className="border border-gray-200 !rounded-none shadow-none">
-              <CardHeader>
-                <CardTitle className="text-lg">Hur fungerar det?</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-start space-x-3">
-                  <div className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 !rounded-none flex items-center justify-center text-sm font-medium">
-                    1
                   </div>
-                  <div>
-                    <h4 className="font-medium text-gray-900">Skapa er förfrågan</h4>
-                    <p className="text-sm text-gray-600">Beskriv vad ni behöver hjälp med</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-3">
-                  <div className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 !rounded-none flex items-center justify-center text-sm font-medium">
-                    2
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-gray-900">Ta emot offerter gratis</h4>
-                    <p className="text-sm text-gray-600">Vi skickar ut förfrågan till relevanta företag</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-3">
-                  <div className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 !rounded-none flex items-center justify-center text-sm font-medium">
-                    3
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-gray-900">Jämför och välj</h4>
-                    <p className="text-sm text-gray-600">Anlita det bästa företaget för er</p>
-                  </div>
-                </div>
 
-                <div className="bg-blue-50 p-4 !rounded-none">
-                  <div className="flex items-start space-x-2">
-                    <Info className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <h4 className="font-medium text-blue-900">Kostnadsfritt</h4>
-                      <p className="text-sm text-blue-700">
-                        Tjänsten är helt kostnadsfri för er. Företagen betalar en liten avgift när ni anlitar dem.
-                      </p>
-                    </div>
+                  {/* Contact Information Section */}
+                  <div className="space-y-4">
+                    <h3 className="text-xl font-bold mb-5 text-[#171717]" style={{ letterSpacing: '-0.01em' }}>Kontaktuppgifter</h3>
+
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium">Namn *</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Ditt namn"
+                              {...field}
+                              className="h-10 text-sm border-gray-300 focus:border-primary focus:ring-primary"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium">E-post *</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="din@email.se"
+                              type="email"
+                              {...field}
+                              className="h-10 text-sm border-gray-300 focus:border-primary focus:ring-primary"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="phone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium">Telefon</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="08-123 45 67"
+                              {...field}
+                              className="h-10 text-sm border-gray-300 focus:border-primary focus:ring-primary"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="company"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium">Företag</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Företagsnamn (valfritt)"
+                              {...field}
+                              className="h-10 text-sm border-gray-300 focus:border-primary focus:ring-primary"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="preferredContact"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium">Önskas kontakt via *</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger className="h-10 text-sm border-gray-300 focus:border-primary focus:ring-primary">
+                                <SelectValue placeholder="Välj kontaktmetod" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="email">E-post</SelectItem>
+                              <SelectItem value="phone">Telefon</SelectItem>
+                              <SelectItem value="both">Både e-post och telefon</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+
+                  {/* Submit Buttons */}
+                  <div className="flex space-x-3 pt-6">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => navigate('/companies')}
+                      className="flex-1 h-10 text-sm border border-gray-300 hover:border-gray-400 text-gray-700"
+                      disabled={createGeneralQuoteMutation.isPending}
+                    >
+                      Avbryt
+                    </Button>
+                    <Button
+                      type="submit"
+                      className="flex-1 h-10 text-sm bg-primary hover:bg-primary-dark text-white font-medium"
+                      disabled={createGeneralQuoteMutation.isPending}
+                    >
+                      {createGeneralQuoteMutation.isPending ? "Skickar..." : "Skicka förfrågan"}
+                    </Button>
+                  </div>
+                </form>
+              </Form>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
