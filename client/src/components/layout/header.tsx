@@ -1,7 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import IndustrinLogo from "@/components/ui/industrin-logo";
-import OffertIcon from "@/components/ui/offert-icon";
+import { Menu } from "lucide-react";
 
 export default function Header() {
   const [location] = useLocation();
@@ -38,15 +38,13 @@ export default function Header() {
           </nav>
           
           <div className="md:hidden">
-            <Link href="/begar-offert">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-[#111827] hover:text-[#111827] hover:bg-[#BCD2FF] [&_svg]:!h-[25px] [&_svg]:!w-[25px]"
-              >
-                <OffertIcon className="h-[25px] w-[25px]" />
-              </Button>
-            </Link>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-[#111827] hover:text-[#111827] hover:bg-transparent"
+            >
+              <Menu className="h-6 w-6" />
+            </Button>
           </div>
         </div>
       </div>
