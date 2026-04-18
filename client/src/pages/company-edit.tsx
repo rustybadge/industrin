@@ -2,7 +2,8 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useLocation } from 'wouter';
 import { useToast } from '@/hooks/use-toast';
-import { Building, LogOut, Loader2, Trash2, Plus, Upload, Play, Briefcase, Award, Lock } from 'lucide-react';
+import { Loader2, Trash2, Plus, Upload, Play, Briefcase, Award, Lock } from 'lucide-react';
+import CompanyNav from '@/components/company/company-nav';
 import { useCompanyAccess } from '@/hooks/use-company-access';
 import { useAuth } from '@clerk/clerk-react';
 import { SERVICE_CATEGORIES } from '@/data/service-categories';
@@ -831,55 +832,13 @@ function CompanyEdit() {
 
   return (
     <div className="bg-white min-h-screen">
-      {/* Top nav */}
-      <header className="bg-white border-b border-[#E5E7EB] h-14">
-        <div className="max-w-5xl mx-auto px-6 h-full flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Building className="h-4 w-4 text-[#9CA3AF]" />
-            <span className="text-sm font-medium text-[#4B5563]">
-              {company?.name ?? ''}
-            </span>
-          </div>
-          <nav className="flex items-center gap-1">
-            <span
-              className="text-sm text-[#4B5563] hover:text-[#111827] transition-colors cursor-pointer px-1"
-              onClick={() => navigate('/company/dashboard')}
-            >
-              Dashboard
-            </span>
-            <span className="text-[#E5E7EB] mx-2 select-none">|</span>
-            <span
-              className={
-                location.startsWith('/company/edit')
-                  ? 'text-sm px-1 text-[#092490] font-semibold cursor-default'
-                  : 'text-sm text-[#4B5563] hover:text-[#111827] transition-colors cursor-pointer px-1'
-              }
-            >
-              Redigera profil
-            </span>
-            <span className="text-[#E5E7EB] mx-2 select-none">|</span>
-            <span
-              className={
-                'text-sm transition-colors px-1 ' +
-                (company?.slug
-                  ? 'text-[#4B5563] hover:text-[#111827] cursor-pointer'
-                  : 'text-[#9CA3AF] cursor-not-allowed')
-              }
-              onClick={() => company?.slug && navigate('/företag/' + company.slug)}
-            >
-              Visa publik profil
-            </span>
-            <span className="text-[#E5E7EB] mx-2 select-none">|</span>
-            <span
-              className="text-sm text-[#4B5563] hover:text-[#111827] transition-colors cursor-pointer px-1 flex items-center gap-1"
-              onClick={() => logout()}
-            >
-              <LogOut className="h-3.5 w-3.5" />
-              Logga ut
-            </span>
-          </nav>
-        </div>
-      </header>
+      <CompanyNav
+        companyName={company?.name ?? ''}
+        companySlug={company?.slug}
+        activePage="edit"
+        onNavigate={navigate}
+        onLogout={logout}
+      />
 
       {/* Content */}
       <main className="max-w-[600px] mx-auto px-6 py-8">

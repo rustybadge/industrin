@@ -2,11 +2,11 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useLocation } from 'wouter';
 import { useToast } from '@/hooks/use-toast';
-import { Building, LogOut } from 'lucide-react';
 import { useCompanyAccess } from '@/hooks/use-company-access';
 import { useAuth } from '@clerk/clerk-react';
 import { calculateDataQuality } from '@/utils/data-quality';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import CompanyNav from '@/components/company/company-nav';
 import { Badge } from '@/components/ui/badge';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart';
 import { AreaChart, Area, XAxis, CartesianGrid } from 'recharts';
@@ -172,8 +172,6 @@ function CompanyDashboard() {
   const ringScore = company ? Math.round(calculateDataQuality(company).percentage) : 0;
   const ringDashoffset = RING_CIRCUMFERENCE * (1 - ringScore / 100);
 
-  const isDashboard = location === '/company/dashboard';
-
   // Inline sparkline points — 7 data points, max=80, SVG viewBox 0 0 80 32
   const heroPoints = [40, 55, 45, 70, 60, 80, 65];
   const standardPoints = [40, 55, 45, 70, 60, 80, 65];
@@ -191,70 +189,19 @@ function CompanyDashboard() {
 
   return (
     <div className="bg-white min-h-screen">
-      {/* Top nav */}
-      <header className="bg-white border-b border-[#E5E7EB] h-14">
-        <div className="max-w-5xl mx-auto px-6 h-full flex items-center justify-between">
-          {/* Left: icon + company name */}
-          <div className="flex items-center gap-2">
-            <Building className="h-4 w-4 text-[#9CA3AF]" />
-            <span className="text-sm font-medium text-[#4B5563]">
-              {company?.name ?? ''} {/* TODO: wire to real data */}
-            </span>
-          </div>
-
-          {/* Right: nav items */}
-          <nav className="flex items-center gap-1">
-            <span
-              className={
-                isDashboard
-                  ? 'text-sm px-1 text-[#092490] font-medium cursor-default'
-                  : 'text-sm text-[#4B5563] hover:text-[#111827] transition-colors cursor-pointer px-1'
-              }
-            >
-              Dashboard
-            </span>
-
-            <span className="text-[#E5E7EB] mx-2 select-none">|</span>
-
-            <span
-              className="text-sm text-[#4B5563] hover:text-[#111827] transition-colors cursor-pointer px-1"
-              onClick={() => navigate('/company/edit')}
-            >
-              Redigera profil
-            </span>
-
-            <span className="text-[#E5E7EB] mx-2 select-none">|</span>
-
-            <span
-              className={
-                'text-sm transition-colors px-1 ' +
-                (company?.slug
-                  ? 'text-[#4B5563] hover:text-[#111827] cursor-pointer'
-                  : 'text-[#9CA3AF] cursor-not-allowed')
-              }
-              onClick={() => company?.slug && navigate('/företag/' + company.slug)}
-            >
-              Visa publik profil
-            </span>
-
-            <span className="text-[#E5E7EB] mx-2 select-none">|</span>
-
-            <span
-              className="text-sm text-[#4B5563] hover:text-[#111827] transition-colors cursor-pointer px-1 flex items-center gap-1"
-              onClick={() => logout()}
-            >
-              <LogOut className="h-3.5 w-3.5" />
-              Logga ut
-            </span>
-          </nav>
-        </div>
-      </header>
+      <CompanyNav
+        companyName={company?.name ?? ''}
+        companySlug={company?.slug}
+        activePage="dashboard"
+        onNavigate={navigate}
+        onLogout={logout}
+      />
 
       {/* Main content */}
       <main className="max-w-5xl mx-auto px-6 py-8 space-y-4">
 
         {/* Row 1: four stat cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
 
           {/* Card 1 — Förfrågningar (hero) */}
           <Card className="rounded-none bg-[#092490] border-[#092490]">
