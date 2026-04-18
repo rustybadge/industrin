@@ -15,7 +15,7 @@ export default function Integritetspolicy() {
           </button>
         </div>
 
-        <h1 className="custom-size text-3xl sm:text-4xl font-bold mb-8 text-[#171717]">Integritetspolicy</h1>
+        <h1 className="custom-size text-2xl sm:text-4xl font-bold mb-8 text-[#171717]">Integritetspolicy</h1>
 
         <div className="text-gray-700">
           <p className="text-lg leading-relaxed mb-8">Senast uppdaterad: Augusti 2025</p>
@@ -24,7 +24,7 @@ export default function Integritetspolicy() {
             Vi på Industrin.se värnar om din personliga integritet. Denna policy beskriver hur vi samlar in, använder och skyddar dina personuppgifter och hur vi använder cookies på vår webbplats.
           </p>
 
-          <h2 className="custom-size text-xl sm:text-2xl font-bold text-[#1f2937] mt-8 mb-4">1. Vilka uppgifter vi samlar in</h2>
+          <h2 className="custom-size text-lg sm:text-2xl font-bold text-[#1f2937] mt-8 mb-4">1. Vilka uppgifter vi samlar in</h2>
           <p className="leading-relaxed mb-4">
             När du använder Industrin.se kan vi behandla följande information:
           </p>
@@ -41,7 +41,7 @@ export default function Integritetspolicy() {
             Vi samlar inte in känsliga personuppgifter.
           </p>
 
-          <h2 className="custom-size text-xl sm:text-2xl font-bold text-[#1f2937] mt-8 mb-4">2. Syfte med behandlingen</h2>
+          <h2 className="custom-size text-lg sm:text-2xl font-bold text-[#1f2937] mt-8 mb-4">2. Syfte med behandlingen</h2>
           <p className="leading-relaxed mb-4">
             Vi behandlar personuppgifter för att:
           </p>
@@ -52,7 +52,7 @@ export default function Integritetspolicy() {
             <li>Uppfylla lagstadgade skyldigheter.</li>
           </ul>
 
-          <h2 className="custom-size text-xl sm:text-2xl font-bold text-[#1f2937] mt-8 mb-4">3. Rättslig grund</h2>
+          <h2 className="custom-size text-lg sm:text-2xl font-bold text-[#1f2937] mt-8 mb-4">3. Rättslig grund</h2>
           <p className="leading-relaxed mb-4">
             Behandlingen sker baserat på:
           </p>
@@ -66,7 +66,7 @@ export default function Integritetspolicy() {
             <strong>Berättigat intresse:</strong> För att kunna driva, underhålla och förbättra vår tjänst.
           </p>
 
-          <h2 className="custom-size text-xl sm:text-2xl font-bold text-[#1f2937] mt-8 mb-4">4. Lagringstid</h2>
+          <h2 className="custom-size text-lg sm:text-2xl font-bold text-[#1f2937] mt-8 mb-4">4. Lagringstid</h2>
           <p className="leading-relaxed mb-4">
             Vi sparar personuppgifter endast så länge det är nödvändigt för ändamålet eller enligt lag.
           </p>
@@ -77,7 +77,7 @@ export default function Integritetspolicy() {
             Företagsprofiler sparas så länge företaget har en aktiv närvaro på Industrin.se.
           </p>
 
-          <h2 className="custom-size text-xl sm:text-2xl font-bold text-[#1f2937] mt-8 mb-4">5. Utlämnande av uppgifter</h2>
+          <h2 className="custom-size text-lg sm:text-2xl font-bold text-[#1f2937] mt-8 mb-4">5. Utlämnande av uppgifter</h2>
           <p className="leading-relaxed mb-4">
             Vi delar endast personuppgifter med:
           </p>
@@ -90,7 +90,7 @@ export default function Integritetspolicy() {
             Vi säljer aldrig personuppgifter vidare.
           </p>
 
-          <h2 className="custom-size text-xl sm:text-2xl font-bold text-[#1f2937] mt-8 mb-4">6. Cookies och spårning</h2>
+          <h2 className="custom-size text-lg sm:text-2xl font-bold text-[#1f2937] mt-8 mb-4">6. Cookies och spårning</h2>
           <h3 className="custom-size text-base sm:text-lg font-semibold text-[#1f2937] mt-6 mb-3">Vad är cookies?</h3>
           <p className="leading-relaxed mb-6">
             Cookies är små textfiler som lagras i din webbläsare och gör det möjligt för vår webbplats att fungera optimalt och förbättra din upplevelse.
@@ -120,7 +120,7 @@ export default function Integritetspolicy() {
             Vid första besöket får du möjlighet att acceptera eller neka icke-nödvändiga cookies. Du kan när som helst radera eller blockera cookies i din webbläsare, men vissa funktioner kan då sluta fungera korrekt.
           </p>
 
-          <h2 className="custom-size text-xl sm:text-2xl font-bold text-[#1f2937] mt-8 mb-4">7. Dina rättigheter</h2>
+          <h2 className="custom-size text-lg sm:text-2xl font-bold text-[#1f2937] mt-8 mb-4">7. Dina rättigheter</h2>
           <p className="leading-relaxed mb-4">
             Du har rätt att:
           </p>
@@ -132,17 +132,17 @@ export default function Integritetspolicy() {
             <li>Lämna klagomål till Integritetsskyddsmyndigheten (IMY) om du anser att vi hanterar uppgifter felaktigt.</li>
           </ul>
 
-          <h2 className="custom-size text-xl sm:text-2xl font-bold text-[#1f2937] mt-8 mb-4">8. Säkerhet</h2>
+          <h2 className="custom-size text-lg sm:text-2xl font-bold text-[#1f2937] mt-8 mb-4">8. Säkerhet</h2>
           <p className="leading-relaxed mb-6">
             Vi vidtar tekniska och organisatoriska åtgärder för att skydda dina personuppgifter mot obehörig åtkomst, förlust eller missbruk.
           </p>
 
-          <h2 className="custom-size text-xl sm:text-2xl font-bold text-[#1f2937] mt-8 mb-4">9. Ändringar i denna policy</h2>
+          <h2 className="custom-size text-lg sm:text-2xl font-bold text-[#1f2937] mt-8 mb-4">9. Ändringar i denna policy</h2>
           <p className="leading-relaxed mb-6">
             Vi kan uppdatera denna policy om vår tjänst eller lagstiftningen förändras. Senaste versionen publiceras alltid på denna sida.
           </p>
 
-          <h2 className="custom-size text-xl sm:text-2xl font-bold text-[#1f2937] mt-8 mb-4">10. Kontakt</h2>
+          <h2 className="custom-size text-lg sm:text-2xl font-bold text-[#1f2937] mt-8 mb-4">10. Kontakt</h2>
           <p className="leading-relaxed mb-4">
             Om du har frågor om hur vi hanterar dina uppgifter, kontakta oss:
           </p>

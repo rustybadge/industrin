@@ -15,7 +15,7 @@ export default function Villkor() {
           </button>
         </div>
 
-        <h1 className="custom-size text-3xl sm:text-4xl font-bold mb-8 text-[#171717]">Användarvillkor</h1>
+        <h1 className="custom-size text-2xl sm:text-4xl font-bold mb-8 text-[#171717]">Användarvillkor</h1>
 
         <div className="text-gray-700 space-y-8">
           <p className="text-lg leading-relaxed">
@@ -25,7 +25,7 @@ export default function Villkor() {
           </p>
 
           <section>
-            <h2 className="custom-size text-xl sm:text-2xl font-bold text-[#1f2937] mb-4">Ägaranspråk</h2>
+            <h2 className="custom-size text-lg sm:text-2xl font-bold text-[#1f2937] mb-4">Ägaranspråk</h2>
             <p className="leading-relaxed mb-4">
               Genom att ansöka om att förvalta en företagsprofil på Industrin.net bekräftar du att
               du är behörig att representera företaget — till exempel som ägare, VD eller
@@ -39,7 +39,7 @@ export default function Villkor() {
           </section>
 
           <section>
-            <h2 className="custom-size text-xl sm:text-2xl font-bold text-[#1f2937] mb-4">Personuppgifter</h2>
+            <h2 className="custom-size text-lg sm:text-2xl font-bold text-[#1f2937] mb-4">Personuppgifter</h2>
             <p className="leading-relaxed mb-4">
               De kontaktuppgifter du lämnar i samband med en ägaransökan — namn, e-postadress och
               eventuellt telefonnummer — behandlas i enlighet med GDPR.
@@ -56,7 +56,7 @@ export default function Villkor() {
           </section>
 
           <section>
-            <h2 className="custom-size text-xl sm:text-2xl font-bold text-[#1f2937] mb-4">Ansvar</h2>
+            <h2 className="custom-size text-lg sm:text-2xl font-bold text-[#1f2937] mb-4">Ansvar</h2>
             <p className="leading-relaxed mb-4">
               Industrin.net förbehåller sig rätten att neka, återkalla eller avsluta åtkomst till
               en företagsprofil om villkoren inte uppfylls eller om information på plattformen
@@ -69,7 +69,7 @@ export default function Villkor() {
           </section>
 
           <section>
-            <h2 className="custom-size text-xl sm:text-2xl font-bold text-[#1f2937] mb-4">Kontakt</h2>
+            <h2 className="custom-size text-lg sm:text-2xl font-bold text-[#1f2937] mb-4">Kontakt</h2>
             <p className="leading-relaxed">
               Har du frågor om dessa villkor eller din ansökan? Kontakta oss på{' '}
               <a href="mailto:info@industrin.net" className="text-blue-600 hover:underline">
