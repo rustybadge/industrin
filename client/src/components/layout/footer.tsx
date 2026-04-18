@@ -9,7 +9,7 @@ export default function Footer() {
           <img
             src={logoImage}
             alt="Industrin.net Logo"
-            className="h-8 w-auto"
+            className="h-8 w-auto max-w-[160px]"
           />
           <span className="text-gray-900 font-medium text-lg sm:text-2xl">Hitta rätt serviceföretag, snabbt.</span>
         </div>
