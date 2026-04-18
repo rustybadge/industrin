@@ -830,7 +830,7 @@ function CompanyEdit() {
   }
 
   return (
-    <div className="bg-[#F3F4F6] min-h-screen">
+    <div className="bg-white min-h-screen">
       {/* Top nav */}
       <header className="bg-white border-b border-[#E5E7EB] h-14">
         <div className="max-w-5xl mx-auto px-6 h-full flex items-center justify-between">
