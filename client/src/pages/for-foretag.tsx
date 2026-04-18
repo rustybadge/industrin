@@ -1,6 +1,5 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import Features7 from "@/components/features-7";
 
 export default function ForForetag() {
   return (
@@ -117,13 +116,6 @@ export default function ForForetag() {
           </div>
         </div>
       </section>
-
-      {/* SECTION 4b — FEATURES-7 BLOCK */}
-      <div className="bg-white border-t border-[#f2f2f2]">
-        <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
-          <Features7 />
-        </div>
-      </div>
 
       {/* SECTION 5 — HOW IT WORKS */}
       <section className="py-20 bg-[#f7f7f7]">
