@@ -15,14 +15,19 @@ import { AreaChart, Area, XAxis, CartesianGrid } from 'recharts';
 
 function buildVisitorData() {
   const data: { date: string; visitors: number }[] = [];
-  const base = new Date('2026-01-18');
-  // a gentle sine-wave pattern so the chart looks realistic
+  const base = new Date('2026-04-18');
+  // Realistic weekday/weekend rhythm with a gentle upward trend
+  const seed = [52, 61, 67, 58, 71, 24, 18, 55, 63, 70, 61, 74, 27, 21,
+                58, 66, 72, 64, 78, 30, 23, 61, 69, 75, 67, 81, 32, 25,
+                64, 72, 79, 70, 84, 34, 28, 67, 75, 82, 73, 87, 36, 29,
+                70, 78, 85, 77, 90, 38, 31, 73, 81, 88, 80, 93, 40, 33,
+                75, 84, 90, 83, 96, 41, 34, 78, 87, 93, 86, 99, 43, 36,
+                80, 89, 95, 88, 102, 44, 37, 83, 91, 97, 90, 104, 45, 38,
+                85, 93, 98, 91, 105, 46];
   for (let i = 89; i >= 0; i--) {
     const d = new Date(base);
     d.setDate(d.getDate() - i);
-    const wave = Math.sin((i / 89) * Math.PI * 4) * 25;
-    const visitors = Math.round(40 + wave + (i % 7 === 0 ? -10 : 0));
-    data.push({ date: d.toISOString().split('T')[0], visitors: Math.max(visitors, 5) });
+    data.push({ date: d.toISOString().split('T')[0], visitors: seed[89 - i] ?? 50 });
   }
   return data;
 }
@@ -251,53 +256,51 @@ function CompanyDashboard() {
         {/* Row 1: four stat cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
 
-          {/* Card 1 — Nya förfrågningar */}
+          {/* Card 1 — Förfrågningar (hero) */}
           <Card className="rounded-none bg-[#092490] border-[#092490]">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-white/80">Nya förfrågningar</CardTitle>
-              <Badge className="bg-white/20 text-white border-0 hover:bg-white/30">7 nya</Badge>
+              <CardTitle className="text-sm font-medium text-white/80">Förfrågningar</CardTitle>
+              <Badge className="bg-white/20 text-white border-0 hover:bg-white/30 text-xs">2 nya</Badge>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-medium text-white">7</div>{/* TODO: wire to real data */}
-              <p className="text-sm text-white/70 mt-1">3 obesvarade</p>{/* TODO: wire to real data */}
+              <div className="text-3xl font-medium text-white">4</div>
+              <p className="text-sm text-white/70 mt-1">denna månad · 2 obesvarade</p>
             </CardContent>
           </Card>
 
-          {/* Card 2 — Profilvisningar */}
+          {/* Card 2 — Profilbesök */}
           <Card className="rounded-none">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Profilvisningar</CardTitle>
-              <Badge variant="outline" className="text-[#092490] border-[#092490]/30 bg-[#cfd8fc]/40 font-medium">↑ 18%</Badge>
+              <CardTitle className="text-sm font-medium">Profilbesök</CardTitle>
+              <Badge variant="outline" className="text-[#092490] border-[#092490]/30 bg-[#cfd8fc]/40 font-medium text-xs">↑ 14%</Badge>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-medium">312</div>{/* TODO: wire to real data */}
-              <p className="text-sm text-muted-foreground mt-1">Jämfört med förra veckan</p>
+              <div className="text-3xl font-medium">1 243</div>
+              <p className="text-sm text-muted-foreground mt-1">vs förra månaden</p>
             </CardContent>
           </Card>
 
-          {/* Card 3 — Sökträffar */}
-          <Card className="rounded-none">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Sökträffar</CardTitle>
-              <Badge variant="outline" className="text-[#092490] border-[#092490]/30 bg-[#cfd8fc]/40 font-medium">↑ 7%</Badge>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-medium">1 840</div>{/* TODO: wire to real data */}
-              <p className="text-sm text-muted-foreground mt-1">Jämfört med förra veckan</p>
-            </CardContent>
-          </Card>
-
-          {/* Card 4 — Klick till hemsida */}
+          {/* Card 3 — Klick till hemsida */}
           <Card className="rounded-none">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Klick till hemsida</CardTitle>
+              <Badge variant="outline" className="text-[#092490] border-[#092490]/30 bg-[#cfd8fc]/40 font-medium text-xs">↑ 8%</Badge>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-medium">41</div>{/* TODO: wire to real data */}
-              <div className="h-1.5 bg-[#E5E7EB] rounded-full mt-3">
-                <div className="h-full bg-[#092490] rounded-full" style={{ width: '41%' }} />{/* TODO: wire to real data */}
-              </div>
-              <p className="text-sm text-muted-foreground mt-2">Den senaste månaden</p>
+              <div className="text-3xl font-medium">87</div>
+              <p className="text-sm text-muted-foreground mt-1">vs förra månaden</p>
+            </CardContent>
+          </Card>
+
+          {/* Card 4 — Telefonklick */}
+          <Card className="rounded-none">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Telefonklick</CardTitle>
+              <Badge variant="outline" className="text-[#092490] border-[#092490]/30 bg-[#cfd8fc]/40 font-medium text-xs">↑ 3%</Badge>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-medium">31</div>
+              <p className="text-sm text-muted-foreground mt-1">vs förra månaden</p>
             </CardContent>
           </Card>
 
@@ -387,13 +390,12 @@ function CompanyDashboard() {
             <p className="text-base font-medium text-[#111827] mb-5">Senaste förfrågningar</p>
 
             <ul>
-              {/* TODO: wire to real data */}
               {[
-                { unread: true,  sender: 'AB Volvo Components', subject: 'Begäran om offert på hydraulikservice', time: '2 tim' },
-                { unread: true,  sender: 'Sandvik Machining',   subject: 'Underhållskontrakt CNC',               time: '5 tim' },
-                { unread: true,  sender: 'Scania CV AB',        subject: 'Akut reparation växellåda',            time: 'igår'  },
-                { unread: false, sender: 'SKF Sverige',         subject: 'Ny samarbetsförfrågan',                time: '3 d'   },
-                { unread: false, sender: 'Atlas Copco',         subject: 'Kompressorservice',                    time: '5 d'   },
+                { unread: true,  sender: 'Halmstad Järn & Stål AB',        subject: 'Offertförfrågan: servicekontrakt pressar',     time: '1 tim' },
+                { unread: true,  sender: 'Kongsberg Automotive AB',         subject: 'Akut – hydraulikläcka på produktionslinje',    time: '4 tim' },
+                { unread: false, sender: 'Alfa Laval AB',                   subject: 'Underhållsavtal värmeväxlare 2026',            time: 'igår'  },
+                { unread: false, sender: 'Trelleborg Sealing Solutions AB', subject: 'Byte av pneumatiska tätningar, offert',        time: '3 d'   },
+                { unread: false, sender: 'Sandvik AB',                      subject: 'Fräsmaskinservice och kalibrering',            time: '6 d'   },
               ].map((row, i) => (
                 <li key={i} className="flex items-center justify-between py-3 border-b border-[#F3F4F6] last:border-0">
                   <div className="flex-1 min-w-0 mr-3">
@@ -465,12 +467,12 @@ function CompanyDashboard() {
 
             {/* Sub-metrics */}
             <div className="text-xs">
-              {/* TODO: wire to real data */}
               {[
-                { label: 'Profil komplett',       value: '82%',    color: 'text-[#092490]' },
-                { label: 'Svarsfrekvens',          value: '91%',    color: 'text-[#092490]' },
-                { label: 'Org.nummer verifierat',  value: 'Ja',     color: 'text-[#092490]' },
-                { label: 'Certifieringar',         value: 'Saknas', color: 'text-[#F0A500]' },
+                { label: 'Profil komplett',      value: '65%',    color: 'text-[#092490]' },
+                { label: 'Svarsfrekvens',         value: '100%',   color: 'text-[#092490]' },
+                { label: 'Org.nr verifierat',     value: 'Ja',     color: 'text-[#092490]' },
+                { label: 'Logotyp',               value: 'Saknas', color: 'text-[#F0A500]' },
+                { label: 'Certifieringar',        value: 'Saknas', color: 'text-[#F0A500]' },
               ].map((m) => (
                 <div key={m.label} className="flex justify-between py-1.5 border-b border-[#F3F4F6] last:border-0">
                   <span className="text-[#4B5563]">{m.label}</span>
@@ -480,36 +482,30 @@ function CompanyDashboard() {
             </div>
 
             {/* Checklist */}
-            <div className="mt-4">
-              {/* TODO: wire to real data */}
-              <div className="flex items-center gap-2 text-sm text-[#4B5563] py-1">
-                <span className="w-3 h-3 rounded-full bg-[#092490] flex-shrink-0" />
-                <span>Kontaktpersoner tillagda</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-[#4B5563] py-1">
-                <span className="w-3 h-3 rounded-full bg-[#092490] flex-shrink-0" />
-                <span>Agenturer listade</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-[#4B5563] py-1">
-                <span className="w-3 h-3 rounded-full border-2 border-[#E5E7EB] flex-shrink-0" />
-                <span>Ladda upp certifikat</span>
-                <span
-                  className="text-[#092490] text-xs cursor-pointer hover:underline ml-1"
-                  onClick={() => navigate('/company/edit')}
-                >
-                  Lägg till →
-                </span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-[#4B5563] py-1">
-                <span className="w-3 h-3 rounded-full border-2 border-[#E5E7EB] flex-shrink-0" />
-                <span>Kontaktfotos saknas</span>
-                <span
-                  className="text-[#092490] text-xs cursor-pointer hover:underline ml-1"
-                  onClick={() => navigate('/company/edit')}
-                >
-                  Lägg till →
-                </span>
-              </div>
+            <div className="mt-4 space-y-1">
+              {[
+                { done: true,  label: 'Företagsbeskrivning tillagd'  },
+                { done: true,  label: 'Kontaktuppgifter ifyllda'      },
+                { done: true,  label: 'Tjänster valda'                },
+                { done: false, label: 'Logotyp saknas'                },
+                { done: false, label: 'Öppettider ej angivna'         },
+                { done: false, label: 'Certifieringar saknas'         },
+              ].map(({ done, label }) => (
+                <div key={label} className="flex items-center justify-between text-sm text-[#4B5563] py-1">
+                  <div className="flex items-center gap-2">
+                    <span className={`w-3 h-3 rounded-full flex-shrink-0 ${done ? 'bg-[#092490]' : 'border-2 border-[#E5E7EB]'}`} />
+                    <span className={done ? '' : 'text-[#9CA3AF]'}>{label}</span>
+                  </div>
+                  {!done && (
+                    <span
+                      className="text-[#092490] text-xs cursor-pointer hover:underline"
+                      onClick={() => navigate('/company/edit')}
+                    >
+                      Åtgärda →
+                    </span>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -521,11 +517,10 @@ function CompanyDashboard() {
           <div className="bg-white border border-[#E5E7EB] p-6 rounded-none">
             <p className="text-sm font-medium text-[#111827] mb-4">Synlighet per kanal</p>
             <div className="space-y-4">
-              {/* TODO: wire to real data */}
               {[
-                { label: 'Organisk sökning', pct: 68 },
-                { label: 'Direktlänk',       pct: 22 },
-                { label: 'Nyhetsbrev',        pct: 10 },
+                { label: 'Sökning på Industrin.net', pct: 74 },
+                { label: 'Direktlänk',               pct: 19 },
+                { label: 'Nyhetsbrev',                pct: 7  },
               ].map((bar) => (
                 <div key={bar.label}>
                   <div className="mb-1 flex justify-between">
@@ -547,8 +542,7 @@ function CompanyDashboard() {
           <div className="bg-white border border-[#E5E7EB] p-6 rounded-none">
             <p className="text-sm font-medium text-[#111827] mb-4">Heta sökord</p>
             <div className="flex flex-wrap gap-2">
-              {/* TODO: wire to real data */}
-              {['stångmatare', 'LNS magasin', 'magnetbord'].map((kw) => (
+              {['hydraulikservice', 'CNC-underhåll', 'mekanisk reparation'].map((kw) => (
                 <span
                   key={kw}
                   className="bg-[#cfd8fc] text-[#092490] border border-[#092490]/20 text-xs px-3 py-1.5 rounded-full"
@@ -556,7 +550,7 @@ function CompanyDashboard() {
                   {kw}
                 </span>
               ))}
-              {['AMF spännverktyg', 'rhenus skärvätska', 'kärnborrmaskin', 'CNC tillbehör'].map((kw) => (
+              {['ventilservice', 'kompressorservice', 'tätningsbyte', 'fräsmaskin'].map((kw) => (
                 <span
                   key={kw}
                   className="bg-[#F3F4F6] text-[#4B5563] border border-[#E5E7EB] text-xs px-3 py-1.5 rounded-full"
@@ -569,13 +563,13 @@ function CompanyDashboard() {
 
           {/* Col 3: Branschjämförelse — UTILITY CARD */}
           <div className="bg-[#F9FAFB] border border-[#E5E7EB] p-5 rounded-none">
-            <p className="text-sm font-medium text-[#111827] mb-4">Branschjämförelse</p>
+            <p className="text-sm font-medium text-[#111827] mb-1">Branschjämförelse</p>
+            <p className="text-xs text-[#9CA3AF] mb-4">Profilbesök per månad</p>
             <div className="space-y-4">
-              {/* TODO: wire to real data */}
               {[
-                { label: 'Detta företag',     value: 21, width: '70%',  textColor: 'text-[#092490]', barColor: 'bg-[#092490]' },
-                { label: 'Snitt i kategorin', value: 11, width: '37%',  textColor: 'text-[#9CA3AF]', barColor: 'bg-[#E5E7EB]' },
-                { label: 'Topp i kategorin',  value: 30, width: '100%', textColor: 'text-[#9CA3AF]', barColor: 'bg-[#E5E7EB]' },
+                { label: 'Ert företag',       value: '1 243', width: '44%',  textColor: 'text-[#092490]', barColor: 'bg-[#092490]' },
+                { label: 'Snitt i kategorin', value: '680',   width: '24%',  textColor: 'text-[#9CA3AF]', barColor: 'bg-[#D1D5DB]' },
+                { label: 'Bäst i kategorin',  value: '2 840', width: '100%', textColor: 'text-[#9CA3AF]', barColor: 'bg-[#D1D5DB]' },
               ].map((row) => (
                 <div key={row.label}>
                   <div className="mb-1 flex justify-between">
@@ -594,31 +588,31 @@ function CompanyDashboard() {
           </div>
         </div>
 
-        {/* Row 5: Snabb åtgärd — UTILITY CARD */}
+        {/* Row 5: Rekommenderade åtgärder */}
         <div className="bg-[#F9FAFB] border border-[#E5E7EB] p-5 rounded-none">
-          <div className="flex items-center justify-between flex-wrap gap-4">
+          <div className="flex items-start justify-between flex-wrap gap-4">
             <div>
-              <p className="text-sm font-medium text-[#111827]">Snabb åtgärd</p>
-              <p className="text-sm text-[#9CA3AF] mt-0.5">Nästa steg för att förbättra er profil</p>
+              <p className="text-sm font-medium text-[#111827]">Rekommenderade åtgärder</p>
+              <p className="text-sm text-[#9CA3AF] mt-0.5">Förbättra er profil för att synas mer och få fler förfrågningar</p>
             </div>
             <div className="flex gap-3 flex-wrap">
               <button
                 className="text-sm px-4 py-2 rounded-none border border-[#E5E7EB] bg-white text-[#4B5563] hover:border-[#9CA3AF] transition-colors"
-                onClick={() => toast({ title: 'Kommer snart' })}
+                onClick={() => navigate('/company/edit')}
               >
-                Förbättra beskrivning med AI
+                Ladda upp logotyp
               </button>
               <button
                 className="text-sm px-4 py-2 rounded-none border border-[#E5E7EB] bg-white text-[#4B5563] hover:border-[#9CA3AF] transition-colors"
                 onClick={() => navigate('/company/edit')}
               >
-                Lägg till certifieringar
+                Fyll i öppettider
               </button>
               <button
-                className="text-sm px-4 py-2 rounded-none border border-[#E5E7EB] bg-white text-[#4B5563] hover:border-[#9CA3AF] transition-colors"
-                onClick={() => toast({ title: 'Kommer snart' })}
+                className="text-sm px-4 py-2 rounded-none border border-[#092490] bg-[#092490] text-white hover:bg-[#071d74] transition-colors"
+                onClick={() => toast({ title: 'Kommer snart', description: 'Premiumfunktioner lanseras inom kort.' })}
               >
-                Öka synligheten
+                Uppgradera till Premium
               </button>
             </div>
           </div>
