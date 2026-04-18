@@ -105,7 +105,7 @@ function AboutSection({
 
   return (
     <div className={isFirst ? '' : 'border-t border-[#E5E7EB] pt-8 mt-8'}>
-      <h2 className="text-lg font-semibold text-[#111827] mb-1">Om företaget</h2>
+      <h2 className="text-base font-medium text-[#111827] mb-1">Om företaget</h2>
       <p className="text-sm text-[#9CA3AF] mb-5">Beskriv ert företag och era tjänster.</p>
       <div className="space-y-4">
         <div>
@@ -177,7 +177,7 @@ function ContactInfoSection({
 
   return (
     <div className="border-t border-[#E5E7EB] pt-8 mt-8">
-      <h2 className="text-lg font-semibold text-[#111827] mb-1">Kontaktuppgifter</h2>
+      <h2 className="text-base font-medium text-[#111827] mb-1">Kontaktuppgifter</h2>
       <p className="text-sm text-[#9CA3AF] mb-5">Telefon, webbplats och e-post som visas på er profil.</p>
       <div className="space-y-4">
         <div className="flex flex-col gap-4">
@@ -271,7 +271,7 @@ function AddressSection({
 
   return (
     <div className="border-t border-[#E5E7EB] pt-8 mt-8">
-      <h2 className="text-lg font-semibold text-[#111827] mb-1">Adress &amp; öppettider</h2>
+      <h2 className="text-base font-medium text-[#111827] mb-1">Adress &amp; öppettider</h2>
       <p className="text-sm text-[#9CA3AF] mb-5">Er besöksadress och öppettider visas på er profilsida.</p>
       <div className="space-y-4">
         <div>
@@ -395,7 +395,7 @@ function ContactsSection({
 
   return (
     <div className="border-t border-[#E5E7EB] pt-8 mt-8">
-      <h2 className="text-lg font-semibold text-[#111827] mb-1">Kontaktpersoner</h2>
+      <h2 className="text-base font-medium text-[#111827] mb-1">Kontaktpersoner</h2>
       <p className="text-sm text-[#9CA3AF] mb-5">Lägg till namngivna kontakter som visas på er företagsprofil.</p>
 
       {company.contacts.length > 0 && (
@@ -519,7 +519,7 @@ function LogoSection({
 
   return (
     <div className="border-t border-[#E5E7EB] pt-8 mt-8">
-      <h2 className="text-lg font-semibold text-[#111827] mb-1">Logotyp</h2>
+      <h2 className="text-base font-medium text-[#111827] mb-1">Logotyp</h2>
       <p className="text-sm text-[#9CA3AF] mb-5">Visas på er profilsida och i sökresultat.</p>
 
       {company.logoUrl && (
@@ -613,7 +613,7 @@ function ServicesSection({
     <div className="border-t border-[#E5E7EB] pt-8 mt-8">
       <div className="flex items-baseline justify-between mb-5">
         <div>
-          <h2 className="text-lg font-semibold text-[#111827] mb-1">Tjänster</h2>
+          <h2 className="text-base font-medium text-[#111827] mb-1">Tjänster</h2>
           <p className="text-sm text-[#9CA3AF]">Välj de tjänster ert företag erbjuder</p>
         </div>
         <span className="text-sm text-[#9CA3AF]">{selected.length} valda</span>
@@ -629,9 +629,9 @@ function ServicesSection({
                 className="flex items-center justify-between w-full py-4 text-left"
               >
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-semibold text-[#111827]">{category.name}</span>
+                  <span className="text-sm font-medium text-[#111827]">{category.name}</span>
                   {selectedInCategory > 0 && (
-                    <span className="bg-[#cfd8fc] text-[#092490] text-xs font-semibold px-2 py-0.5 rounded-full">
+                    <span className="bg-[#cfd8fc] text-[#092490] text-xs font-medium px-2 py-0.5 rounded-full">
                       {selectedInCategory}
                     </span>
                   )}
@@ -649,7 +649,7 @@ function ServicesSection({
 
               {openCategory === category.id && (
                 <div className="pb-5">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
+                  <div className="flex flex-col gap-y-3">
                     {category.subcategories.map((sub) => (
                       <label key={sub} className="flex items-center gap-2.5 cursor-pointer">
                         <input
@@ -700,21 +700,21 @@ function PremiumSection({ company }: { company: CompanyEditData & { tier?: strin
 
   return (
     <div className="border-t border-[#E5E7EB] pt-8 mt-8">
-      <h2 className="text-lg font-semibold text-[#111827] mb-1">Premium-funktioner</h2>
+      <h2 className="text-base font-medium text-[#111827] mb-1">Premium-funktioner</h2>
       <p className="text-sm text-[#9CA3AF] mb-5">Lås upp för att synas mer och nå fler kunder.</p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="flex flex-col gap-3">
         {features.map(({ Icon, title, desc }) => (
           <div key={title} className="bg-white border border-[#E5E7EB] rounded-none p-6 relative overflow-hidden">
             {!isPremium && (
               <>
                 <div className="filter blur-sm select-none pointer-events-none">
                   <Icon className="h-5 w-5 text-[#9CA3AF] mb-3" />
-                  <p className="text-sm font-semibold text-[#111827] mb-1">{title}</p>
+                  <p className="text-sm font-medium text-[#111827] mb-1">{title}</p>
                   <p className="text-xs text-[#4B5563] leading-relaxed">{desc}</p>
                 </div>
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/60">
-                  <span className="text-sm font-semibold text-[#111827]">Premium</span>
+                  <span className="text-sm font-medium text-[#111827]">Premium</span>
                   <span
                     className="text-sm text-[#092490] font-medium mt-1 cursor-pointer hover:underline"
                     onClick={() => toast({ title: 'Kommer snart', description: 'Premiumfunktioner lanseras inom kort.' })}
@@ -727,7 +727,7 @@ function PremiumSection({ company }: { company: CompanyEditData & { tier?: strin
             {isPremium && (
               <>
                 <Icon className="h-5 w-5 text-[#9CA3AF] mb-3" />
-                <p className="text-sm font-semibold text-[#111827] mb-1">{title}</p>
+                <p className="text-sm font-medium text-[#111827] mb-1">{title}</p>
                 <p className="text-xs text-[#4B5563] leading-relaxed">{desc}</p>
               </>
             )}
@@ -833,7 +833,7 @@ function CompanyEdit() {
     <div className="bg-white min-h-screen">
       {/* Top nav */}
       <header className="bg-white border-b border-[#E5E7EB] h-14">
-        <div className="max-w-[520px] mx-auto px-6 h-full flex items-center justify-between">
+        <div className="max-w-[600px] mx-auto px-6 h-full flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Building className="h-4 w-4 text-[#9CA3AF]" />
             <span className="text-sm font-medium text-[#4B5563]">
@@ -882,9 +882,9 @@ function CompanyEdit() {
       </header>
 
       {/* Content */}
-      <main className="max-w-[520px] mx-auto px-6 py-8">
+      <main className="max-w-[600px] mx-auto px-6 py-8">
         <div className="mb-8 text-center">
-          <h1 className="text-xl font-semibold text-[#111827]">{company.name}</h1>
+          <h1 className="text-xl font-medium text-[#111827]">{company.name}</h1>
           <p className="text-sm text-[#9CA3AF] mt-1">Uppdatera er företagsprofil</p>
         </div>
         <AboutSection company={company} fetchWithCompanyAuth={fetchWithCompanyAuth} isFirst />
