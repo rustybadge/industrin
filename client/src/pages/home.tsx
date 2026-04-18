@@ -41,24 +41,24 @@ export default function Home() {
       </div>
 
       {/* Hero Section */}
-      <section className="relative bg-white py-28 lg:py-36 overflow-hidden">
+      <section className="relative bg-white py-16 sm:py-24 lg:py-36 overflow-hidden">
         {/* Background pattern */}
         <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
           <img src={heroBg} alt="" className="absolute w-full h-full object-cover" />
           <div className="absolute inset-0 bg-white/[0.94] mix-blend-hard-light" />
         </div>
-        <div className="relative max-w-[1700px] mx-auto px-8">
+        <div className="relative max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-[885px] flex flex-col gap-6">
             <div>
               <p
-                className="font-medium text-[#1d1d1d] m-0"
-                style={{ fontFamily: 'PP Neue Montreal, Inter Tight, sans-serif', fontSize: '42px', lineHeight: '1.15', letterSpacing: '-1.26px' }}
+                className="font-medium text-[#1d1d1d] m-0 text-[28px] sm:text-[36px] lg:text-[42px]"
+                style={{ fontFamily: 'PP Neue Montreal, Inter Tight, sans-serif', lineHeight: '1.15', letterSpacing: '-0.84px' }}
               >
                 Service och support när maskinen stannar.
               </p>
               <p
-                className="font-medium text-[#092490] m-0"
-                style={{ fontFamily: 'PP Neue Montreal, Inter Tight, sans-serif', fontSize: '42px', lineHeight: '1.15', letterSpacing: '-1.26px' }}
+                className="font-medium text-[#092490] m-0 text-[28px] sm:text-[36px] lg:text-[42px]"
+                style={{ fontFamily: 'PP Neue Montreal, Inter Tight, sans-serif', lineHeight: '1.15', letterSpacing: '-0.84px' }}
               >
                 Hitta rätt företag, snabbt.
               </p>
@@ -77,14 +77,14 @@ export default function Home() {
 
       {/* Yellow CTA Banner */}
       <div className="w-full bg-[#f7d046]">
-        <div className="max-w-[1700px] mx-auto px-8 py-6 flex items-center justify-between gap-8">
-          <p className="font-medium text-[#1d1d1d] text-xl tracking-tight m-0">
+        <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <p className="font-medium text-[#1d1d1d] text-base sm:text-xl tracking-tight m-0">
             Driver du ett serviceföretag? Sök upp din profil och ta över den gratis.
           </p>
-          <Link href="/for-foretag">
+          <Link href="/for-foretag" className="shrink-0">
             <Button
               variant="outline"
-              className="bg-white border border-[#dcdcdc] text-[#092490] font-medium px-5 text-sm tracking-tight hover:bg-gray-50 shrink-0"
+              className="w-full sm:w-auto bg-white border border-[#dcdcdc] text-[#092490] font-medium px-5 text-sm tracking-tight hover:bg-gray-50"
               style={{ height: '48px' }}
             >
               Sök efter ditt företag
@@ -94,13 +94,13 @@ export default function Home() {
       </div>
 
       {/* Company Directory Section */}
-      <section id="directory" className="py-16 bg-background">
-        <div className="max-w-[1700px] mx-auto px-8">
+      <section id="directory" className="py-12 sm:py-16 bg-background">
+        <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-6">
-            <h3 className="text-[#1d1d1d] custom-size" style={{ fontSize: '32px', lineHeight: '1.2', letterSpacing: '-0.96px', fontWeight: 500 }}>
+            <h3 className="text-[#1d1d1d] custom-size text-2xl sm:text-[32px]" style={{ lineHeight: '1.2', letterSpacing: '-0.96px', fontWeight: 500 }}>
               Serviceföretag i hela Sverige
             </h3>
-            <p className="text-xl text-[#666] mt-2 tracking-tight">
+            <p className="text-base sm:text-xl text-[#666] mt-2 tracking-tight">
               Sök bland företag som kan hjälpa dig med reparation, underhåll och service.
             </p>
           </div>

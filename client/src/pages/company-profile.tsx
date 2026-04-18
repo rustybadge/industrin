@@ -115,11 +115,11 @@ export default function CompanyProfile() {
       {/* Unclaimed banner */}
       {!company.isClaimed && (
         <div className="w-full bg-[#F0FAF6] border-y border-[#E5E7EB]">
-          <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
+          <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <p className="text-sm text-gray-700">Den här profilen är inte hanterad — ta över den och nå fler kunder.</p>
             <a
               href={`/ansokkontroll/${company.slug}`}
-              className="shrink-0 text-sm font-medium border border-[#1D9E75] text-[#1D9E75] bg-white rounded-none px-4 py-2 hover:bg-[#F0FAF6] transition-colors"
+              className="text-center text-sm font-medium border border-[#1D9E75] text-[#1D9E75] bg-white rounded-none px-4 py-2 hover:bg-[#F0FAF6] transition-colors"
             >
               Är det ditt företag? Ta över profilen.
             </a>
