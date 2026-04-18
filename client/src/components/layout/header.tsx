@@ -13,11 +13,22 @@ export default function Header() {
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <Link href="/">
-                <IndustrinLogo 
-                  className="h-8 w-auto cursor-pointer text-gray-900" 
+                {/* Full logo on md+, icon mark only on mobile */}
+                <IndustrinLogo
+                  className="hidden md:block h-8 w-auto cursor-pointer text-gray-900"
                   height={32}
                   width={193}
                 />
+                <svg
+                  className="block md:hidden h-8 w-auto cursor-pointer text-gray-900"
+                  height={32}
+                  width={32}
+                  viewBox="0 0 265 300"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M251.887 77.61L126.466 146.577V292.068L127.012 292.382L126.466 292.697L0.5 219.952V96.1042C0.5 84.8546 6.50092 74.4594 16.2427 68.8335L110.717 14.2744C120.462 8.6466 132.47 8.64661 142.215 14.2744L251.887 77.61Z" fill="currentColor"/>
+                </svg>
               </Link>
             </div>
           </div>
