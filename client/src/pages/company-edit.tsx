@@ -55,12 +55,12 @@ function Spinner() {
 // ---- Shared input class helpers --------------------------------------------
 
 const inputClass =
-  'w-full bg-white border border-[#E5E7EB] rounded-none px-4 py-2.5 text-sm text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#1D9E75]/40';
+  'w-full bg-white border border-[#e5e5e5] rounded-none px-4 py-2.5 text-sm text-[#171717] placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#092490]/20';
 
-const labelClass = 'block text-sm font-medium text-[#4B5563] mb-1.5';
+const labelClass = 'block text-sm font-medium text-[#525252] mb-1.5';
 
 const saveButtonClass =
-  'text-sm font-medium px-5 py-2 rounded-none bg-[#1D9E75] text-white hover:bg-[#167A5A] transition-colors disabled:opacity-40';
+  'w-full text-sm font-medium px-5 py-2.5 rounded-none bg-[#092490] text-white hover:bg-[#071d74] transition-colors disabled:opacity-40';
 
 // ---- Section: Om företaget -------------------------------------------------
 
@@ -180,7 +180,7 @@ function ContactInfoSection({
       <h2 className="text-lg font-semibold text-[#111827] mb-1">Kontaktuppgifter</h2>
       <p className="text-sm text-[#9CA3AF] mb-5">Telefon, webbplats och e-post som visas på er profil.</p>
       <div className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="flex flex-col gap-4">
           <div>
             <label htmlFor="phone" className={labelClass}>Telefon</label>
             <input
@@ -426,7 +426,7 @@ function ContactsSection({
 
       <div className="space-y-4">
         <p className="text-sm font-medium text-[#4B5563]">Lägg till ny kontakt</p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div className="flex flex-col gap-3">
           <div>
             <label htmlFor="newContactName" className={labelClass}>Namn *</label>
             <input
@@ -462,7 +462,7 @@ function ContactsSection({
         <button
           onClick={handleAdd}
           disabled={addMutation.isPending}
-          className="inline-flex items-center text-sm font-medium px-5 py-2 rounded-none border border-[#E5E7EB] bg-white text-[#4B5563] hover:border-[#9CA3AF] transition-colors disabled:opacity-40"
+          className="w-full inline-flex items-center justify-center text-sm font-medium px-5 py-2.5 rounded-none border border-[#E5E7EB] bg-white text-[#4B5563] hover:border-[#9CA3AF] transition-colors disabled:opacity-40"
         >
           {addMutation.isPending ? (
             <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -541,7 +541,7 @@ function LogoSection({
       />
 
       <div
-        className="border-2 border-dashed border-[#E5E7EB] rounded-none bg-white p-8 text-center hover:border-[#1D9E75]/50 transition-colors cursor-pointer"
+        className="border-2 border-dashed border-[#E5E7EB] rounded-none bg-white p-8 text-center hover:border-[#092490]/50 transition-colors cursor-pointer"
         onClick={() => fileInputRef.current?.click()}
       >
         {isUploading ? (
@@ -631,7 +631,7 @@ function ServicesSection({
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-semibold text-[#111827]">{category.name}</span>
                   {selectedInCategory > 0 && (
-                    <span className="bg-[#E8F7F2] text-[#1D9E75] text-xs font-semibold px-2 py-0.5 rounded-full">
+                    <span className="bg-[#cfd8fc] text-[#092490] text-xs font-semibold px-2 py-0.5 rounded-full">
                       {selectedInCategory}
                     </span>
                   )}
@@ -649,14 +649,14 @@ function ServicesSection({
 
               {openCategory === category.id && (
                 <div className="pb-5">
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
                     {category.subcategories.map((sub) => (
                       <label key={sub} className="flex items-center gap-2.5 cursor-pointer">
                         <input
                           type="checkbox"
                           checked={selected.includes(sub)}
                           onChange={() => toggle(sub)}
-                          className="w-4 h-4 rounded border-[#E5E7EB] accent-[#1D9E75]"
+                          className="w-4 h-4 rounded border-[#E5E7EB] accent-[#092490]"
                         />
                         <span className={`text-sm select-none ${selected.includes(sub) ? 'text-[#111827] font-medium' : 'text-[#4B5563]'}`}>
                           {sub}
@@ -703,7 +703,7 @@ function PremiumSection({ company }: { company: CompanyEditData & { tier?: strin
       <h2 className="text-lg font-semibold text-[#111827] mb-1">Premium-funktioner</h2>
       <p className="text-sm text-[#9CA3AF] mb-5">Lås upp för att synas mer och nå fler kunder.</p>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {features.map(({ Icon, title, desc }) => (
           <div key={title} className="bg-white border border-[#E5E7EB] rounded-none p-6 relative overflow-hidden">
             {!isPremium && (
@@ -716,7 +716,7 @@ function PremiumSection({ company }: { company: CompanyEditData & { tier?: strin
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/60">
                   <span className="text-sm font-semibold text-[#111827]">Premium</span>
                   <span
-                    className="text-sm text-[#1D9E75] font-medium mt-1 cursor-pointer hover:underline"
+                    className="text-sm text-[#092490] font-medium mt-1 cursor-pointer hover:underline"
                     onClick={() => toast({ title: 'Kommer snart', description: 'Premiumfunktioner lanseras inom kort.' })}
                   >
                     Uppgradera för åtkomst
@@ -833,7 +833,7 @@ function CompanyEdit() {
     <div className="bg-white min-h-screen">
       {/* Top nav */}
       <header className="bg-white border-b border-[#E5E7EB] h-14">
-        <div className="max-w-5xl mx-auto px-6 h-full flex items-center justify-between">
+        <div className="max-w-[520px] mx-auto px-6 h-full flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Building className="h-4 w-4 text-[#9CA3AF]" />
             <span className="text-sm font-medium text-[#4B5563]">
@@ -851,7 +851,7 @@ function CompanyEdit() {
             <span
               className={
                 location.startsWith('/company/edit')
-                  ? 'text-sm px-1 text-[#1D9E75] font-semibold cursor-default'
+                  ? 'text-sm px-1 text-[#092490] font-semibold cursor-default'
                   : 'text-sm text-[#4B5563] hover:text-[#111827] transition-colors cursor-pointer px-1'
               }
             >
@@ -882,7 +882,11 @@ function CompanyEdit() {
       </header>
 
       {/* Content */}
-      <main className="max-w-5xl mx-auto px-6 py-8">
+      <main className="max-w-[520px] mx-auto px-6 py-8">
+        <div className="mb-8 text-center">
+          <h1 className="text-xl font-semibold text-[#111827]">{company.name}</h1>
+          <p className="text-sm text-[#9CA3AF] mt-1">Uppdatera er företagsprofil</p>
+        </div>
         <AboutSection company={company} fetchWithCompanyAuth={fetchWithCompanyAuth} isFirst />
         <ContactInfoSection company={company} fetchWithCompanyAuth={fetchWithCompanyAuth} />
         <AddressSection company={company} fetchWithCompanyAuth={fetchWithCompanyAuth} />

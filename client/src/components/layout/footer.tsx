@@ -48,6 +48,11 @@ export default function Footer() {
                   Sök upp ditt företag
                 </a>
               </li>
+              <li>
+                <a href="/company/login" className="hover:text-gray-900 transition-colors">
+                  Logga in
+                </a>
+              </li>
             </ul>
           </div>
 

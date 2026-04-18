@@ -176,7 +176,7 @@ function CompanyDashboard() {
             <span
               className={
                 isDashboard
-                  ? 'text-sm px-1 text-[#1D9E75] font-semibold cursor-default'
+                  ? 'text-sm px-1 text-[#092490] font-medium cursor-default'
                   : 'text-sm text-[#4B5563] hover:text-[#111827] transition-colors cursor-pointer px-1'
               }
             >
@@ -220,18 +220,18 @@ function CompanyDashboard() {
       </header>
 
       {/* Main content */}
-      <main className="max-w-5xl mx-auto px-6 py-8 space-y-6">
+      <main className="max-w-5xl mx-auto px-6 py-8 space-y-4">
 
         {/* Row 1: four stat cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
 
           {/* Card 1 — Nya förfrågningar (HERO CARD) */}
-          <div className="bg-[#1D9E75] p-7 rounded-none relative overflow-hidden">
+          <div className="bg-[#092490] p-7 rounded-none relative overflow-hidden">
             <span className="absolute top-4 right-4 w-6 h-6 rounded-full bg-white/20 text-white text-xs flex items-center justify-center">
               7 {/* TODO: wire to real data */}
             </span>
-            <p className="text-xs font-semibold uppercase tracking-wide text-white/70">Nya förfrågningar</p>
-            <p className="text-4xl font-bold text-white mt-1">7</p> {/* TODO: wire to real data */}
+            <p className="text-sm font-medium text-white/80">Nya förfrågningar</p>
+            <p className="text-4xl font-medium text-white mt-1">7</p> {/* TODO: wire to real data */}
             <p className="text-sm text-white/80 mt-1">3 obesvarade</p> {/* TODO: wire to real data */}
             <svg
               viewBox="0 0 80 32"
@@ -251,9 +251,9 @@ function CompanyDashboard() {
 
           {/* Card 2 — Profilvisningar (STANDARD CARD) */}
           <div className="bg-white border border-[#E5E7EB] p-6 rounded-none relative overflow-hidden">
-            <p className="text-xs font-semibold uppercase tracking-wide text-[#9CA3AF]">Profilvisningar</p>
-            <p className="text-3xl font-semibold text-[#111827] mt-1">312</p> {/* TODO: wire to real data */}
-            <p className="text-xs text-[#1D9E75] font-medium mt-1">↑ 18% vs förra veckan</p> {/* TODO: wire to real data */}
+            <p className="text-sm font-medium text-[#111827]">Profilvisningar</p>
+            <p className="text-3xl font-medium text-[#111827] mt-1">312</p> {/* TODO: wire to real data */}
+            <p className="text-xs text-[#092490] font-medium mt-1">↑ 18% vs förra veckan</p> {/* TODO: wire to real data */}
             <svg
               viewBox="0 0 80 32"
               width="80"
@@ -262,7 +262,7 @@ function CompanyDashboard() {
             >
               <polyline
                 points={toPolyline(standardPoints)}
-                stroke="#1D9E75"
+                stroke="#092490"
                 strokeOpacity="0.6"
                 strokeWidth="1.5"
                 fill="none"
@@ -272,9 +272,9 @@ function CompanyDashboard() {
 
           {/* Card 3 — Sökträffar (STANDARD CARD) */}
           <div className="bg-white border border-[#E5E7EB] p-6 rounded-none relative overflow-hidden">
-            <p className="text-xs font-semibold uppercase tracking-wide text-[#9CA3AF]">Sökträffar</p>
-            <p className="text-3xl font-semibold text-[#111827] mt-1">1 840</p> {/* TODO: wire to real data */}
-            <p className="text-xs text-[#1D9E75] font-medium mt-1">↑ 7% vs förra veckan</p> {/* TODO: wire to real data */}
+            <p className="text-sm font-medium text-[#111827]">Sökträffar</p>
+            <p className="text-3xl font-medium text-[#111827] mt-1">1 840</p> {/* TODO: wire to real data */}
+            <p className="text-xs text-[#092490] font-medium mt-1">↑ 7% vs förra veckan</p> {/* TODO: wire to real data */}
             <svg
               viewBox="0 0 80 32"
               width="80"
@@ -283,7 +283,7 @@ function CompanyDashboard() {
             >
               <polyline
                 points={toPolyline(searchPoints)}
-                stroke="#1D9E75"
+                stroke="#092490"
                 strokeOpacity="0.6"
                 strokeWidth="1.5"
                 fill="none"
@@ -293,20 +293,20 @@ function CompanyDashboard() {
 
           {/* Card 4 — Klick till hemsida (UTILITY CARD) */}
           <div className="bg-[#F9FAFB] border border-[#E5E7EB] p-5 rounded-none">
-            <p className="text-xs font-semibold uppercase tracking-wide text-[#9CA3AF]">Klick till hemsida</p>
-            <p className="text-2xl font-semibold text-[#111827] mt-1">41</p> {/* TODO: wire to real data */}
+            <p className="text-sm font-medium text-[#111827]">Klick till hemsida</p>
+            <p className="text-2xl font-medium text-[#111827] mt-1">41</p> {/* TODO: wire to real data */}
             <div className="h-1.5 bg-[#E5E7EB] rounded-full mt-3">
-              <div className="h-full bg-[#1D9E75] rounded-full" style={{ width: '41%' }} /> {/* TODO: wire to real data */}
+              <div className="h-full bg-[#092490] rounded-full" style={{ width: '41%' }} /> {/* TODO: wire to real data */}
             </div>
           </div>
         </div>
 
         {/* Row 2: enquiries + profile strength */}
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
 
           {/* Left (lg:col-span-3): Senaste förfrågningar — STANDARD CARD */}
           <div className="lg:col-span-3 bg-white border border-[#E5E7EB] p-6 rounded-none">
-            <p className="text-lg font-semibold text-[#111827] mb-5">Senaste förfrågningar</p>
+            <p className="text-base font-medium text-[#111827] mb-5">Senaste förfrågningar</p>
 
             <ul>
               {/* TODO: wire to real data */}
@@ -324,7 +324,7 @@ function CompanyDashboard() {
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
                     {row.unread ? (
-                      <span className="bg-[#E8F7F2] text-[#1D9E75] text-xs font-medium px-2 py-0.5 rounded-full">
+                      <span className="bg-[#cfd8fc] text-[#092490] text-xs font-medium px-2 py-0.5 rounded-full">
                         Ny
                       </span>
                     ) : (
@@ -332,7 +332,7 @@ function CompanyDashboard() {
                         Läst
                       </span>
                     )}
-                    <span className="text-xs text-[#1D9E75] font-medium cursor-pointer ml-1">Visa</span>
+                    <span className="text-xs text-[#092490] font-medium cursor-pointer ml-1">Visa</span>
                   </div>
                 </li>
               ))}
@@ -345,7 +345,7 @@ function CompanyDashboard() {
 
           {/* Right (lg:col-span-2): Profilstyrka — STANDARD CARD */}
           <div className="lg:col-span-2 bg-white border border-[#E5E7EB] p-6 rounded-none">
-            <p className="text-lg font-semibold text-[#111827] mb-1">Profilstyrka</p>
+            <p className="text-base font-medium text-[#111827] mb-1">Profilstyrka</p>
             <p className="text-xs text-[#9CA3AF] mb-5 leading-relaxed">
               Profilstyrka visar hur komplett din företagsprofil är på industrin.net. En starkare profil syns bättre i sökresultat och skapar förtroende hos potentiella kunder.
             </p>
@@ -368,7 +368,7 @@ function CompanyDashboard() {
                   cy="50"
                   r={RING_RADIUS}
                   fill="none"
-                  stroke="#1D9E75"
+                  stroke="#092490"
                   strokeWidth="8"
                   strokeLinecap="round"
                   strokeDasharray={RING_CIRCUMFERENCE}
@@ -389,9 +389,9 @@ function CompanyDashboard() {
             <div className="text-xs">
               {/* TODO: wire to real data */}
               {[
-                { label: 'Profil komplett',       value: '82%',    color: 'text-[#1D9E75]' },
-                { label: 'Svarsfrekvens',          value: '91%',    color: 'text-[#1D9E75]' },
-                { label: 'Org.nummer verifierat',  value: 'Ja',     color: 'text-[#1D9E75]' },
+                { label: 'Profil komplett',       value: '82%',    color: 'text-[#092490]' },
+                { label: 'Svarsfrekvens',          value: '91%',    color: 'text-[#092490]' },
+                { label: 'Org.nummer verifierat',  value: 'Ja',     color: 'text-[#092490]' },
                 { label: 'Certifieringar',         value: 'Saknas', color: 'text-[#F0A500]' },
               ].map((m) => (
                 <div key={m.label} className="flex justify-between py-1.5 border-b border-[#F3F4F6] last:border-0">
@@ -405,18 +405,18 @@ function CompanyDashboard() {
             <div className="mt-4">
               {/* TODO: wire to real data */}
               <div className="flex items-center gap-2 text-sm text-[#4B5563] py-1">
-                <span className="w-3 h-3 rounded-full bg-[#1D9E75] flex-shrink-0" />
+                <span className="w-3 h-3 rounded-full bg-[#092490] flex-shrink-0" />
                 <span>Kontaktpersoner tillagda</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-[#4B5563] py-1">
-                <span className="w-3 h-3 rounded-full bg-[#1D9E75] flex-shrink-0" />
+                <span className="w-3 h-3 rounded-full bg-[#092490] flex-shrink-0" />
                 <span>Agenturer listade</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-[#4B5563] py-1">
                 <span className="w-3 h-3 rounded-full border-2 border-[#E5E7EB] flex-shrink-0" />
                 <span>Ladda upp certifikat</span>
                 <span
-                  className="text-[#1D9E75] text-xs cursor-pointer hover:underline ml-1"
+                  className="text-[#092490] text-xs cursor-pointer hover:underline ml-1"
                   onClick={() => navigate('/company/edit')}
                 >
                   Lägg till →
@@ -426,7 +426,7 @@ function CompanyDashboard() {
                 <span className="w-3 h-3 rounded-full border-2 border-[#E5E7EB] flex-shrink-0" />
                 <span>Kontaktfotos saknas</span>
                 <span
-                  className="text-[#1D9E75] text-xs cursor-pointer hover:underline ml-1"
+                  className="text-[#092490] text-xs cursor-pointer hover:underline ml-1"
                   onClick={() => navigate('/company/edit')}
                 >
                   Lägg till →
@@ -437,11 +437,11 @@ function CompanyDashboard() {
         </div>
 
         {/* Row 3: three analytics cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
 
           {/* Col 1: Synlighet per kanal — STANDARD CARD */}
           <div className="bg-white border border-[#E5E7EB] p-6 rounded-none">
-            <p className="text-xs font-semibold uppercase tracking-wide text-[#9CA3AF] mb-4">Synlighet per kanal</p>
+            <p className="text-sm font-medium text-[#111827] mb-4">Synlighet per kanal</p>
             <div className="space-y-4">
               {/* TODO: wire to real data */}
               {[
@@ -456,7 +456,7 @@ function CompanyDashboard() {
                   </div>
                   <div className="h-2 bg-[#E5E7EB] rounded-full">
                     <div
-                      className="h-full bg-[#1D9E75] rounded-full"
+                      className="h-full bg-[#092490] rounded-full"
                       style={{ width: `${bar.pct}%` }}
                     />
                   </div>
@@ -467,13 +467,13 @@ function CompanyDashboard() {
 
           {/* Col 2: Heta sökord — STANDARD CARD */}
           <div className="bg-white border border-[#E5E7EB] p-6 rounded-none">
-            <p className="text-xs font-semibold uppercase tracking-wide text-[#9CA3AF] mb-4">Heta sökord</p>
+            <p className="text-sm font-medium text-[#111827] mb-4">Heta sökord</p>
             <div className="flex flex-wrap gap-2">
               {/* TODO: wire to real data */}
               {['stångmatare', 'LNS magasin', 'magnetbord'].map((kw) => (
                 <span
                   key={kw}
-                  className="bg-[#E8F7F2] text-[#1D9E75] border border-[#1D9E75]/20 text-xs px-3 py-1.5 rounded-full"
+                  className="bg-[#cfd8fc] text-[#092490] border border-[#092490]/20 text-xs px-3 py-1.5 rounded-full"
                 >
                   {kw}
                 </span>
@@ -491,11 +491,11 @@ function CompanyDashboard() {
 
           {/* Col 3: Branschjämförelse — UTILITY CARD */}
           <div className="bg-[#F9FAFB] border border-[#E5E7EB] p-5 rounded-none">
-            <p className="text-xs font-semibold uppercase tracking-wide text-[#9CA3AF] mb-4">Branschjämförelse</p>
+            <p className="text-sm font-medium text-[#111827] mb-4">Branschjämförelse</p>
             <div className="space-y-4">
               {/* TODO: wire to real data */}
               {[
-                { label: 'Detta företag',     value: 21, width: '70%',  textColor: 'text-[#1D9E75]', barColor: 'bg-[#1D9E75]' },
+                { label: 'Detta företag',     value: 21, width: '70%',  textColor: 'text-[#092490]', barColor: 'bg-[#092490]' },
                 { label: 'Snitt i kategorin', value: 11, width: '37%',  textColor: 'text-[#9CA3AF]', barColor: 'bg-[#E5E7EB]' },
                 { label: 'Topp i kategorin',  value: 30, width: '100%', textColor: 'text-[#9CA3AF]', barColor: 'bg-[#E5E7EB]' },
               ].map((row) => (
@@ -520,7 +520,7 @@ function CompanyDashboard() {
         <div className="bg-[#F9FAFB] border border-[#E5E7EB] p-5 rounded-none">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
-              <p className="text-sm font-semibold text-[#111827]">Snabb åtgärd</p>
+              <p className="text-sm font-medium text-[#111827]">Snabb åtgärd</p>
               <p className="text-sm text-[#9CA3AF] mt-0.5">Nästa steg för att förbättra er profil</p>
             </div>
             <div className="flex gap-3 flex-wrap">
