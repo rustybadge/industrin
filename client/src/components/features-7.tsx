@@ -4,7 +4,7 @@ import dashboardScreenshot from '@/assets/images/dashboard-screenshot.png'
 export default function Features7() {
     return (
         <section className="overflow-hidden py-16 md:py-24">
-            <div className="mx-auto max-w-5xl space-y-8 px-6 md:space-y-12">
+            <div className="max-w-5xl space-y-8 px-6 md:space-y-12">
                 <div className="relative z-10 max-w-2xl">
                     <h2 className="custom-size text-4xl font-semibold lg:text-5xl" style={{ fontSize: 'clamp(24px, 3vw, 40px)', letterSpacing: '-0.02em' }}>
                         Byggt för att synas och växa
@@ -29,11 +29,11 @@ export default function Features7() {
                         <img
                             src={dashboardScreenshot}
                             alt="Instrumentpanel — Industrin.net"
-                            className="w-full rounded-lg shadow-2xl"
+                            className="w-full max-w-3xl rounded-lg shadow-2xl"
                         />
                     </div>
                 </div>
-                <div className="relative mx-auto grid grid-cols-2 gap-x-3 gap-y-6 sm:gap-8 lg:grid-cols-4">
+                <div className="relative grid grid-cols-2 gap-x-3 gap-y-6 sm:gap-8 lg:grid-cols-4">
                     <div className="space-y-3">
                         <div className="flex items-center gap-2">
                             <CheckCircle className="size-4 text-[#092490]" />
