@@ -5,13 +5,13 @@ export default function Footer() {
     <footer className="bg-white border-t border-gray-200 py-12">
       <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Logo and Tagline Section */}
-        <div className="flex items-center justify-between py-12 mb-16 border-b border-gray-200">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between py-12 mb-16 border-b border-gray-200">
           <img
             src={logoImage}
             alt="Industrin.net Logo"
             className="h-8 w-auto"
           />
-          <span className="text-gray-900 font-medium" style={{ fontSize: '24px' }}>Hitta rätt serviceföretag, snabbt.</span>
+          <span className="text-gray-900 font-medium text-lg sm:text-2xl">Hitta rätt serviceföretag, snabbt.</span>
         </div>
 
         {/* Main Footer Content - Three Link Columns */}
