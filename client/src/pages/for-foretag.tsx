@@ -50,9 +50,9 @@ export default function ForForetag() {
             />
             {/* Fade to white */}
             <div
-              className="absolute inset-0 pointer-events-none"
+              className="absolute inset-0 pointer-events-none z-10"
               style={{
-                backgroundImage: 'linear-gradient(to bottom, transparent 50%, white 95%)',
+                backgroundImage: 'linear-gradient(to bottom, transparent 50%, rgba(255,255,255,1) 95%)',
               }}
             />
           </div>
