@@ -41,12 +41,19 @@ export default function ForForetag() {
             </div>
           </div>
 
-          {/* Dashboard screenshot — full-width, bottom of hero */}
-          <div className="rounded-2xl border border-[#e5e5e5] shadow-lg shadow-zinc-950/10 overflow-hidden">
+          {/* Dashboard screenshot — landscape crop with bottom fade */}
+          <div className="relative rounded-2xl border border-[#e5e5e5] shadow-lg shadow-zinc-950/10 overflow-hidden aspect-[15/8]">
             <img
               src={dashboardScreenshot}
               alt="Industrin.net instrumentpanel"
-              className="w-full block"
+              className="w-full h-full object-cover object-top block"
+            />
+            {/* Fade to white */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                backgroundImage: 'linear-gradient(to bottom, transparent 50%, white 95%)',
+              }}
             />
           </div>
         </div>
