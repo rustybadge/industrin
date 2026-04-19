@@ -1,75 +1,59 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { MapPin, MessageSquare, Settings, Wrench, Zap, ShoppingCart, Star, Users, Award, Video, ChevronRight } from "lucide-react";
+import dashboardScreenshot from "@/assets/images/dashboard-screenshot.png";
 
 export default function ForForetag() {
   return (
     <div>
 
       {/* ── 1. HERO ─────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-[#092490] py-24 lg:py-40 text-center">
-        {/* Radial glow — desktop only */}
-        <div
-          className="pointer-events-none absolute inset-0 hidden md:block"
-          style={{
-            backgroundImage:
-              'radial-gradient(ellipse 80% 55% at 50% -5%, rgba(159,177,249,0.30), transparent)',
-          }}
-        />
-        {/* Subtle bottom fade */}
-        <div
-          className="pointer-events-none absolute bottom-0 left-0 right-0 h-24"
-          style={{
-            backgroundImage: 'linear-gradient(to bottom, transparent, rgba(9,36,144,0.6))',
-          }}
-        />
-
-        <div className="relative max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mx-auto">
-            {/* Badge pill */}
-            <div className="inline-flex items-center gap-2 border border-white/20 bg-white/10 px-4 py-1.5 text-xs text-[#cfd8fc] tracking-wide mb-8">
-              Sveriges industriregister
-            </div>
-
+      <section className="bg-white pt-16 pb-0 lg:pt-24">
+        <div className="max-w-5xl mx-auto px-6">
+          {/* Text + CTAs */}
+          <div className="max-w-2xl mb-10">
             <h1
-              className="!text-white font-medium mb-6"
-              style={{ fontSize: "clamp(30px, 5vw, 64px)", lineHeight: "1.05", letterSpacing: "-0.025em" }}
+              className="custom-size !text-[#0a0a0a] font-semibold mb-6"
+              style={{ fontSize: "clamp(36px, 6vw, 80px)", lineHeight: "1.05", letterSpacing: "-0.03em" }}
             >
               Dina kunder söker redan.<br />
               Finns ditt företag när de hittar?
             </h1>
-            <p className="text-[#cfd8fc] text-lg mb-10 max-w-2xl mx-auto" style={{ lineHeight: "1.65" }}>
+            <p className="text-[#555] text-lg leading-relaxed mb-8">
               Industrin.net är Sveriges register för industriella serviceföretag.
               Vi hjälper underhållschefer och produktionsledare att hitta rätt
               leverantör — snabbt.
             </p>
-
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              {/* Bordered wrapper around primary CTA — hero-section-2 pattern */}
-              <div className="border border-white/20 p-0.5">
-                <Link href="/companies">
-                  <Button className="bg-[#f7d046] hover:bg-[#e6c13e] text-[#1d1d1d] font-medium px-7 h-12 text-sm tracking-tight w-full sm:w-auto flex items-center gap-1">
-                    Hitta ditt företag
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                </Link>
-              </div>
+            <div className="flex flex-col sm:flex-row items-start gap-3">
+              <Link href="/companies">
+                <Button className="bg-[#092490] hover:bg-[#071d74] text-white font-medium px-6 h-11 text-sm w-full sm:w-auto">
+                  Hitta ditt företag
+                </Button>
+              </Link>
               <Link href="/registrera">
                 <Button
                   variant="ghost"
-                  className="text-white font-medium px-7 h-12 text-sm tracking-tight hover:bg-white/10 hover:text-white w-full sm:w-auto flex items-center gap-1"
+                  className="text-[#0a0a0a] font-medium px-6 h-11 text-sm hover:bg-[#f5f5f5] w-full sm:w-auto"
                 >
                   Registrera nytt företag
-                  <ChevronRight className="h-4 w-4" />
                 </Button>
               </Link>
             </div>
+          </div>
+
+          {/* Dashboard screenshot — full-width, bottom of hero */}
+          <div className="rounded-2xl border border-[#e5e5e5] shadow-lg shadow-zinc-950/10 overflow-hidden">
+            <img
+              src={dashboardScreenshot}
+              alt="Industrin.net instrumentpanel"
+              className="w-full block"
+            />
           </div>
         </div>
       </section>
 
       {/* ── 2. STATS BAR ────────────────────────────────────────────── */}
-      <section className="py-14 bg-white border-b border-[#f2f2f2]">
+      <section className="py-14 bg-[#f7f7f7] border-t border-b border-[#e6e6e6]">
         <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-[#e6e6e6] max-w-3xl mx-auto text-center">
             <div className="py-6 sm:py-0 sm:px-10">
