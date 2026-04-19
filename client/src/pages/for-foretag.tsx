@@ -1,39 +1,66 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { MapPin, MessageSquare, Settings, Wrench, Zap, ShoppingCart, Star, Users, Award, Video } from "lucide-react";
+import { MapPin, MessageSquare, Settings, Wrench, Zap, ShoppingCart, Star, Users, Award, Video, ChevronRight } from "lucide-react";
 
 export default function ForForetag() {
   return (
     <div>
 
       {/* ── 1. HERO ─────────────────────────────────────────────────── */}
-      <section className="py-24 lg:py-40 bg-[#092490] text-center">
-        <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden bg-[#092490] py-24 lg:py-40 text-center">
+        {/* Radial glow — desktop only */}
+        <div
+          className="pointer-events-none absolute inset-0 hidden md:block"
+          style={{
+            backgroundImage:
+              'radial-gradient(ellipse 80% 55% at 50% -5%, rgba(159,177,249,0.30), transparent)',
+          }}
+        />
+        {/* Subtle bottom fade */}
+        <div
+          className="pointer-events-none absolute bottom-0 left-0 right-0 h-24"
+          style={{
+            backgroundImage: 'linear-gradient(to bottom, transparent, rgba(9,36,144,0.6))',
+          }}
+        />
+
+        <div className="relative max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto">
+            {/* Badge pill */}
+            <div className="inline-flex items-center gap-2 border border-white/20 bg-white/10 px-4 py-1.5 text-xs text-[#cfd8fc] tracking-wide mb-8">
+              Sveriges industriregister
+            </div>
+
             <h1
               className="!text-white font-medium mb-6"
-              style={{ fontSize: "clamp(28px, 4vw, 56px)", lineHeight: "1.1", letterSpacing: "-0.02em" }}
+              style={{ fontSize: "clamp(30px, 5vw, 64px)", lineHeight: "1.05", letterSpacing: "-0.025em" }}
             >
               Dina kunder söker redan.<br />
               Finns ditt företag när de hittar?
             </h1>
-            <p className="text-[#cfd8fc] text-lg mb-10 max-w-2xl mx-auto" style={{ lineHeight: "1.6" }}>
+            <p className="text-[#cfd8fc] text-lg mb-10 max-w-2xl mx-auto" style={{ lineHeight: "1.65" }}>
               Industrin.net är Sveriges register för industriella serviceföretag.
               Vi hjälper underhållschefer och produktionsledare att hitta rätt
               leverantör — snabbt.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/companies">
-                <Button className="bg-[#f7d046] hover:bg-[#e6c13e] text-[#1d1d1d] font-medium px-8 h-14 text-sm tracking-tight w-full sm:w-auto">
-                  Hitta ditt företag
-                </Button>
-              </Link>
+
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              {/* Bordered wrapper around primary CTA — hero-section-2 pattern */}
+              <div className="border border-white/20 p-0.5">
+                <Link href="/companies">
+                  <Button className="bg-[#f7d046] hover:bg-[#e6c13e] text-[#1d1d1d] font-medium px-7 h-12 text-sm tracking-tight w-full sm:w-auto flex items-center gap-1">
+                    Hitta ditt företag
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </Link>
+              </div>
               <Link href="/registrera">
                 <Button
-                  variant="outline"
-                  className="bg-transparent border border-white text-white font-medium px-8 h-14 text-sm tracking-tight hover:bg-white/10 hover:text-white w-full sm:w-auto"
+                  variant="ghost"
+                  className="text-white font-medium px-7 h-12 text-sm tracking-tight hover:bg-white/10 hover:text-white w-full sm:w-auto flex items-center gap-1"
                 >
                   Registrera nytt företag
+                  <ChevronRight className="h-4 w-4" />
                 </Button>
               </Link>
             </div>
