@@ -15,6 +15,19 @@ import { Resend } from "resend";
 const resend = new Resend(process.env.RESEND_API_KEY);
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "rus121@hotmail.com";
 
+/**
+ * Escape untrusted text before interpolating it into an HTML email body.
+ * Without this, user-submitted form fields can inject markup/links into the
+ * notification emails we send to the admin inbox.
+ */
+const escapeHtml = (value: unknown): string =>
+  String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 2 * 1024 * 1024 },
@@ -351,13 +364,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
             subject: `Ny företagsregistrering: ${company_name}`,
             html: `
               <h2>Ny registreringsansökan inkom</h2>
-              <p><strong>Företagsnamn:</strong> ${company_name}</p>
-              <p><strong>Organisationsnummer:</strong> ${org_number}</p>
-              <p><strong>Kontaktperson:</strong> ${contact_name}</p>
-              <p><strong>E-post:</strong> ${email}</p>
-              ${phone ? `<p><strong>Telefon:</strong> ${phone}</p>` : ""}
-              ${city ? `<p><strong>Stad:</strong> ${city}</p>` : ""}
-              ${description ? `<p><strong>Beskrivning:</strong> ${description}</p>` : ""}
+              <p><strong>Företagsnamn:</strong> ${escapeHtml(company_name)}</p>
+              <p><strong>Organisationsnummer:</strong> ${escapeHtml(org_number)}</p>
+              <p><strong>Kontaktperson:</strong> ${escapeHtml(contact_name)}</p>
+              <p><strong>E-post:</strong> ${escapeHtml(email)}</p>
+              ${phone ? `<p><strong>Telefon:</strong> ${escapeHtml(phone)}</p>` : ""}
+              ${city ? `<p><strong>Stad:</strong> ${escapeHtml(city)}</p>` : ""}
+              ${description ? `<p><strong>Beskrivning:</strong> ${escapeHtml(description)}</p>` : ""}
             `,
           });
         } catch (emailErr) {
@@ -488,11 +501,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
           subject: `Ny offertförfrågan: ${company.name}`,
           html: `
             <h2>Ny offertförfrågan inkom</h2>
-            <p><strong>Företag:</strong> ${company.name}</p>
-            <p><strong>Namn:</strong> ${quoteRequest.name}</p>
-            <p><strong>E-post:</strong> ${quoteRequest.email}</p>
-            <p><strong>Telefon:</strong> ${quoteRequest.phone || '–'}</p>
-            <p><strong>Meddelande:</strong> ${quoteRequest.message || '–'}</p>
+            <p><strong>Företag:</strong> ${escapeHtml(company.name)}</p>
+            <p><strong>Namn:</strong> ${escapeHtml(quoteRequest.name)}</p>
+            <p><strong>E-post:</strong> ${escapeHtml(quoteRequest.email)}</p>
+            <p><strong>Telefon:</strong> ${escapeHtml(quoteRequest.phone || '–')}</p>
+            <p><strong>Meddelande:</strong> ${escapeHtml(quoteRequest.message || '–')}</p>
             <br/>
             <a href="https://www.industrin.net/admin" style="background:#111827;color:#fff;padding:10px 20px;text-decoration:none;border-radius:6px;">
               Visa i admin
@@ -552,11 +565,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
           subject: `Ny ägaransökan: ${company.name}`,
           html: `
             <h2>Ny ägaransökan inkom</h2>
-            <p><strong>Företag:</strong> ${company.name}</p>
-            <p><strong>Namn:</strong> ${claimRequest.name}</p>
-            <p><strong>E-post:</strong> ${claimRequest.email}</p>
-            <p><strong>Telefon:</strong> ${claimRequest.phone || '–'}</p>
-            <p><strong>Meddelande:</strong> ${claimRequest.message || '–'}</p>
+            <p><strong>Företag:</strong> ${escapeHtml(company.name)}</p>
+            <p><strong>Namn:</strong> ${escapeHtml(claimRequest.name)}</p>
+            <p><strong>E-post:</strong> ${escapeHtml(claimRequest.email)}</p>
+            <p><strong>Telefon:</strong> ${escapeHtml(claimRequest.phone || '–')}</p>
+            <p><strong>Meddelande:</strong> ${escapeHtml(claimRequest.message || '–')}</p>
             <br/>
             <a href="https://www.industrin.net/admin" style="background:#111827;color:#fff;padding:10px 20px;text-decoration:none;border-radius:6px;">
               Granska ansökan i admin
@@ -627,8 +640,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Seed companies endpoint (for development)
-  app.post("/api/seed-companies", async (req, res) => {
+  // Seed companies endpoint (for development ONLY).
+  // Guarded twice: refuses outright in production, and otherwise requires an
+  // authenticated Clerk admin. Previously this was publicly callable and could
+  // inject arbitrary listings into the live directory.
+  app.post("/api/seed-companies", requireAuth(), ensureAdmin, async (req, res) => {
+    if (process.env.NODE_ENV === "production") {
+      return res.status(403).json({ message: "Seeding is disabled in production" });
+    }
     try {
       const seedCompanies = [
         {
