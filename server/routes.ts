@@ -11,22 +11,16 @@ import { nanoid } from "nanoid";
 import { requireAuth, getAuth, clerkClient } from "@clerk/express";
 import type { JwtPayload } from "@clerk/types";
 import { Resend } from "resend";
+import { escapeHtml } from "./emails/html";
+import { createResendMailer } from "./emails/send";
+import { claimReceivedAdmin, claimConfirmation, claimApproved, claimRejected } from "./emails/templates";
+import { migrateClaimWorkflow } from "./claims/migrate";
+import { claimsVerifyRouter } from "./claims/wire";
+import { assertNoEmailConflict, finalizeApproval, ClaimConflictError } from "./claims/repo";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+const mailer = createResendMailer();
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "rus121@hotmail.com";
-
-/**
- * Escape untrusted text before interpolating it into an HTML email body.
- * Without this, user-submitted form fields can inject markup/links into the
- * notification emails we send to the admin inbox.
- */
-const escapeHtml = (value: unknown): string =>
-  String(value ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -286,6 +280,11 @@ async function addUserToOrganizationOrInvite({
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  await migrateClaimWorkflow();
+
+  // Owner verification: Clerk JWT-template token -> bind account to the approved company, flag Verified.
+  app.use("/api/claims/verify", claimsVerifyRouter());
+
   // One-time startup migration: fix misspelled service category name
   try {
     await pool.query(
@@ -557,26 +556,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log(`Claim request submitted for ${company.name}:`, claimRequest);
 
-      // Notify admin
-      if (process.env.RESEND_API_KEY) {
-        await resend.emails.send({
-          from: "Industrin.net <noreply@industrin.net>",
-          to: ADMIN_EMAIL,
-          subject: `Ny ägaransökan: ${company.name}`,
-          html: `
-            <h2>Ny ägaransökan inkom</h2>
-            <p><strong>Företag:</strong> ${escapeHtml(company.name)}</p>
-            <p><strong>Namn:</strong> ${escapeHtml(claimRequest.name)}</p>
-            <p><strong>E-post:</strong> ${escapeHtml(claimRequest.email)}</p>
-            <p><strong>Telefon:</strong> ${escapeHtml(claimRequest.phone || '–')}</p>
-            <p><strong>Meddelande:</strong> ${escapeHtml(claimRequest.message || '–')}</p>
-            <br/>
-            <a href="https://www.industrin.net/admin" style="background:#111827;color:#fff;padding:10px 20px;text-decoration:none;border-radius:6px;">
-              Granska ansökan i admin
-            </a>
-          `
-        });
-      }
+      // Emails are best-effort (mailer never throws): admin alert + confirmation to the claimant.
+      await mailer.send(ADMIN_EMAIL, claimReceivedAdmin({
+        companyName: company.name,
+        claimantName: claimRequest.name,
+        claimantEmail: claimRequest.email,
+        phone: claimRequest.phone,
+        message: claimRequest.message,
+        adminUrl: "https://www.industrin.net/admin",
+      }));
+      await mailer.send(claimRequest.email, claimConfirmation({ name: claimRequest.name, companyName: company.name }));
 
       res.status(201).json(claimRequest);
     } catch (error) {
@@ -776,23 +765,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const auth = getAuth(req);
       const adminClerkId = auth.userId || undefined;
 
-      // Get the claim request
       const claimRequest = await storage.getClaimRequestById(id);
       if (!claimRequest) {
         return res.status(404).json({ message: 'Claim request not found' });
       }
-
-      // Check if company user already exists for this email. If so, clean it up so we can re-invite.
-      const existingUser = await storage.getCompanyUserByEmail(claimRequest.email);
-      if (existingUser) {
-        await storage.deleteCompanyUser(existingUser.id);
-      }
-
       const company = await storage.getCompanyById(claimRequest.companyId);
       if (!company) {
         return res.status(404).json({ message: 'Company not found' });
       }
 
+      // Refuse before touching Clerk if this email already belongs to another company.
+      await assertNoEmailConflict(claimRequest.email, claimRequest.companyId);
+
+      // 1) External side: Clerk org + invitation (idempotent: pending invites are revoked and re-sent).
       const organizationId = await ensureClerkOrganization(company);
       const clerkOutcome = await addUserToOrganizationOrInvite({
         organizationId,
@@ -802,64 +787,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
         adminClerkId,
       });
 
-      // Generate secure access token (legacy local auth, kept for backward compatibility)
-      const accessToken = nanoid(32);
-
-      await storage.createCompanyUser({
-        companyId: claimRequest.companyId,
-        email: claimRequest.email,
-        name: claimRequest.name,
-        role: 'owner', // First user is always owner
-        accessToken,
-        isActive: true,
-        ...(clerkOutcome.clerkUserId ? { clerkUserId: clerkOutcome.clerkUserId } : {}),
+      // 2) Database side, all-or-nothing: owner row (upsert, never delete), category sync, claim status.
+      //    access_token is the legacy local-auth credential, kept for backward compatibility.
+      const result = await finalizeApproval({
+        claimId: id,
+        clerkUserId: clerkOutcome.clerkUserId,
+        accessToken: nanoid(32),
+        reviewNotes,
       });
 
-      // Copy serviceCategories from claim to company profile (non-blocking)
-      try {
-        if (claimRequest.serviceCategories) {
-          const raw = claimRequest.serviceCategories;
-          const cats: string[] = Array.isArray(raw) ? raw as string[] : [];
-          if (cats.length > 0) {
-            await storage.updateCompany(claimRequest.companyId, { categories: cats });
-          }
-        }
-      } catch (catError) {
-        console.warn("Could not copy service categories to company profile:", catError);
-      }
+      // 3) Only after commit: notify the claimant (best-effort).
+      await mailer.send(claimRequest.email, claimApproved({
+        name: claimRequest.name,
+        companyName: company.name,
+        portalUrl: COMPANY_PORTAL_URL ?? 'https://www.industrin.net/company/login',
+      }));
 
-      // Send approval email to claimant
-      if (process.env.RESEND_API_KEY) {
-        try {
-          const portalUrl = COMPANY_PORTAL_URL ?? 'https://www.industrin.net/company/login';
-          await resend.emails.send({
-            from: 'Industrin.net <noreply@industrin.net>',
-            to: claimRequest.email,
-            subject: `Din ägaransökan för ${company.name} har godkänts`,
-            html: `
-              <div style="font-family:sans-serif;max-width:600px;margin:0 auto;color:#111827;">
-                <h2 style="font-size:20px;margin-bottom:16px;">Din ägaransökan har godkänts</h2>
-                <p>Hej ${claimRequest.name},</p>
-                <p>Vi har granskat din ansökan och godkänt dig som ägare av <strong>${company.name}</strong> på Industrin.net.</p>
-                <p>Du kommer inom kort att få ett <strong>separat inbjudningsmail</strong> från vårt system. Acceptera inbjudan så kommer du direkt till företagsportalen där du kan hantera er profil.</p>
-                <p>Har du redan ett konto kan du logga in direkt här:</p>
-                <p style="margin:24px 0;">
-                  <a href="${portalUrl}" style="background:#111827;color:#fff;padding:10px 20px;text-decoration:none;border-radius:6px;">Logga in på företagsportalen</a>
-                </p>
-                <p>Hör av dig om du har några frågor.</p>
-                <p>Med vänliga hälsningar,<br/>Industrin.net-teamet</p>
-              </div>
-            `,
-          });
-        } catch (emailError) {
-          console.warn('Could not send approval email to claimant:', emailError);
-        }
-      }
-
-      // Update claim request status
-      await storage.updateClaimRequestStatus(id, 'approved', null, reviewNotes);
-      
-      res.json({ 
+      res.json({
         message: 'Claim request approved. The company has been invited via Clerk.',
         organizationId,
         clerkAdminId: adminClerkId,
@@ -867,8 +811,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         invitationEmail: clerkOutcome.invitation?.emailAddress ?? null,
         clerkUserId: clerkOutcome.clerkUserId ?? null,
         status: clerkOutcome.type,
+        categoriesWritten: result.categoriesWritten,
+        unmatchedCategories: result.unmatchedCategories,
       });
     } catch (error: any) {
+      if (error instanceof ClaimConflictError) {
+        return res.status(409).json({ message: error.message });
+      }
       console.error("Error approving claim request:", error);
       const detail = error?.errors?.[0]?.message || error?.message || String(error);
       res.status(500).json({ message: `Failed to approve claim request: ${detail}` });
@@ -890,28 +839,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       await storage.updateClaimRequestStatus(id, 'rejected', null, reviewNotes);
 
-      // Send rejection email to claimant
-      if (process.env.RESEND_API_KEY) {
-        try {
-          await resend.emails.send({
-            from: 'Industrin.net <noreply@industrin.net>',
-            to: claimRequest.email,
-            subject: `Angående din ägaransökan för ${company?.name ?? 'företaget'}`,
-            html: `
-              <div style="font-family:sans-serif;max-width:600px;margin:0 auto;color:#111827;">
-                <h2 style="font-size:20px;margin-bottom:16px;">Angående din ägaransökan</h2>
-                <p>Hej ${claimRequest.name},</p>
-                <p>Tack för att du skickade in en ägaransökan för <strong>${company?.name ?? 'företaget'}</strong> på Industrin.net.</p>
-                <p>Efter granskning kan vi tyvärr inte godkänna ansökan vid detta tillfälle.</p>
-                <p>Har du frågor eller vill lämna mer information är du välkommen att kontakta oss på <a href="mailto:kontakt@industrin.net">kontakt@industrin.net</a>.</p>
-                <p>Med vänliga hälsningar,<br/>Industrin.net-teamet</p>
-              </div>
-            `,
-          });
-        } catch (emailError) {
-          console.warn('Could not send rejection email to claimant:', emailError);
-        }
-      }
+      await mailer.send(claimRequest.email, claimRejected({
+        name: claimRequest.name,
+        companyName: company?.name ?? 'företaget',
+      }));
 
       res.json({ message: 'Claim request rejected' });
     } catch (error) {

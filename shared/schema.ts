@@ -37,6 +37,7 @@ export const companies = pgTable("companies", {
   city: text("city"),
   isFeatured: boolean("is_featured").default(false),
   isVerified: boolean("is_verified").default(false),
+  verifiedAt: timestamp("verified_at"), // set when the approved owner proves control via /api/claims/verify
   clerkOrganizationId: text("clerk_organization_id").unique(),
   createdAt: timestamp("created_at").defaultNow(),
   tier: varchar("tier").default('free'),
@@ -65,6 +66,8 @@ export const companyServices = pgTable("company_services", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   companyId: varchar("company_id").notNull().references(() => companies.id, { onDelete: "cascade" }),
   serviceCategoryId: varchar("service_category_id").notNull().references(() => serviceCategories.id, { onDelete: "cascade" }),
+  // 'classifier' = keyword classification script, 'claim' = chosen by the verified owner (wins over classifier)
+  source: varchar("source").notNull().default("classifier"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
