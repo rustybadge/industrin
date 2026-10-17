@@ -29,7 +29,7 @@ const MIN_SCORE = Number((process.argv.find(a => a.startsWith('--min=')) || '--m
  */
 const RULES = {
   // --- Maskinbearbetning ---
-  'cnc-bearbetning':        { strong: ['cnc-bearbetning', 'cnc bearbetning', 'cnc-maskin'], weak: ['cnc', 'skärande bearbetning'] },
+  'cnc-bearbetning':        { strong: ['cnc-bearbetning', 'cnc bearbetning', 'cnc-maskin'], weak: ['cnc', 'skärande bearbetning', 'precisionsbearbetning'] },
   'cnc-frasning':           { strong: ['cnc-fräsning', 'cnc fräsning'], weak: ['fräsning', 'fräs'] },
   'cnc-svarvning':          { strong: ['cnc-svarvning', 'cnc svarvning'], weak: ['svarvning', 'svarv'] },
   'automatsvarvning':       { strong: ['automatsvarvning', 'automatsvarv'], weak: [] },
@@ -40,50 +40,58 @@ const RULES = {
   'baddfrasning':           { strong: ['bäddfräsning'], weak: [] },
   'cnc-karusellsvarvning':  { strong: ['karusellsvarvning', 'karusellsvarv'], weak: [] },
 
+  // --- Generic fallbacks (leaf 'Annat ...'): broad vocabulary, only fires with corroboration ---
+  'annat-maskinbearbetning': { strong: ['laserskärning', 'plåtbearbetning', 'mekanisk bearbetning', 'bearbetning av metall', 'metallbearbetning'], weak: ['bearbetning', 'mekanisk verkstad', 'bockning', 'tillverkning av komponenter', 'precisionskomponenter', 'verkstad'] },
+  'annat-svetsning-montage': { strong: ['svetsning', 'svetsarbeten', 'svetstjänster'], weak: ['montage', 'montering', 'svets'] },
+  'annat-ytbehandling':      { strong: ['blästring', 'lackering', 'målning'], weak: ['ytskydd', 'korrosionsskydd'] },
+  'annat-elektrisk-service': { strong: ['elservice', 'elinstallation', 'el-installation', 'elektrisk service'], weak: ['elektriker', 'elarbeten'] },
+  'annat-industriservice':   { strong: ['tekniska tjänster', 'serviceföretag', 'service och underhåll'], weak: ['industriföretag', 'tekniska lösningar'] },
+  'annat-mekanisk-underhall':{ strong: ['reparation och underhåll', 'service och reparation', 'service och reparationer'], weak: [] },
+
   // --- Industriservice & Felsökning ---
   'industriservice-general':{ strong: ['industriservice'], weak: ['industriella tjänster', 'service för industrin'] },
   'felsokning':             { strong: ['felsökning', 'felsöka'], weak: ['diagnostik', 'troubleshooting'] },
   'maskininstallation':     { strong: ['maskininstallation', 'installation av maskiner'], weak: ['nyinstallation', 'idrifttagning'] },
   'maskinflytt':            { strong: ['maskinflytt', 'maskinflyttning', 'flytt av maskiner'], weak: [] },
-  'industriell-konsultation':{ strong: ['industriell konsultation', 'industrikonsult'], weak: ['konsultation', 'rådgivning', 'konsult'] },
+  'industriell-konsultation':{ strong: ['industriell konsultation', 'industrikonsult'], weak: ['konsultation', 'rådgivning'] },
   'driftoptimering':        { strong: ['driftoptimering', 'driftsoptimering'], weak: ['optimering', 'effektivisering'] },
   'preventivt-underhall':   { strong: ['preventivt underhåll', 'förebyggande underhåll'], weak: ['planerat underhåll'] },
 
   // --- Mekanisk Underhåll & Reparation ---
-  'maskinreparation':       { strong: ['maskinreparation', 'reparation av maskiner', 'maskinservice'], weak: ['reparation', 'renovering av maskiner'] },
-  'hydraulikservice':       { strong: ['hydraulikservice', 'hydraulsystem', 'hydraulik'], weak: ['hydraul', 'hydrauliska'] },
+  'maskinreparation':       { strong: ['maskinreparation', 'reparation av maskiner', 'maskinservice', 'service och reparation av', 'reparation av industri'], weak: ['reparation', 'renovering av maskiner'] },
+  'hydraulikservice':       { strong: ['hydraulikservice', 'hydraulsystem', 'hydraulik', 'hydrauliska system'], weak: ['hydrauliska'] },
   'pneumatikservice':       { strong: ['pneumatikservice', 'pneumatiklösningar', 'pneumatik'], weak: ['tryckluft', 'pneumatiska'] },
-  'mekaniskt-underhall':    { strong: ['mekaniskt underhåll', 'mekanisk service'], weak: ['mekaniska reparations', 'mekanisk'] },
+  'mekaniskt-underhall':    { strong: ['mekaniskt underhåll', 'mekanisk service', 'mekaniska reparationer'], weak: ['underhåll'] },
   'komponentbyten':         { strong: ['komponentbyte', 'komponentbyten', 'byte av komponenter'], weak: [] },
-  'reservdelar':            { strong: ['reservdelar', 'reservdel'], weak: ['delar', 'spare parts'] },
+  'reservdelar':            { strong: ['reservdelar', 'reservdel'], weak: ['spare parts'] },
   'underhallsavtal':        { strong: ['underhållsavtal', 'serviceavtal'], weak: [] },
 
   // --- Elektrisk Service & Automation ---
   'elektrisk-reparation':   { strong: ['elektrisk reparation', 'elmotor', 'elmotorer', 'elektromekanisk'], weak: ['elservice', 'generator', 'generatorer'] },
   'automation':             { strong: ['automation', 'automatisering'], weak: ['automatiserade', 'automatiska system'] },
-  'robotikservice':         { strong: ['robotikservice', 'robotservice', 'industrirobot'], weak: ['robot', 'robotar'] },
+  'robotikservice':         { strong: ['robotikservice', 'robotservice', 'industrirobot'], weak: ['robot', 'robotar', 'robotceller'] },
   'elkonstruktion':         { strong: ['elkonstruktion', 'eldesign'], weak: ['elsystem', 'elprojektering'] },
   'automationsinstallation':{ strong: ['automationsinstallation'], weak: [] },
   'plc-programmering':      { strong: ['plc-programmering', 'plc programmering', 'plc'], weak: ['styrsystem', 'hmi'] },
   'frequensomriktare':      { strong: ['frekvensomriktare'], weak: [] },
 
   // --- Svetsning & Montering ---
-  'mig-svetsning':          { strong: ['mig-svetsning', 'mig svetsning'], weak: ['mig'] },
+  'mig-svetsning':          { strong: ['mig-svetsning', 'mig svetsning'], weak: [] },
   'mag-svetsning':          { strong: ['mag-svetsning', 'mag svetsning'], weak: [] },
-  'tig-svetsning':          { strong: ['tig-svetsning', 'tig svetsning'], weak: ['tig'] },
+  'tig-svetsning':          { strong: ['tig-svetsning', 'tig svetsning'], weak: [] },
   'licenssvetsning':        { strong: ['licenssvetsning', 'licenssvetsare', 'certifierad svetsning'], weak: [] },
   'rorsvetsning':           { strong: ['rörsvetsning'], weak: [] },
   'konstruktionssvetsning': { strong: ['konstruktionssvetsning'], weak: [] },
   'maskinmontage':          { strong: ['maskinmontage', 'maskinmontering'], weak: [] },
   'rormontage':             { strong: ['rörmontage', 'rörmontering', 'rörinstallation'], weak: ['rörarbeten'] },
-  'stalmontage':            { strong: ['stålmontage', 'stålmontering', 'stålkonstruktion'], weak: ['smide', 'stålkonstruktioner'] },
+  'stalmontage':            { strong: ['stålmontage', 'stålmontering', 'stålkonstruktion', 'stålbyggnad'], weak: ['smide'] },
 
   // --- Specialiserad Utrustning ---
-  'kompressor-tryckluftservice':{ strong: ['kompressorservice', 'tryckluftservice', 'kompressor'], weak: ['tryckluftsystem'] },
-  'avlopps-pumpservice':    { strong: ['pumpservice', 'avloppsservice', 'pumpar'], weak: ['pump', 'avlopp'] },
-  'travers-lyftutrustning': { strong: ['travers', 'traverser', 'lyftutrustning', 'lyftbord'], weak: ['lyft'] },
+  'kompressor-tryckluftservice':{ strong: ['kompressorservice', 'tryckluftservice', 'kompressorer'], weak: ['kompressor', 'tryckluftsystem'] },
+  'avlopps-pumpservice':    { strong: ['pumpservice', 'avloppsservice', 'pumpreparation'], weak: ['pumpar', 'pump', 'avloppspump'] },
+  'travers-lyftutrustning': { strong: ['traversservice', 'lyftutrustning', 'lyftbord'], weak: ['travers', 'traverser', 'lyft'] },
   'entreprenadmaskiner-service':{ strong: ['entreprenadmaskin', 'entreprenadmaskiner'], weak: ['grävmaskin', 'anläggningsmaskiner'] },
-  'kranreparation':         { strong: ['kranreparation', 'kranservice', 'kranar'], weak: ['kran'] },
+  'kranreparation':         { strong: ['kranreparation', 'kranservice'], weak: ['kranar', 'kran'] },
   'lyftanordningar':        { strong: ['lyftanordning', 'lyftanordningar', 'lyftdon'], weak: ['lyftredskap', 'telfer'] },
 
   // --- Ytbehandling & Måleri ---
@@ -95,11 +103,11 @@ const RULES = {
   'anodisering':            { strong: ['anodisering', 'eloxering'], weak: [] },
 
   // --- Fastighetsdrift & Underhåll ---
-  'fastighetsunderhall-general':{ strong: ['fastighetsunderhåll', 'fastighetsservice', 'fastighetsskötsel'], weak: ['fastighet'] },
-  'byggnadsservice':        { strong: ['byggnadsservice', 'byggservice'], weak: ['byggnadsarbeten', 'bygg'] },
-  'hvac-service':           { strong: ['hvac', 'ventilationsservice', 'ventilation'], weak: ['klimatsystem', 'luftbehandling'] },
+  'fastighetsunderhall-general':{ strong: ['fastighetsunderhåll', 'fastighetsservice', 'fastighetsskötsel', 'fastighetsdrift'], weak: ['fastighet'] },
+  'byggnadsservice':        { strong: ['byggnadsservice', 'byggservice'], weak: ['byggnadsarbeten', 'byggnation'] },
+  'hvac-service':           { strong: ['hvac', 'ventilationsservice', 'ventilationsinstallation'], weak: ['ventilation', 'klimatsystem', 'luftbehandling'] },
   'vvs-service':            { strong: ['vvs-service', 'vvs'], weak: ['rörmokeri', 'sanitet'] },
-  'elinstalleringar':       { strong: ['elinstallation', 'elinstallationer'], weak: ['elarbeten'] },
+  'elinstalleringar':       { strong: ['elinstallation', 'elinstallationer', 'el-installation'], weak: ['elarbeten'] },
   'sakerhetssystem':        { strong: ['säkerhetssystem', 'larmsystem'], weak: ['larm', 'bevakning'] },
 };
 
@@ -138,17 +146,19 @@ function classify(text) {
   const h = norm(text);
   const scores = [];
   for (const [catId, rule] of Object.entries(RULES)) {
-    let score = 0;
-    const matched = [];
-    for (const kw of rule.strong) {
-      const n = countHits(h, kw);
-      if (n) { score += 3 * Math.min(n, 2); matched.push(kw); }
+    // Collect hits, then drop any term that is a substring of a longer matched term
+    // in the same rule (e.g. 'kompressor' inside 'kompressorer') so one word isn't counted twice.
+    const hits = [
+      ...rule.strong.map(kw => ({ kw: norm(kw), w: 3, n: countHits(h, kw) })),
+      ...rule.weak.map(kw => ({ kw: norm(kw), w: 1, n: countHits(h, kw) })),
+    ].filter(x => x.n > 0);
+    const kept = hits.filter(x => !hits.some(y => y !== x && y.kw.length > x.kw.length && y.kw.includes(x.kw)));
+    const strong = kept.filter(x => x.w === 3), weak = kept.filter(x => x.w === 1);
+    const score = strong.reduce((a, x) => a + 3 * Math.min(x.n, 2), 0) + weak.length;
+    // A lone weak term is never enough: need a strong term OR >=2 distinct weak terms.
+    if (score > 0 && (strong.length > 0 || weak.length >= 2)) {
+      scores.push({ catId, score, matched: kept.map(x => x.kw) });
     }
-    for (const kw of rule.weak) {
-      const n = countHits(h, kw);
-      if (n) { score += 1 * Math.min(n, 2); matched.push(kw); }
-    }
-    if (score > 0) scores.push({ catId, score, matched });
   }
   return scores.sort((a, b) => b.score - a.score);
 }
@@ -178,7 +188,7 @@ const results = [];
 let noText = 0, noMatch = 0, placeholder = 0;
 
 for (const c of comps) {
-  const text = `${c.name} ${c.sv} ${c.en}`;
+  const text = `${c.sv} ${c.en}`; // description only: company names like 'Mekaniska Verkstad' caused false hits
   const body = (c.sv + c.en).trim();
   if (body.length < 30) { noText++; results.push({ ...c, status: 'NO_TEXT', picks: [] }); continue; }
   if (PLACEHOLDER.test(body)) { placeholder++; results.push({ ...c, status: 'PLACEHOLDER', picks: [] }); continue; }
