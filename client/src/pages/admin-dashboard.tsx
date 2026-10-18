@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
@@ -31,6 +31,11 @@ import {
   Globe,
   ChevronDown,
   ChevronUp,
+  Copy,
+  Check,
+  Search,
+  Mail,
+  Send,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAdminAccess } from '@/hooks/use-admin-access';
@@ -75,11 +80,24 @@ export default function AdminDashboard() {
   const [, navigate] = useLocation();
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  const [selectedTab, setSelectedTab] = useState<'overview' | 'claims' | 'companies'>('overview');
+  const [selectedTab, setSelectedTab] = useState<'overview' | 'claims' | 'companies' | 'outreach'>('overview');
   const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(null);
   const [expandedCompanyId, setExpandedCompanyId] = useState<string | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [resetConfirmId, setResetConfirmId] = useState<string | null>(null);
+
+  // Outreach tab state
+  const [outreachSearch, setOutreachSearch] = useState('');
+  const [outreachRegion, setOutreachRegion] = useState('');
+  const [outreachCategory, setOutreachCategory] = useState('');
+  const [outreachUnclaimedOnly, setOutreachUnclaimedOnly] = useState(true);
+  const [contactedIds, setContactedIds] = useState<Set<string>>(() => {
+    try {
+      const stored = localStorage.getItem('industrin_outreach_contacted');
+      return stored ? new Set(JSON.parse(stored)) : new Set();
+    } catch { return new Set(); }
+  });
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const fetchWithAdminAuth = useCallback(
     async (input: RequestInfo, init?: RequestInit) => {
@@ -215,7 +233,7 @@ export default function AdminDashboard() {
       }
       return response.json();
     },
-    enabled: !!admin && selectedTab === 'companies',
+    enabled: !!admin && (selectedTab === 'companies' || selectedTab === 'outreach'),
     retry: 1,
     retryDelay: 1000,
   });
@@ -406,6 +424,47 @@ export default function AdminDashboard() {
     }
   };
 
+  // Outreach helpers
+  const toggleContacted = (id: string) => {
+    setContactedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      localStorage.setItem('industrin_outreach_contacted', JSON.stringify(Array.from(next)));
+      return next;
+    });
+  };
+
+  const copyListingUrl = (slug: string, id: string) => {
+    const url = `${window.location.origin}/companies/${slug}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 2000);
+    });
+  };
+
+  const outreachRegions = useMemo(() => {
+    if (!adminCompanies) return [];
+    return Array.from(new Set(adminCompanies.map(c => c.region).filter(Boolean) as string[])).sort();
+  }, [adminCompanies]);
+
+  const outreachCategories = useMemo(() => {
+    if (!adminCompanies) return [];
+    const cats = new Set<string>();
+    adminCompanies.forEach(c => (c.categories || []).forEach(cat => cats.add(cat)));
+    return Array.from(cats).sort();
+  }, [adminCompanies]);
+
+  const outreachCompanies = useMemo(() => {
+    if (!adminCompanies) return [];
+    return adminCompanies.filter(c => {
+      if (outreachUnclaimedOnly && c.isClaimed) return false;
+      if (outreachSearch && !c.name.toLowerCase().includes(outreachSearch.toLowerCase())) return false;
+      if (outreachRegion && c.region !== outreachRegion) return false;
+      if (outreachCategory && !(c.categories || []).includes(outreachCategory)) return false;
+      return true;
+    });
+  }, [adminCompanies, outreachSearch, outreachRegion, outreachCategory, outreachUnclaimedOnly]);
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'pending':
@@ -478,6 +537,16 @@ export default function AdminDashboard() {
               }`}
             >
               Företag
+            </button>
+            <button
+              onClick={() => setSelectedTab('outreach')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                selectedTab === 'outreach'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Utskick
             </button>
           </div>
         </div>
@@ -994,6 +1063,193 @@ export default function AdminDashboard() {
                     <p className="text-gray-500">Inga företag hittades.</p>
                   </div>
                 )}
+              </div>
+            )}
+          </div>
+        )}
+        {selectedTab === 'outreach' && (
+          <div className="space-y-6">
+            {/* Header + stats */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">Utskick</h2>
+                <p className="text-sm text-gray-500 mt-1">
+                  Hitta företag att kontakta. Deras listningslänk är redo att kopiera och klistra in i ditt e-postmeddelande.
+                </p>
+              </div>
+              {adminCompanies && (
+                <div className="flex gap-4 text-sm text-gray-600 shrink-0">
+                  <span className="bg-gray-100 rounded px-3 py-1">
+                    <strong>{outreachCompanies.length}</strong> visas
+                  </span>
+                  <span className="bg-green-50 text-green-800 rounded px-3 py-1">
+                    <strong>{contactedIds.size}</strong> kontaktade
+                  </span>
+                  <span className="bg-blue-50 text-blue-800 rounded px-3 py-1">
+                    <strong>{outreachCompanies.filter(c => !contactedIds.has(c.id)).length}</strong> kvar
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Filters */}
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col sm:flex-row gap-3 flex-wrap">
+              {/* Search */}
+              <div className="relative flex-1 min-w-[200px]">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Sök företagsnamn…"
+                  value={outreachSearch}
+                  onChange={e => setOutreachSearch(e.target.value)}
+                  className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              {/* Region filter */}
+              <select
+                value={outreachRegion}
+                onChange={e => setOutreachRegion(e.target.value)}
+                className="text-sm border border-gray-200 rounded-md px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-[160px]"
+              >
+                <option value="">Alla regioner</option>
+                {outreachRegions.map(r => (
+                  <option key={r} value={r}>{r}</option>
+                ))}
+              </select>
+
+              {/* Category filter */}
+              <select
+                value={outreachCategory}
+                onChange={e => setOutreachCategory(e.target.value)}
+                className="text-sm border border-gray-200 rounded-md px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-[180px]"
+              >
+                <option value="">Alla kategorier</option>
+                {outreachCategories.map(c => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+
+              {/* Unclaimed toggle */}
+              <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer whitespace-nowrap">
+                <input
+                  type="checkbox"
+                  checked={outreachUnclaimedOnly}
+                  onChange={e => setOutreachUnclaimedOnly(e.target.checked)}
+                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
+                Bara ej övertagna
+              </label>
+
+              {/* Reset filters */}
+              {(outreachSearch || outreachRegion || outreachCategory || !outreachUnclaimedOnly) && (
+                <button
+                  onClick={() => { setOutreachSearch(''); setOutreachRegion(''); setOutreachCategory(''); setOutreachUnclaimedOnly(true); }}
+                  className="text-sm text-gray-500 hover:text-gray-800 underline whitespace-nowrap"
+                >
+                  Återställ filter
+                </button>
+              )}
+            </div>
+
+            {/* Company list */}
+            {adminCompaniesLoading ? (
+              <div className="text-center py-12">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4" />
+                <p className="text-gray-500 text-sm">Laddar företag…</p>
+              </div>
+            ) : outreachCompanies.length === 0 ? (
+              <div className="text-center py-12 text-gray-500 text-sm">
+                Inga företag matchar de valda filtren.
+              </div>
+            ) : (
+              <div className="border border-gray-200 rounded-lg overflow-hidden">
+                {/* Table header */}
+                <div className="grid grid-cols-[2fr_1fr_1.5fr_1fr_auto] gap-4 px-4 py-2 bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  <span>Företag</span>
+                  <span>Ort / Region</span>
+                  <span>Kontaktadress</span>
+                  <span>Listningslänk</span>
+                  <span>Kontaktad</span>
+                </div>
+
+                {/* Rows */}
+                <div className="divide-y divide-gray-100">
+                  {outreachCompanies.map(company => {
+                    const isContacted = contactedIds.has(company.id);
+                    const isCopied = copiedId === company.id;
+                    return (
+                      <div
+                        key={company.id}
+                        className={`grid grid-cols-[2fr_1fr_1.5fr_1fr_auto] gap-4 px-4 py-3 items-center text-sm transition-colors ${
+                          isContacted ? 'bg-green-50' : 'bg-white hover:bg-gray-50'
+                        }`}
+                      >
+                        {/* Name + categories */}
+                        <div className="min-w-0">
+                          <p className="font-medium text-gray-900 truncate">{company.name}</p>
+                          {(company.categories || []).length > 0 && (
+                            <p className="text-xs text-gray-400 truncate mt-0.5">
+                              {(company.categories || []).slice(0, 3).join(' · ')}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Location */}
+                        <div className="text-gray-500 text-xs truncate">
+                          {[company.city, company.region].filter(Boolean).join(', ') || '–'}
+                        </div>
+
+                        {/* Contact email */}
+                        <div className="min-w-0">
+                          {company.contactEmail ? (
+                            <a
+                              href={`mailto:${company.contactEmail}`}
+                              className="text-blue-600 hover:underline text-xs truncate block"
+                            >
+                              {company.contactEmail}
+                            </a>
+                          ) : (
+                            <span className="text-gray-300 text-xs italic">Saknas</span>
+                          )}
+                        </div>
+
+                        {/* Copy listing URL */}
+                        <div>
+                          <button
+                            onClick={() => copyListingUrl(company.slug, company.id)}
+                            className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded border transition-colors ${
+                              isCopied
+                                ? 'bg-green-50 border-green-300 text-green-700'
+                                : 'bg-white border-gray-200 text-gray-600 hover:border-gray-400 hover:text-gray-900'
+                            }`}
+                          >
+                            {isCopied ? (
+                              <><Check className="h-3 w-3" />Kopierad!</>
+                            ) : (
+                              <><Copy className="h-3 w-3" />Kopiera länk</>
+                            )}
+                          </button>
+                        </div>
+
+                        {/* Contacted toggle */}
+                        <div className="flex justify-center">
+                          <button
+                            onClick={() => toggleContacted(company.id)}
+                            title={isContacted ? 'Markera som ej kontaktad' : 'Markera som kontaktad'}
+                            className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-colors ${
+                              isContacted
+                                ? 'bg-green-500 border-green-500 text-white'
+                                : 'border-gray-300 hover:border-green-400'
+                            }`}
+                          >
+                            {isContacted && <Check className="h-3.5 w-3.5" />}
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             )}
           </div>
