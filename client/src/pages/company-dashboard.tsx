@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { useLocation } from 'wouter';
 import { useToast } from '@/hooks/use-toast';
 import { useCompanyAccess } from '@/hooks/use-company-access';
@@ -48,6 +48,8 @@ function CompanyDashboard() {
   const { toast } = useToast();
   const [setupError, setSetupError] = useState(false);
   const [activeRange, setActiveRange] = useState<'90d' | '30d' | '7d'>('30d');
+  const [respondingTo, setRespondingTo] = useState<string | null>(null);
+  const [responseText, setResponseText] = useState('');
   const setupAttempted = useRef(false);
 
   const fetchWithCompanyAuth = useCallback(
@@ -98,6 +100,41 @@ function CompanyDashboard() {
         throw new Error(`HTTP ${response.status}: ${body || 'no body'}`);
       }
       return response.json();
+    },
+  });
+
+  // Fetch real service requests for this company
+  const { data: serviceRequests = [], refetch: refetchRequests } = useQuery<any[]>({
+    queryKey: ['/api/company/requests'],
+    enabled: !!companyUser,
+    queryFn: async () => {
+      const response = await fetchWithCompanyAuth('/api/company/requests');
+      if (!response.ok) return [];
+      return response.json();
+    },
+  });
+
+  const respondMutation = useMutation({
+    mutationFn: async ({ requestId, message }: { requestId: string; message: string }) => {
+      const response = await fetchWithCompanyAuth(`/api/company/requests/${requestId}/respond`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message }),
+      });
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({ message: 'Okänt fel' }));
+        throw new Error(err.message);
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({ title: 'Svar skickat', description: 'Köparen har fått ditt svar via e-post.' });
+      setRespondingTo(null);
+      setResponseText('');
+      refetchRequests();
+    },
+    onError: (err: any) => {
+      toast({ title: 'Fel', description: err.message || 'Kunde inte skicka svar.', variant: 'destructive' });
     },
   });
 
@@ -207,11 +244,17 @@ function CompanyDashboard() {
           <Card className="rounded-none bg-[#092490] border-[#092490]">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-white/80">Förfrågningar</CardTitle>
-              <Badge className="bg-white/20 text-white border-0 hover:bg-white/30 text-xs">2 nya</Badge>
+              {serviceRequests.filter((r: any) => !r.hasResponded).length > 0 && (
+                <Badge className="bg-white/20 text-white border-0 hover:bg-white/30 text-xs">
+                  {serviceRequests.filter((r: any) => !r.hasResponded).length} nya
+                </Badge>
+              )}
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-medium text-white">4</div>
-              <p className="text-sm text-white/70 mt-1">denna månad · 2 obesvarade</p>
+              <div className="text-3xl font-medium text-white">{serviceRequests.length}</div>
+              <p className="text-sm text-white/70 mt-1">
+                {serviceRequests.filter((r: any) => !r.hasResponded).length} obesvarade
+              </p>
             </CardContent>
           </Card>
 
@@ -332,42 +375,77 @@ function CompanyDashboard() {
         {/* Row 3: enquiries + profile strength */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
 
-          {/* Left (lg:col-span-3): Senaste förfrågningar — STANDARD CARD */}
+          {/* Left (lg:col-span-3): Senaste förfrågningar — REAL DATA */}
           <div className="lg:col-span-3 bg-white border border-[#E5E7EB] p-6 rounded-none">
             <p className="text-base font-medium text-[#111827] mb-5">Senaste förfrågningar</p>
 
-            <ul>
-              {[
-                { unread: true,  sender: 'Halmstad Järn & Stål AB',        subject: 'Offertförfrågan: servicekontrakt pressar',     time: '1 tim' },
-                { unread: true,  sender: 'Kongsberg Automotive AB',         subject: 'Akut – hydraulikläcka på produktionslinje',    time: '4 tim' },
-                { unread: false, sender: 'Alfa Laval AB',                   subject: 'Underhållsavtal värmeväxlare 2026',            time: 'igår'  },
-                { unread: false, sender: 'Trelleborg Sealing Solutions AB', subject: 'Byte av pneumatiska tätningar, offert',        time: '3 d'   },
-                { unread: false, sender: 'Sandvik AB',                      subject: 'Fräsmaskinservice och kalibrering',            time: '6 d'   },
-              ].map((row, i) => (
-                <li key={i} className="flex items-center justify-between py-3 border-b border-[#F3F4F6] last:border-0">
-                  <div className="flex-1 min-w-0 mr-3">
-                    <p className="text-sm font-medium text-[#111827]">{row.sender}</p>
-                    <p className="text-xs text-[#9CA3AF] mt-0.5 truncate">{row.subject}</p>
-                  </div>
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    {row.unread ? (
-                      <span className="bg-[#cfd8fc] text-[#092490] text-xs font-medium px-2 py-0.5 rounded-full">
-                        Ny
-                      </span>
-                    ) : (
-                      <span className="bg-[#F3F4F6] text-[#9CA3AF] text-xs font-medium px-2 py-0.5 rounded-full">
-                        Läst
-                      </span>
-                    )}
-                    <span className="text-xs text-[#092490] font-medium cursor-pointer ml-1">Visa</span>
-                  </div>
-                </li>
-              ))}
-            </ul>
+            {serviceRequests.length === 0 ? (
+              <div className="py-8 text-center">
+                <p className="text-sm text-[#9CA3AF]">Inga förfrågningar i ditt område ännu.</p>
+                <p className="text-xs text-[#C4C9D4] mt-1">Nya förfrågningar visas här när köpare söker hjälp i er region.</p>
+              </div>
+            ) : (
+              <ul>
+                {serviceRequests.slice(0, 5).map((req: any) => (
+                  <li key={req.id} className="py-4 border-b border-[#F3F4F6] last:border-0">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <p className="text-sm font-medium text-[#111827]">{req.serviceType}</p>
+                          {req.urgency === 'akut' && (
+                            <span className="bg-red-50 text-red-700 text-xs font-medium px-2 py-0.5 rounded-full">Akut</span>
+                          )}
+                          {!req.hasResponded && (
+                            <span className="bg-[#cfd8fc] text-[#092490] text-xs font-medium px-2 py-0.5 rounded-full">Ny</span>
+                          )}
+                        </div>
+                        <p className="text-xs text-[#6B7280] mb-1">{req.location || req.region} · {new Date(req.submittedAt).toLocaleDateString('sv-SE')}</p>
+                        <p className="text-sm text-[#374151] line-clamp-2">{req.description}</p>
+                      </div>
+                    </div>
 
-            <a className="block w-full text-center text-sm text-[#9CA3AF] hover:text-[#4B5563] mt-4 pt-4 border-t border-[#F3F4F6] cursor-pointer">
-              Visa alla förfrågningar
-            </a>
+                    {/* Respond section */}
+                    {!req.hasResponded ? (
+                      respondingTo === req.id ? (
+                        <div className="mt-3 space-y-2">
+                          <textarea
+                            value={responseText}
+                            onChange={e => setResponseText(e.target.value)}
+                            placeholder="Skriv ert svar till köparen..."
+                            className="w-full text-sm border border-gray-200 rounded p-3 resize-none focus:outline-none focus:ring-2 focus:ring-[#092490]"
+                            rows={3}
+                          />
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => respondMutation.mutate({ requestId: req.id, message: responseText })}
+                              disabled={!responseText.trim() || respondMutation.isPending}
+                              className="text-xs px-4 py-2 bg-[#092490] text-white rounded hover:bg-[#071d74] disabled:opacity-50 transition-colors"
+                            >
+                              {respondMutation.isPending ? 'Skickar...' : 'Skicka svar'}
+                            </button>
+                            <button
+                              onClick={() => { setRespondingTo(null); setResponseText(''); }}
+                              className="text-xs px-4 py-2 border border-gray-200 text-gray-600 rounded hover:border-gray-400 transition-colors"
+                            >
+                              Avbryt
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => setRespondingTo(req.id)}
+                          className="mt-3 text-xs text-[#092490] font-medium hover:underline"
+                        >
+                          Svara på förfrågan →
+                        </button>
+                      )
+                    ) : (
+                      <p className="mt-2 text-xs text-[#9CA3AF]">✓ Ni har svarat på denna förfrågan</p>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
           {/* Right (lg:col-span-2): Profilstyrka — STANDARD CARD */}

@@ -27,10 +27,21 @@ import {
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 
+const SWEDISH_REGIONS = [
+  'Blekinge län', 'Dalarnas län', 'Gotlands län', 'Gävleborgs län',
+  'Hallands län', 'Jämtlands län', 'Jönköpings län', 'Kalmar län',
+  'Kronobergs län', 'Norrbottens län', 'Skåne', 'Stockholms län',
+  'Södermanlands län', 'Uppsala län', 'Värmlands län', 'Västerbottens län',
+  'Västernorrlands län', 'Västmanlands län', 'Västra Götaland',
+  'Örebro län', 'Östergötlands län',
+];
+
 const generalQuoteFormSchema = z.object({
   description: z.string().min(10, 'Beskrivningen måste vara minst 10 tecken'),
   serviceType: z.string().min(1, 'Välj typ av tjänst'),
   urgency: z.string().min(1, 'Välj tidsram'),
+  location: z.string().min(2, 'Ange din ort'),
+  region: z.string().min(1, 'Välj ditt län'),
   name: z.string().min(2, 'Namnet måste vara minst 2 tecken'),
   email: z.string().email('Ange en giltig e-postadress'),
   phone: z.string().optional(),
@@ -55,6 +66,7 @@ export default function GeneralQuoteRequest() {
   const [location, navigate] = useLocation();
   const { toast } = useToast();
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [matchedCount, setMatchedCount] = useState(0);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
 
   const form = useForm<GeneralQuoteFormData>({
@@ -63,6 +75,8 @@ export default function GeneralQuoteRequest() {
       description: '',
       serviceType: '',
       urgency: 'planerad',
+      location: '',
+      region: '',
       name: '',
       email: '',
       phone: '',
@@ -84,23 +98,31 @@ export default function GeneralQuoteRequest() {
 
       const response = await fetch('/api/general-quote-requests', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ...data,
-          files: fileData
+          description: data.description,
+          serviceType: data.serviceType,
+          urgency: data.urgency,
+          location: data.location,
+          region: data.region,
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          companyName: data.company,
+          preferredContact: data.preferredContact,
+          files: fileData,
         }),
       });
 
       if (!response.ok) throw new Error('Failed to submit quote request');
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (result: any) => {
       setIsSubmitted(true);
+      setMatchedCount(result?.matchedCount ?? 0);
       toast({
         title: "Förfrågan skickad!",
-        description: "Vi har skickat din förfrågan till relevanta företag. Du kommer att få svar inom kort."
+        description: "Serviceföretag i ditt område har fått din förfrågan och hör av sig direkt."
       });
     },
     onError: (error: any) => {
@@ -135,8 +157,8 @@ export default function GeneralQuoteRequest() {
                 <CheckCircle className="h-16 w-16 text-green-600 mx-auto mb-6" />
                 <h1 className="text-2xl font-bold text-gray-900 mb-4">Förfrågan mottagen</h1>
                 <p className="text-gray-600 mb-6 leading-relaxed max-w-2xl mx-auto">
-                  Tack! Vi har skickat din förfrågan till relevanta företag inom reparation och service.
-                  Du kommer att få svar via e-post inom kort.
+                  Tack! Din förfrågan har skickats till {matchedCount > 0 ? `${matchedCount} serviceföretag` : 'relevanta serviceföretag'} i ditt område.
+                  Du får svar direkt via e-post när ett företag hör av sig.
                 </p>
                 <div className="space-y-3">
                   <Button
@@ -290,6 +312,49 @@ export default function GeneralQuoteRequest() {
                         </FormItem>
                       )}
                     />
+
+                    {/* Location fields */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="location"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-sm font-medium">Ort *</FormLabel>
+                            <FormControl>
+                              <input
+                                placeholder="Stad eller ort"
+                                {...field}
+                                className="flex h-10 w-full rounded-md border border-gray-300 bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="region"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-sm font-medium">Län *</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <FormControl>
+                                <SelectTrigger className="h-10 text-sm border-gray-300 focus:border-primary focus:ring-primary">
+                                  <SelectValue placeholder="Välj ditt län" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {SWEDISH_REGIONS.map(r => (
+                                  <SelectItem key={r} value={r}>{r}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
 
                     {/* File Upload */}
                     <div className="space-y-2">
