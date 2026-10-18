@@ -215,6 +215,26 @@ export default function AdminDashboard() {
     retryDelay: 1000,
   });
 
+  // Outreach companies — separate lightweight query (single JOIN, no profiles/contacts)
+  type OutreachCompany = { id: string; name: string; slug: string; city: string | null; region: string | null; categories: string[] | null; contactEmail: string | null; isClaimed: boolean };
+  const { data: outreachData, isLoading: outreachLoading, error: outreachError } = useQuery<OutreachCompany[]>({
+    queryKey: ['/api/admin/outreach-companies'],
+    queryFn: async () => {
+      const token = await getAdminToken();
+      const response = await fetch('/api/admin/outreach-companies', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) {
+        if (response.status === 401) { logout(); navigate('/admin/login'); }
+        throw new Error(`Kunde inte hämta företag (${response.status})`);
+      }
+      return response.json();
+    },
+    enabled: !!admin && selectedTab === 'outreach',
+    retry: 1,
+    retryDelay: 1000,
+  });
+
   // Fetch all companies with profiles (admin companies tab)
   const { data: adminCompanies, isLoading: adminCompaniesLoading, error: adminCompaniesError } = useQuery<CompanyDetail[]>({
     queryKey: ['/api/admin/companies'],
@@ -233,7 +253,7 @@ export default function AdminDashboard() {
       }
       return response.json();
     },
-    enabled: !!admin && (selectedTab === 'companies' || selectedTab === 'outreach'),
+    enabled: !!admin && selectedTab === 'companies',
     retry: 1,
     retryDelay: 1000,
   });
@@ -443,20 +463,20 @@ export default function AdminDashboard() {
   };
 
   const outreachRegions = useMemo(() => {
-    if (!adminCompanies) return [];
-    return Array.from(new Set(adminCompanies.map(c => c.region).filter(Boolean) as string[])).sort();
-  }, [adminCompanies]);
+    if (!outreachData) return [];
+    return Array.from(new Set(outreachData.map(c => c.region).filter(Boolean) as string[])).sort();
+  }, [outreachData]);
 
   const outreachCategories = useMemo(() => {
-    if (!adminCompanies) return [];
+    if (!outreachData) return [];
     const cats = new Set<string>();
-    adminCompanies.forEach(c => (c.categories || []).forEach(cat => cats.add(cat)));
+    outreachData.forEach(c => (c.categories || []).forEach(cat => cats.add(cat)));
     return Array.from(cats).sort();
-  }, [adminCompanies]);
+  }, [outreachData]);
 
   const outreachCompanies = useMemo(() => {
-    if (!adminCompanies) return [];
-    return adminCompanies.filter(c => {
+    if (!outreachData) return [];
+    return outreachData.filter(c => {
       if (outreachUnclaimedOnly && c.isClaimed) return false;
       if (outreachSearch && !c.name.toLowerCase().includes(outreachSearch.toLowerCase())) return false;
       if (outreachRegion && c.region !== outreachRegion) return false;
@@ -1077,7 +1097,7 @@ export default function AdminDashboard() {
                   Hitta företag att kontakta. Deras listningslänk är redo att kopiera och klistra in i ditt e-postmeddelande.
                 </p>
               </div>
-              {adminCompanies && (
+              {outreachData && (
                 <div className="flex gap-4 text-sm text-gray-600 shrink-0">
                   <span className="bg-gray-100 rounded px-3 py-1">
                     <strong>{outreachCompanies.length}</strong> visas
@@ -1153,7 +1173,12 @@ export default function AdminDashboard() {
             </div>
 
             {/* Company list */}
-            {adminCompaniesLoading ? (
+            {outreachError ? (
+              <div className="text-center py-12 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-red-700 font-medium mb-1">Kunde inte ladda företag</p>
+                <p className="text-red-500 text-sm">{(outreachError as Error).message}</p>
+              </div>
+            ) : outreachLoading ? (
               <div className="text-center py-12">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4" />
                 <p className="text-gray-500 text-sm">Laddar företag…</p>
