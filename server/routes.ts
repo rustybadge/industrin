@@ -971,6 +971,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get all companies with profile + contacts (admin)
+  app.get("/api/admin/outreach-companies", requireAuth(), ensureAdmin, async (req, res) => {
+    try {
+      const companies = await storage.getCompaniesForOutreach();
+      res.json(companies);
+    } catch (error) {
+      console.error("Error fetching outreach companies:", error);
+      res.status(500).json({ message: "Failed to fetch companies" });
+    }
+  });
+
   app.get("/api/admin/companies", requireAuth(), ensureAdmin, async (req, res) => {
     try {
       const companiesWithProfile = await storage.getAllCompaniesWithProfile();

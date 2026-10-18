@@ -73,6 +73,7 @@ export interface IStorage {
 
   // Admin
   getAllCompaniesWithProfile(): Promise<(CompanyWithClaimed & { profile: CompanyProfile | null; contacts: Contact[] })[]>;
+  getCompaniesForOutreach(): Promise<{ id: string; name: string; slug: string; city: string | null; region: string | null; categories: string[] | null; contactEmail: string | null; isClaimed: boolean }[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -541,6 +542,42 @@ export class DatabaseStorage implements IStorage {
       })
     );
     return results;
+  }
+  async getCompaniesForOutreach(): Promise<{ id: string; name: string; slug: string; city: string | null; region: string | null; categories: string[] | null; contactEmail: string | null; isClaimed: boolean }[]> {
+    // Single query: left-join company_users to determine claimed status in one round-trip
+    const rows = await db
+      .select({
+        id: companies.id,
+        name: companies.name,
+        slug: companies.slug,
+        city: companies.city,
+        region: companies.region,
+        categories: companies.categories,
+        contactEmail: companies.contactEmail,
+        claimedUserId: companyUsers.id,
+      })
+      .from(companies)
+      .leftJoin(companyUsers, eq(companies.id, companyUsers.companyId))
+      .orderBy(companies.name);
+
+    // Deduplicate — a company with multiple users would appear multiple times
+    const seen = new Set<string>();
+    const result: { id: string; name: string; slug: string; city: string | null; region: string | null; categories: string[] | null; contactEmail: string | null; isClaimed: boolean }[] = [];
+    for (const row of rows) {
+      if (seen.has(row.id)) continue;
+      seen.add(row.id);
+      result.push({
+        id: row.id,
+        name: row.name,
+        slug: row.slug,
+        city: row.city ?? null,
+        region: row.region ?? null,
+        categories: (row.categories as string[] | null) ?? null,
+        contactEmail: row.contactEmail ?? null,
+        isClaimed: row.claimedUserId !== null,
+      });
+    }
+    return result;
   }
 }
 
