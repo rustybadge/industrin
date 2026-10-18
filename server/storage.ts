@@ -1,6 +1,6 @@
 import {
   users, companies, claimRequests, quoteRequests, companyUsers,
-  companyProfiles, contacts,
+  companyProfiles, contacts, generalQuoteRequests, serviceRequestResponses,
   type User, type InsertUser,
   type Company, type InsertCompany,
   type ClaimRequest, type InsertClaimRequest,
@@ -70,6 +70,14 @@ export interface IStorage {
   getContactsByCompany(companyId: string): Promise<Contact[]>;
   createContact(contact: InsertContact): Promise<Contact>;
   deleteContact(id: string, companyId: string): Promise<void>;
+
+  // Service request marketplace
+  getCompaniesForRegion(region: string, limit?: number): Promise<{ id: string; name: string; contactEmail: string | null; region: string | null }[]>;
+  createServiceRequestResponse(data: { requestId: string; companyId: string; message: string }): Promise<{ id: string; createdAt: Date }>;
+  getRequestsForCompany(companyId: string): Promise<import('@shared/schema').GeneralQuoteRequest[]>;
+  getRequestById(requestId: string): Promise<import('@shared/schema').GeneralQuoteRequest | undefined>;
+  getResponsesByRequest(requestId: string): Promise<(import('@shared/schema').ServiceRequestResponse & { companyName: string })[]>;
+  hasCompanyResponded(requestId: string, companyId: string): Promise<boolean>;
 
   // Admin
   getAllCompaniesWithProfile(): Promise<(CompanyWithClaimed & { profile: CompanyProfile | null; contacts: Contact[] })[]>;
@@ -543,6 +551,65 @@ export class DatabaseStorage implements IStorage {
     );
     return results;
   }
+  async getCompaniesForRegion(region: string, limit = 20): Promise<{ id: string; name: string; contactEmail: string | null; region: string | null }[]> {
+    const rows = await db
+      .select({ id: companies.id, name: companies.name, contactEmail: companies.contactEmail, region: companies.region })
+      .from(companies)
+      .where(sql`lower(${companies.region}) ILIKE ${'%' + region.toLowerCase() + '%'}`)
+      .limit(limit);
+    return rows;
+  }
+
+  async createServiceRequestResponse(data: { requestId: string; companyId: string; message: string }): Promise<{ id: string; createdAt: Date }> {
+    const [row] = await db
+      .insert(serviceRequestResponses)
+      .values({ requestId: data.requestId, companyId: data.companyId, message: data.message })
+      .returning({ id: serviceRequestResponses.id, createdAt: serviceRequestResponses.createdAt });
+    return row;
+  }
+
+  async getRequestsForCompany(companyId: string): Promise<import('@shared/schema').GeneralQuoteRequest[]> {
+    // Find the company's region, then return requests from that region, newest first
+    const [company] = await db.select({ region: companies.region }).from(companies).where(eq(companies.id, companyId));
+    if (!company?.region) return [];
+    return db
+      .select()
+      .from(generalQuoteRequests)
+      .where(sql`lower(${generalQuoteRequests.region}) ILIKE ${'%' + company.region.toLowerCase() + '%'}`)
+      .orderBy(desc(generalQuoteRequests.submittedAt))
+      .limit(50);
+  }
+
+  async getRequestById(requestId: string): Promise<import('@shared/schema').GeneralQuoteRequest | undefined> {
+    const [row] = await db.select().from(generalQuoteRequests).where(eq(generalQuoteRequests.id, requestId));
+    return row;
+  }
+
+  async getResponsesByRequest(requestId: string): Promise<(import('@shared/schema').ServiceRequestResponse & { companyName: string })[]> {
+    const rows = await db
+      .select({
+        id: serviceRequestResponses.id,
+        requestId: serviceRequestResponses.requestId,
+        companyId: serviceRequestResponses.companyId,
+        message: serviceRequestResponses.message,
+        createdAt: serviceRequestResponses.createdAt,
+        companyName: companies.name,
+      })
+      .from(serviceRequestResponses)
+      .innerJoin(companies, eq(serviceRequestResponses.companyId, companies.id))
+      .where(eq(serviceRequestResponses.requestId, requestId))
+      .orderBy(serviceRequestResponses.createdAt);
+    return rows as any;
+  }
+
+  async hasCompanyResponded(requestId: string, companyId: string): Promise<boolean> {
+    const [row] = await db
+      .select({ id: serviceRequestResponses.id })
+      .from(serviceRequestResponses)
+      .where(sql`${serviceRequestResponses.requestId} = ${requestId} AND ${serviceRequestResponses.companyId} = ${companyId}`);
+    return !!row;
+  }
+
   async getCompaniesForOutreach(): Promise<{ id: string; name: string; slug: string; city: string | null; region: string | null; categories: string[] | null; contactEmail: string | null; isClaimed: boolean }[]> {
     // Single query: left-join company_users to determine claimed status in one round-trip
     const rows = await db

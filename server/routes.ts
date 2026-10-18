@@ -13,7 +13,7 @@ import type { JwtPayload } from "@clerk/types";
 import { Resend } from "resend";
 import { escapeHtml } from "./emails/html";
 import { createResendMailer } from "./emails/send";
-import { claimReceivedAdmin, claimConfirmation, claimApproved, claimRejected } from "./emails/templates";
+import { claimReceivedAdmin, claimConfirmation, claimApproved, claimRejected, serviceRequestNotification, serviceRequestResponse as serviceRequestResponseEmail } from "./emails/templates";
 import { migrateClaimWorkflow } from "./claims/migrate";
 import { claimsVerifyRouter } from "./claims/wire";
 import { assertNoEmailConflict, finalizeApproval, ClaimConflictError } from "./claims/repo";
@@ -1189,5 +1189,126 @@ export async function registerRoutes(app: Express): Promise<Server> {
   );
 
   const httpServer = createServer(app);
+
+  // ===== SERVICE REQUEST MARKETPLACE =====
+
+  // POST /api/general-quote-requests — buyer submits a service request
+  // Saves to DB, matches companies by region, emails them
+  app.post("/api/general-quote-requests", async (req, res) => {
+    try {
+      const { description, serviceType, urgency, location, region, name, email, phone, companyName, preferredContact, files } = req.body;
+      if (!description || !serviceType || !urgency || !name || !email || !preferredContact) {
+        return res.status(400).json({ message: "Obligatoriska fält saknas" });
+      }
+
+      // Save the request
+      const result = await pool.query<{ id: string }>(
+        `INSERT INTO general_quote_requests
+          (description, service_type, urgency, location, region, name, email, phone, company_name, preferred_contact, files)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING id`,
+        [description, serviceType, urgency, location ?? null, region ?? location ?? null,
+         name, email, phone ?? null, companyName ?? null, preferredContact, files ? JSON.stringify(files) : null]
+      );
+      const requestId = result.rows[0].id;
+
+      // Match and notify companies — use region if provided, otherwise location text
+      const matchRegion = region || location || '';
+      const matchedCompanies = matchRegion
+        ? await storage.getCompaniesForRegion(matchRegion, 20)
+        : [];
+
+      const dashboardUrl = process.env.COMPANY_PORTAL_URL ?? 'https://www.industrin.net/company/dashboard';
+
+      // Email matched companies (best-effort, non-blocking)
+      const notifications = matchedCompanies
+        .filter(c => c.contactEmail)
+        .map(c =>
+          mailer.send(c.contactEmail!, serviceRequestNotification({
+            companyName: c.name,
+            serviceType,
+            urgency,
+            location: location || matchRegion || 'Sverige',
+            description,
+            dashboardUrl,
+          }))
+        );
+      await Promise.allSettled(notifications);
+
+      // Confirmation to buyer
+      await mailer.send(email, {
+        subject: 'Vi har tagit emot din förfrågan – Industrin.net',
+        html: `<p>Hej ${escapeHtml(name)},</p>
+               <p>Vi har tagit emot din förfrågan om <strong>${escapeHtml(serviceType)}</strong> och skickat den till ${matchedCompanies.length} relevanta serviceföretag i ditt område.</p>
+               <p>Du hör av dig direkt när ett företag svarar.</p>
+               <p>Med vänlig hälsning,<br/>Industrin.net</p>`,
+      });
+
+      res.status(201).json({ id: requestId, matchedCount: matchedCompanies.length });
+    } catch (error) {
+      console.error("Error creating general quote request:", error);
+      res.status(500).json({ message: "Kunde inte spara förfrågan" });
+    }
+  });
+
+  // GET /api/company/requests — requests matching this company's region
+  app.get("/api/company/requests", requireAuth(), ensureCompanyMember, async (req: any, res) => {
+    try {
+      const companyId = req.companyId as string;
+      const requests = await storage.getRequestsForCompany(companyId);
+      // For each request, check if this company has already responded
+      const withResponded = await Promise.all(
+        requests.map(async (r) => ({
+          ...r,
+          hasResponded: await storage.hasCompanyResponded(r.id, companyId),
+        }))
+      );
+      res.json(withResponded);
+    } catch (error) {
+      console.error("Error fetching company requests:", error);
+      res.status(500).json({ message: "Kunde inte hämta förfrågningar" });
+    }
+  });
+
+  // POST /api/company/requests/:id/respond — company responds to a request
+  app.post("/api/company/requests/:id/respond", requireAuth(), ensureCompanyMember, async (req: any, res) => {
+    try {
+      const { id: requestId } = req.params;
+      const { message } = req.body;
+      const companyId = req.companyId as string;
+
+      if (!message?.trim()) {
+        return res.status(400).json({ message: "Meddelandet får inte vara tomt" });
+      }
+
+      // Prevent double-response
+      const alreadyResponded = await storage.hasCompanyResponded(requestId, companyId);
+      if (alreadyResponded) {
+        return res.status(409).json({ message: "Ni har redan svarat på denna förfrågan" });
+      }
+
+      const request = await storage.getRequestById(requestId);
+      if (!request) return res.status(404).json({ message: "Förfrågan hittades inte" });
+
+      const company = await storage.getCompanyById(companyId);
+      if (!company) return res.status(404).json({ message: "Företag hittades inte" });
+
+      // Save response
+      await storage.createServiceRequestResponse({ requestId, companyId, message });
+
+      // Notify the buyer
+      await mailer.send(request.email, serviceRequestResponseEmail({
+        buyerName: request.name,
+        companyName: company.name,
+        responseMessage: message,
+        serviceType: request.serviceType,
+      }));
+
+      res.status(201).json({ message: "Svar skickat" });
+    } catch (error) {
+      console.error("Error responding to request:", error);
+      res.status(500).json({ message: "Kunde inte skicka svar" });
+    }
+  });
+
   return httpServer;
 }

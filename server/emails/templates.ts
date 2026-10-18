@@ -83,3 +83,56 @@ export function ownerWelcome(p: { name: string; companyName: string; portalUrl: 
     ),
   };
 }
+
+/** Notifies a service company that a matching request came in. */
+export function serviceRequestNotification(p: {
+  companyName: string;
+  serviceType: string;
+  urgency: string;
+  location: string;
+  description: string;
+  dashboardUrl: string;
+}): RenderedEmail {
+  const urgencyLabel: Record<string, string> = {
+    akut: 'Akut – behövs omgående',
+    'inom-veckan': 'Inom veckan',
+    planerad: 'Planerat',
+  };
+  return {
+    subject: `Ny förfrågan på Industrin – ${e(p.serviceType)}, ${e(p.location)}`,
+    html: layout(
+      'Ny serviceförfrågan',
+      [
+        `<p>Hej ${e(p.companyName)},</p>`,
+        `<p>En ny förfrågan som matchar ert område har kommit in på Industrin.net.</p>`,
+        field('Tjänst', p.serviceType),
+        field('Ort', p.location),
+        field('Prioritet', urgencyLabel[p.urgency] ?? p.urgency),
+        field('Beskrivning', p.description),
+        `<p>Logga in på ert konto för att se hela förfrågan och svara köparen direkt.</p>`,
+        button('Svara på förfrågan', p.dashboardUrl),
+      ].join('\n'),
+    ),
+  };
+}
+
+/** Notifies the buyer that a company has responded to their request. */
+export function serviceRequestResponse(p: {
+  buyerName: string;
+  companyName: string;
+  responseMessage: string;
+  serviceType: string;
+}): RenderedEmail {
+  return {
+    subject: `${e(p.companyName)} har svarat på din förfrågan`,
+    html: layout(
+      'Svar på din serviceförfrågan',
+      `<p>Hej ${e(p.buyerName)},</p>
+       <p><strong>${e(p.companyName)}</strong> har svarat på din förfrågan om ${e(p.serviceType)} på Industrin.net.</p>
+       <blockquote style="border-left:3px solid #e5e7eb;margin:16px 0;padding:12px 16px;color:#374151;">
+         ${e(p.responseMessage)}
+       </blockquote>
+       <p>Kontakta företaget direkt för att komma vidare.</p>`,
+    ),
+  };
+}

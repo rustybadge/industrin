@@ -138,13 +138,24 @@ export const generalQuoteRequests = pgTable("general_quote_requests", {
   description: text("description").notNull(),
   serviceType: text("service_type").notNull(),
   urgency: text("urgency").notNull(),
+  location: text("location"),        // buyer's city / free text
+  region: text("region"),            // matched Swedish region for company matching
   name: text("name").notNull(),
   email: text("email").notNull(),
   phone: text("phone"),
   companyName: text("company_name"),
   preferredContact: text("preferred_contact").notNull(),
-  files: json("files"), // Store file data as JSON
+  files: json("files"),
   submittedAt: timestamp("submitted_at").defaultNow().notNull(),
+});
+
+/** Responses from service companies to a general service request. */
+export const serviceRequestResponses = pgTable("service_request_responses", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  requestId: varchar("request_id").notNull().references(() => generalQuoteRequests.id, { onDelete: "cascade" }),
+  companyId: varchar("company_id").notNull().references(() => companies.id, { onDelete: "cascade" }),
+  message: text("message").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 // Relations
@@ -280,3 +291,6 @@ export type CompanyProfile = typeof companyProfiles.$inferSelect;
 export type InsertCompanyProfile = z.infer<typeof insertCompanyProfileSchema>;
 export type Contact = typeof contacts.$inferSelect;
 export type InsertContact = z.infer<typeof insertContactSchema>;
+
+export type GeneralQuoteRequest = typeof generalQuoteRequests.$inferSelect;
+export type ServiceRequestResponse = typeof serviceRequestResponses.$inferSelect;
