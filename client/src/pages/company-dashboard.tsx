@@ -5,41 +5,23 @@ import { useToast } from '@/hooks/use-toast';
 import { useCompanyAccess } from '@/hooks/use-company-access';
 import { useAuth } from '@clerk/clerk-react';
 import { calculateDataQuality } from '@/utils/data-quality';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import CompanyNav from '@/components/company/company-nav';
 import { Badge } from '@/components/ui/badge';
-import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart';
-import { AreaChart, Area, XAxis, CartesianGrid } from 'recharts';
-
-// ---- Placeholder visitor data (90 days) -----------------------------------
-
-function buildVisitorData() {
-  const data: { date: string; visitors: number }[] = [];
-  const base = new Date('2026-04-18');
-  // Realistic weekday/weekend rhythm with a gentle upward trend
-  const seed = [52, 61, 67, 58, 71, 24, 18, 55, 63, 70, 61, 74, 27, 21,
-                58, 66, 72, 64, 78, 30, 23, 61, 69, 75, 67, 81, 32, 25,
-                64, 72, 79, 70, 84, 34, 28, 67, 75, 82, 73, 87, 36, 29,
-                70, 78, 85, 77, 90, 38, 31, 73, 81, 88, 80, 93, 40, 33,
-                75, 84, 90, 83, 96, 41, 34, 78, 87, 93, 86, 99, 43, 36,
-                80, 89, 95, 88, 102, 44, 37, 83, 91, 97, 90, 104, 45, 38,
-                85, 93, 98, 91, 105, 46];
-  for (let i = 89; i >= 0; i--) {
-    const d = new Date(base);
-    d.setDate(d.getDate() - i);
-    data.push({ date: d.toISOString().split('T')[0], visitors: seed[89 - i] ?? 50 });
-  }
-  return data;
-}
-const ALL_VISITOR_DATA = buildVisitorData();
-
-const visitorChartConfig = {
-  visitors: { label: 'Besökare', color: '#092490' },
-} satisfies ChartConfig;
 
 // SVG ring constants — r=40, cx=cy=50
 const RING_RADIUS = 40;
-const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS; // ≈ 251.3
+const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
+
+const FIELD_LABELS: Record<string, string> = {
+  hasDescription:    'Företagsbeskrivning',
+  hasContactEmail:   'Kontakt-e-post',
+  hasPhone:          'Telefonnummer',
+  hasWebsite:        'Webbplats',
+  hasAddress:        'Adress',
+  hasServiceområden: 'Serviceområden',
+  hasCategories:     'Tjänstekategorier',
+};
 
 function CompanyDashboard() {
   const { companyUser, logout, isLoading: authLoading, getCompanyToken } = useCompanyAccess();
@@ -47,7 +29,6 @@ function CompanyDashboard() {
   const [location, navigate] = useLocation();
   const { toast } = useToast();
   const [setupError, setSetupError] = useState(false);
-  const [activeRange, setActiveRange] = useState<'90d' | '30d' | '7d'>('30d');
   const [respondingTo, setRespondingTo] = useState<string | null>(null);
   const [responseText, setResponseText] = useState('');
   const setupAttempted = useRef(false);
@@ -62,8 +43,6 @@ function CompanyDashboard() {
     [getCompanyToken]
   );
 
-  // If user is signed in via Clerk but missing role metadata (new invitation flow),
-  // call the setup endpoint to fix their metadata, then reload.
   useEffect(() => {
     if (!authLoading && !companyUser && isSignedIn && !setupAttempted.current) {
       setupAttempted.current = true;
@@ -74,7 +53,6 @@ function CompanyDashboard() {
             headers: { Authorization: `Bearer ${token}` },
           });
           if (res.ok) {
-            // Metadata updated — reload to pick up new Clerk session
             window.location.reload();
           } else {
             setSetupError(true);
@@ -88,7 +66,6 @@ function CompanyDashboard() {
     }
   }, [authLoading, companyUser, isSignedIn, getToken, navigate]);
 
-  // Fetch company profile — hooks must be before any early returns
   const { data: company, isLoading, error } = useQuery({
     queryKey: ['/api/company/profile'],
     enabled: !!companyUser,
@@ -96,14 +73,12 @@ function CompanyDashboard() {
       const response = await fetchWithCompanyAuth('/api/company/profile');
       if (!response.ok) {
         const body = await response.text().catch(() => '');
-        console.error('[company-dashboard] /api/company/profile failed:', response.status, body);
         throw new Error(`HTTP ${response.status}: ${body || 'no body'}`);
       }
       return response.json();
     },
   });
 
-  // Fetch real service requests for this company
   const { data: serviceRequests = [], refetch: refetchRequests } = useQuery<any[]>({
     queryKey: ['/api/company/requests'],
     enabled: !!companyUser,
@@ -172,9 +147,7 @@ function CompanyDashboard() {
     );
   }
 
-  if (!companyUser) {
-    return null;
-  }
+  if (!companyUser) return null;
 
   if (isLoading) {
     return (
@@ -195,8 +168,6 @@ function CompanyDashboard() {
           <div className="text-xs font-mono bg-gray-100 px-3 py-2 rounded-none text-left break-all space-y-1">
             <p><span className="text-gray-500">error:</span> {(error as Error).message}</p>
             <p><span className="text-gray-500">companyId:</span> {companyUser?.companyId ?? 'none'}</p>
-            <p><span className="text-gray-500">userId:</span> {companyUser?.id ?? 'none'}</p>
-            <p><span className="text-gray-500">role:</span> {companyUser?.role ?? 'none'}</p>
           </div>
           <button onClick={() => window.location.reload()} className="text-sm text-blue-600 hover:underline">
             Försök igen
@@ -206,23 +177,11 @@ function CompanyDashboard() {
     );
   }
 
-  const ringScore = company ? Math.round(calculateDataQuality(company).percentage) : 0;
+  const quality = company ? calculateDataQuality(company) : null;
+  const ringScore = quality ? Math.round(quality.percentage) : 0;
   const ringDashoffset = RING_CIRCUMFERENCE * (1 - ringScore / 100);
 
-  // Inline sparkline points — 7 data points, max=80, SVG viewBox 0 0 80 32
-  const heroPoints = [40, 55, 45, 70, 60, 80, 65];
-  const standardPoints = [40, 55, 45, 70, 60, 80, 65];
-  const searchPoints = [30, 50, 40, 60, 55, 75, 70];
-  const maxVal = 80;
-  const svgH = 32;
-  const svgW = 80;
-
-  function toPolyline(pts: number[]) {
-    const step = svgW / (pts.length - 1);
-    return pts
-      .map((v, i) => `${(i * step).toFixed(1)},${(svgH - (v / maxVal) * svgH).toFixed(1)}`)
-      .join(' ');
-  }
+  const unanswered = serviceRequests.filter((r: any) => !r.hasResponded).length;
 
   return (
     <div className="bg-white min-h-screen">
@@ -234,148 +193,50 @@ function CompanyDashboard() {
         onLogout={logout}
       />
 
-      {/* Main content */}
       <main className="max-w-5xl mx-auto px-6 py-8 space-y-4">
 
-        {/* Row 1: four stat cards */}
+        {/* Row 1: stat cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
 
-          {/* Card 1 — Förfrågningar (hero) */}
+          {/* Card 1 — Förfrågningar (real) */}
           <Card className="rounded-none bg-[#092490] border-[#092490]">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-white/80">Förfrågningar</CardTitle>
-              {serviceRequests.filter((r: any) => !r.hasResponded).length > 0 && (
+              {unanswered > 0 && (
                 <Badge className="bg-white/20 text-white border-0 hover:bg-white/30 text-xs">
-                  {serviceRequests.filter((r: any) => !r.hasResponded).length} nya
+                  {unanswered} nya
                 </Badge>
               )}
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-medium text-white">{serviceRequests.length}</div>
-              <p className="text-sm text-white/70 mt-1">
-                {serviceRequests.filter((r: any) => !r.hasResponded).length} obesvarade
-              </p>
+              <p className="text-sm text-white/70 mt-1">{unanswered} obesvarade</p>
             </CardContent>
           </Card>
 
-          {/* Card 2 — Profilbesök */}
-          <Card className="rounded-none">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Profilbesök</CardTitle>
-              <Badge variant="outline" className="text-[#092490] border-[#092490]/30 bg-[#cfd8fc]/40 font-medium text-xs">↑ 14%</Badge>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-medium">1 243</div>
-              <p className="text-sm text-muted-foreground mt-1">vs förra månaden</p>
-            </CardContent>
-          </Card>
-
-          {/* Card 3 — Klick till hemsida */}
-          <Card className="rounded-none">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Klick till hemsida</CardTitle>
-              <Badge variant="outline" className="text-[#092490] border-[#092490]/30 bg-[#cfd8fc]/40 font-medium text-xs">↑ 8%</Badge>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-medium">87</div>
-              <p className="text-sm text-muted-foreground mt-1">vs förra månaden</p>
-            </CardContent>
-          </Card>
-
-          {/* Card 4 — Telefonklick */}
-          <Card className="rounded-none">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Telefonklick</CardTitle>
-              <Badge variant="outline" className="text-[#092490] border-[#092490]/30 bg-[#cfd8fc]/40 font-medium text-xs">↑ 3%</Badge>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-medium">31</div>
-              <p className="text-sm text-muted-foreground mt-1">vs förra månaden</p>
-            </CardContent>
-          </Card>
-
-        </div>
-
-        {/* Row 2: visitor traffic chart */}
-        {(() => {
-          const days = activeRange === '90d' ? 90 : activeRange === '30d' ? 30 : 7;
-          const chartData = ALL_VISITOR_DATA.slice(-days);
-          const ranges = [
-            { key: '90d', label: '3 månader' },
-            { key: '30d', label: '30 dagar' },
-            { key: '7d',  label: '7 dagar'  },
-          ] as const;
-          return (
-            <Card className="rounded-none">
-              <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
-                <div>
-                  <CardTitle className="text-base font-medium">Profilbesök</CardTitle>
-                  <CardDescription className="mt-0.5">Besökare på er profilsida</CardDescription>
-                </div>
-                <div className="flex gap-1">
-                  {ranges.map(({ key, label }) => (
-                    <button
-                      key={key}
-                      onClick={() => setActiveRange(key)}
-                      className={
-                        'text-xs px-3 py-1.5 border transition-colors ' +
-                        (activeRange === key
-                          ? 'bg-[#092490] text-white border-[#092490]'
-                          : 'bg-white text-[#4B5563] border-[#E5E7EB] hover:border-[#9CA3AF]')
-                      }
-                    >
-                      {label}
-                    </button>
-                  ))}
-                </div>
+          {/* Cards 2–4 — coming soon, honest */}
+          {[
+            { label: 'Profilbesök',       sub: 'Mäts när statistik aktiveras' },
+            { label: 'Klick till hemsida', sub: 'Mäts när statistik aktiveras' },
+            { label: 'Telefonklick',       sub: 'Mäts när statistik aktiveras' },
+          ].map(({ label, sub }) => (
+            <Card key={label} className="rounded-none">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">{label}</CardTitle>
+                <span className="text-xs text-[#D1D5DB] font-medium">Kommer snart</span>
               </CardHeader>
-              <CardContent className="px-2 pt-4">
-                <ChartContainer config={visitorChartConfig} className="h-[180px] w-full">
-                  <AreaChart data={chartData} margin={{ left: 12, right: 12, top: 4, bottom: 0 }}>
-                    <defs>
-                      <linearGradient id="fillVisitors" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%"  stopColor="#092490" stopOpacity={0.35} />
-                        <stop offset="95%" stopColor="#092490" stopOpacity={0.02} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid vertical={false} stroke="#F3F4F6" />
-                    <XAxis
-                      dataKey="date"
-                      tickLine={false}
-                      axisLine={false}
-                      tickMargin={8}
-                      tick={{ fontSize: 11, fill: '#9CA3AF' }}
-                      tickFormatter={(v) => {
-                        const d = new Date(v);
-                        return d.toLocaleDateString('sv-SE', { month: 'short', day: 'numeric' });
-                      }}
-                      interval={Math.floor(chartData.length / 6)}
-                    />
-                    <ChartTooltip
-                      content={
-                        <ChartTooltipContent
-                          labelFormatter={(v) => new Date(v).toLocaleDateString('sv-SE', { weekday: 'short', month: 'short', day: 'numeric' })}
-                        />
-                      }
-                    />
-                    <Area
-                      dataKey="visitors"
-                      type="natural"
-                      fill="url(#fillVisitors)"
-                      stroke="#092490"
-                      strokeWidth={1.5}
-                    />
-                  </AreaChart>
-                </ChartContainer>
+              <CardContent>
+                <div className="text-3xl font-medium text-[#D1D5DB]">–</div>
+                <p className="text-xs text-[#D1D5DB] mt-1">{sub}</p>
               </CardContent>
             </Card>
-          );
-        })()}
+          ))}
+        </div>
 
-        {/* Row 3: enquiries + profile strength */}
+        {/* Row 2: enquiries + profile strength */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
 
-          {/* Left (lg:col-span-3): Senaste förfrågningar — REAL DATA */}
+          {/* Förfrågningar — real */}
           <div className="lg:col-span-3 bg-white border border-[#E5E7EB] p-6 rounded-none">
             <p className="text-base font-medium text-[#111827] mb-5">Senaste förfrågningar</p>
 
@@ -399,12 +260,13 @@ function CompanyDashboard() {
                             <span className="bg-[#cfd8fc] text-[#092490] text-xs font-medium px-2 py-0.5 rounded-full">Ny</span>
                           )}
                         </div>
-                        <p className="text-xs text-[#6B7280] mb-1">{req.location || req.region} · {new Date(req.submittedAt).toLocaleDateString('sv-SE')}</p>
+                        <p className="text-xs text-[#6B7280] mb-1">
+                          {req.location || req.region} · {new Date(req.submittedAt).toLocaleDateString('sv-SE')}
+                        </p>
                         <p className="text-sm text-[#374151] line-clamp-2">{req.description}</p>
                       </div>
                     </div>
 
-                    {/* Respond section */}
                     {!req.hasResponded ? (
                       respondingTo === req.id ? (
                         <div className="mt-3 space-y-2">
@@ -448,200 +310,91 @@ function CompanyDashboard() {
             )}
           </div>
 
-          {/* Right (lg:col-span-2): Profilstyrka — STANDARD CARD */}
+          {/* Profilstyrka — real */}
           <div className="lg:col-span-2 bg-white border border-[#E5E7EB] p-6 rounded-none">
             <p className="text-base font-medium text-[#111827] mb-1">Profilstyrka</p>
             <p className="text-xs text-[#9CA3AF] mb-5 leading-relaxed">
-              Profilstyrka visar hur komplett din företagsprofil är på industrin.net. En starkare profil syns bättre i sökresultat och skapar förtroende hos potentiella kunder.
+              En komplett profil syns bättre i sökresultat och skapar förtroende hos potentiella kunder.
             </p>
 
-            {/* Circular progress ring */}
             <div className="flex justify-center mb-4">
               <svg width="100" height="100" viewBox="0 0 100 100">
-                {/* Background circle */}
+                <circle cx="50" cy="50" r={RING_RADIUS} fill="none" stroke="#E5E7EB" strokeWidth="8" />
                 <circle
-                  cx="50"
-                  cy="50"
-                  r={RING_RADIUS}
-                  fill="none"
-                  stroke="#E5E7EB"
-                  strokeWidth="8"
-                />
-                {/* Progress circle */}
-                <circle
-                  cx="50"
-                  cy="50"
-                  r={RING_RADIUS}
-                  fill="none"
-                  stroke="#092490"
-                  strokeWidth="8"
-                  strokeLinecap="round"
+                  cx="50" cy="50" r={RING_RADIUS} fill="none"
+                  stroke={ringScore >= 70 ? '#16a34a' : ringScore >= 40 ? '#092490' : '#F0A500'}
+                  strokeWidth="8" strokeLinecap="round"
                   strokeDasharray={RING_CIRCUMFERENCE}
                   strokeDashoffset={ringDashoffset}
                   transform="rotate(-90 50 50)"
                 />
-                {/* Center text */}
                 <text x="50" y="46" textAnchor="middle" fontSize="18" fontWeight="700" fill="#111827">
                   {ringScore}
                 </text>
-                <text x="50" y="58" textAnchor="middle" fontSize="10" fill="#9CA3AF">
-                  / 100
-                </text>
+                <text x="50" y="58" textAnchor="middle" fontSize="10" fill="#9CA3AF">/ 100</text>
               </svg>
             </div>
 
-            {/* Sub-metrics */}
-            <div className="text-xs">
-              {[
-                { label: 'Profil komplett',      value: '65%',    color: 'text-[#092490]' },
-                { label: 'Svarsfrekvens',         value: '100%',   color: 'text-[#092490]' },
-                { label: 'Org.nr verifierat',     value: 'Ja',     color: 'text-[#092490]' },
-                { label: 'Logotyp',               value: 'Saknas', color: 'text-[#F0A500]' },
-                { label: 'Certifieringar',        value: 'Saknas', color: 'text-[#F0A500]' },
-              ].map((m) => (
-                <div key={m.label} className="flex justify-between py-1.5 border-b border-[#F3F4F6] last:border-0">
-                  <span className="text-[#4B5563]">{m.label}</span>
-                  <span className={m.color}>{m.value}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* Checklist */}
-            <div className="mt-4 space-y-1">
-              {[
-                { done: true,  label: 'Företagsbeskrivning tillagd'  },
-                { done: true,  label: 'Kontaktuppgifter ifyllda'      },
-                { done: true,  label: 'Tjänster valda'                },
-                { done: false, label: 'Logotyp saknas'                },
-                { done: false, label: 'Öppettider ej angivna'         },
-                { done: false, label: 'Certifieringar saknas'         },
-              ].map(({ done, label }) => (
-                <div key={label} className="flex items-center justify-between text-sm text-[#4B5563] py-1">
-                  <div className="flex items-center gap-2">
-                    <span className={`w-3 h-3 rounded-full flex-shrink-0 ${done ? 'bg-[#092490]' : 'border-2 border-[#E5E7EB]'}`} />
-                    <span className={done ? '' : 'text-[#9CA3AF]'}>{label}</span>
-                  </div>
-                  {!done && (
-                    <span
-                      className="text-[#092490] text-xs cursor-pointer hover:underline"
-                      onClick={() => navigate('/company/edit')}
-                    >
-                      Åtgärda →
-                    </span>
-                  )}
-                </div>
-              ))}
-            </div>
+            {/* Real checklist from data quality */}
+            {quality && (
+              <div className="mt-2 space-y-1">
+                {Object.entries(FIELD_LABELS).map(([key, label]) => {
+                  const done = quality.completedFields.includes(key);
+                  return (
+                    <div key={key} className="flex items-center justify-between text-sm text-[#4B5563] py-1">
+                      <div className="flex items-center gap-2">
+                        <span className={`w-3 h-3 rounded-full flex-shrink-0 ${done ? 'bg-[#092490]' : 'border-2 border-[#E5E7EB]'}`} />
+                        <span className={done ? '' : 'text-[#9CA3AF]'}>{label}</span>
+                      </div>
+                      {!done && (
+                        <span
+                          className="text-[#092490] text-xs cursor-pointer hover:underline"
+                          onClick={() => navigate('/company/edit')}
+                        >
+                          Åtgärda →
+                        </span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Row 4: three analytics cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
-
-          {/* Col 1: Synlighet per kanal — STANDARD CARD */}
-          <div className="bg-white border border-[#E5E7EB] p-6 rounded-none">
-            <p className="text-sm font-medium text-[#111827] mb-4">Synlighet per kanal</p>
-            <div className="space-y-4">
-              {[
-                { label: 'Sökning på Industrin.net', pct: 74 },
-                { label: 'Direktlänk',               pct: 19 },
-                { label: 'Nyhetsbrev',                pct: 7  },
-              ].map((bar) => (
-                <div key={bar.label}>
-                  <div className="mb-1 flex justify-between">
-                    <span className="text-xs text-[#4B5563]">{bar.label}</span>
-                    <span className="text-xs font-medium text-[#111827]">{bar.pct}%</span>
-                  </div>
-                  <div className="h-2 bg-[#E5E7EB] rounded-full">
-                    <div
-                      className="h-full bg-[#092490] rounded-full"
-                      style={{ width: `${bar.pct}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
+        {/* Row 3: analytics — honest coming soon */}
+        <div className="bg-[#F9FAFB] border border-[#E5E7EB] p-6 rounded-none">
+          <div className="flex items-start justify-between flex-wrap gap-2 mb-2">
+            <p className="text-sm font-medium text-[#111827]">Statistik & insikter</p>
+            <span className="text-xs text-[#9CA3AF] bg-white border border-[#E5E7EB] px-2 py-0.5 rounded">Kommer snart</span>
           </div>
+          <p className="text-sm text-[#9CA3AF]">
+            Profilbesök, klick, sökord och branschjämförelser aktiveras när statistikinsamlingen är igång.
+            Förfrågningar som kommer in visas redan nu ovan.
+          </p>
+        </div>
 
-          {/* Col 2: Heta sökord — STANDARD CARD */}
-          <div className="bg-white border border-[#E5E7EB] p-6 rounded-none">
-            <p className="text-sm font-medium text-[#111827] mb-4">Heta sökord</p>
-            <div className="flex flex-wrap gap-2">
-              {['hydraulikservice', 'CNC-underhåll', 'mekanisk reparation'].map((kw) => (
-                <span
-                  key={kw}
-                  className="bg-[#cfd8fc] text-[#092490] border border-[#092490]/20 text-xs px-3 py-1.5 rounded-full"
-                >
-                  {kw}
-                </span>
-              ))}
-              {['ventilservice', 'kompressorservice', 'tätningsbyte', 'fräsmaskin'].map((kw) => (
-                <span
-                  key={kw}
-                  className="bg-[#F3F4F6] text-[#4B5563] border border-[#E5E7EB] text-xs px-3 py-1.5 rounded-full"
-                >
-                  {kw}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          {/* Col 3: Branschjämförelse — UTILITY CARD */}
+        {/* Row 4: recommendations — driven by real profile quality */}
+        {quality && quality.missingFields.length > 0 && (
           <div className="bg-[#F9FAFB] border border-[#E5E7EB] p-5 rounded-none">
-            <p className="text-sm font-medium text-[#111827] mb-1">Branschjämförelse</p>
-            <p className="text-xs text-[#9CA3AF] mb-4">Profilbesök per månad</p>
-            <div className="space-y-4">
-              {[
-                { label: 'Ert företag',       value: '1 243', width: '44%',  textColor: 'text-[#092490]', barColor: 'bg-[#092490]' },
-                { label: 'Snitt i kategorin', value: '680',   width: '24%',  textColor: 'text-[#9CA3AF]', barColor: 'bg-[#D1D5DB]' },
-                { label: 'Bäst i kategorin',  value: '2 840', width: '100%', textColor: 'text-[#9CA3AF]', barColor: 'bg-[#D1D5DB]' },
-              ].map((row) => (
-                <div key={row.label}>
-                  <div className="mb-1 flex justify-between">
-                    <span className="text-xs text-[#4B5563]">{row.label}</span>
-                    <span className={`text-xs font-medium ${row.textColor}`}>{row.value}</span>
-                  </div>
-                  <div className="h-2 bg-[#E5E7EB] rounded-full">
-                    <div
-                      className={`h-full rounded-full ${row.barColor}`}
-                      style={{ width: row.width }}
-                    />
-                  </div>
-                </div>
-              ))}
+            <div className="flex items-start justify-between flex-wrap gap-4">
+              <div>
+                <p className="text-sm font-medium text-[#111827]">Rekommenderade åtgärder</p>
+                <p className="text-sm text-[#9CA3AF] mt-0.5">
+                  Fyll i {quality.missingFields.length} saknade {quality.missingFields.length === 1 ? 'fält' : 'fält'} för att stärka er profil och synas bättre.
+                </p>
+              </div>
+              <div className="flex gap-3 flex-wrap">
+                <button
+                  className="text-sm px-4 py-2 rounded-none border border-[#092490] bg-[#092490] text-white hover:bg-[#071d74] transition-colors"
+                  onClick={() => navigate('/company/edit')}
+                >
+                  Uppdatera profil
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-
-        {/* Row 5: Rekommenderade åtgärder */}
-        <div className="bg-[#F9FAFB] border border-[#E5E7EB] p-5 rounded-none">
-          <div className="flex items-start justify-between flex-wrap gap-4">
-            <div>
-              <p className="text-sm font-medium text-[#111827]">Rekommenderade åtgärder</p>
-              <p className="text-sm text-[#9CA3AF] mt-0.5">Förbättra er profil för att synas mer och få fler förfrågningar</p>
-            </div>
-            <div className="flex gap-3 flex-wrap">
-              <button
-                className="text-sm px-4 py-2 rounded-none border border-[#E5E7EB] bg-white text-[#4B5563] hover:border-[#9CA3AF] transition-colors"
-                onClick={() => navigate('/company/edit')}
-              >
-                Ladda upp logotyp
-              </button>
-              <button
-                className="text-sm px-4 py-2 rounded-none border border-[#E5E7EB] bg-white text-[#4B5563] hover:border-[#9CA3AF] transition-colors"
-                onClick={() => navigate('/company/edit')}
-              >
-                Fyll i öppettider
-              </button>
-              <button
-                className="text-sm px-4 py-2 rounded-none border border-[#092490] bg-[#092490] text-white hover:bg-[#071d74] transition-colors"
-                onClick={() => toast({ title: 'Kommer snart', description: 'Premiumfunktioner lanseras inom kort.' })}
-              >
-                Uppgradera till Premium
-              </button>
-            </div>
-          </div>
-        </div>
+        )}
 
       </main>
     </div>
