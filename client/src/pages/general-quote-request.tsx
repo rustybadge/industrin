@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -68,6 +68,15 @@ export default function GeneralQuoteRequest() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [matchedCount, setMatchedCount] = useState(0);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+
+  // Pre-fill serviceType from URL param (set by homepage category chips)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const serviceType = params.get('serviceType');
+    if (serviceType) {
+      form.setValue('serviceType', serviceType);
+    }
+  }, []);
 
   const form = useForm<GeneralQuoteFormData>({
     resolver: zodResolver(generalQuoteFormSchema),
