@@ -9,7 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import ScrollWall from "@/components/ui/scroll-wall";
 import QuoteModal from "@/components/company/quote-modal";
-import { calculateDataQuality } from "@/utils/data-quality";
+import { calculateDataQuality, isGenericDescription } from "@/utils/data-quality";
 
 import {
   Globe,
@@ -207,10 +207,19 @@ export default function CompanyProfile() {
               <div>
                 <h2 className="font-bold mb-6 tracking-tight custom-size text-[#171717] text-[38px]" style={{fontSize: '38px'}}>Om företaget</h2>
                 <div className="prose prose-gray max-w-none lg:max-w-3xl">
-                  {displayDescription && displayDescription.length >= 50 ? (
+                  {displayDescription && !isGenericDescription(displayDescription) ? (
                     <p className="text-gray-700 leading-7 text-lg whitespace-pre-wrap">
                       {displayDescription}
                     </p>
+                  ) : displayDescription && displayDescription.trim().length > 0 ? (
+                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
+                      <p className="text-gray-500 text-center italic">
+                        Det här företaget har inte lagt till en egen beskrivning än.
+                      </p>
+                      <p className="text-gray-400 text-sm text-center mt-2">
+                        Äger du företaget? Ta kontroll över profilen och berätta för kunderna vad ni erbjuder.
+                      </p>
+                    </div>
                   ) : (
                     <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
                       <p className="text-gray-500 text-center italic">

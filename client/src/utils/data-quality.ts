@@ -10,19 +10,48 @@ export interface DataQualityScore {
   missingFields: string[];
 }
 
+/**
+ * Known boilerplate/generic descriptions that were bulk-assigned and carry
+ * no real information about the specific company. Treat these the same as
+ * a missing description for quality-scoring purposes.
+ */
+const GENERIC_DESCRIPTIONS = new Set([
+  "Svenskt industriföretag med fokus på tekniska tjänster och lösningar.",
+  "Mekanisk verkstad som erbjuder reparations- och underhållstjänster för industrin.",
+  "Utrustningsföretag som levererar tekniska lösningar till industrin.",
+  "Svetsföretag som erbjuder professionella svetstjänster och metallbearbetning.",
+  "Industriautomationsföretag som erbjuder tekniska lösningar och system.",
+  "Byggföretag specialiserat på industriella konstruktioner.",
+  "Underhålls- och reparationsföretag för industriell utrustning.",
+  "unavailable",
+]);
+
+/**
+ * Returns true if the description is a known generic placeholder, or is
+ * shorter than 150 characters (too brief to be genuinely useful).
+ */
+export function isGenericDescription(text: string | null | undefined): boolean {
+  if (!text || text.trim() === "") return true;
+  const trimmed = text.trim();
+  if (GENERIC_DESCRIPTIONS.has(trimmed)) return true;
+  // Also flag very short descriptions and ones that just restate the company name
+  if (trimmed.length < 150) return true;
+  return false;
+}
+
 export function calculateDataQuality(company: Company): DataQualityScore {
   const qualityChecks = {
     hasDescription: () => {
       const desc = company.description_sv || company.description;
-      return desc && desc.length >= 50;
+      return !isGenericDescription(desc);
     },
     hasContactEmail: () => company.contactEmail && company.contactEmail.trim() !== '',
     hasPhone: () => company.phone && company.phone.trim() !== '',
     hasWebsite: () => company.website && company.website.trim() !== '',
     hasAddress: () => company.address && company.address.trim() !== '',
-    hasServiceområden: () => 
+    hasServiceområden: () =>
       company.serviceområden && Array.isArray(company.serviceområden) && company.serviceområden.length > 0,
-    hasCategories: () => 
+    hasCategories: () =>
       company.categories && Array.isArray(company.categories) && company.categories.length > 0,
   };
 
@@ -70,7 +99,7 @@ export function getDataQualityMessage(quality: DataQualityScore): string {
     'poor': 'Ofullständig information - behöver kompletteras',
     'very-poor': 'Mycket begränsad information - behöver omfattande komplettering',
   };
-  
+
   return messages[quality.level];
 }
 
