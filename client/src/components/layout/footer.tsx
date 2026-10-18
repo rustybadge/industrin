@@ -70,11 +70,15 @@ export default function Footer() {
         </div>
 
         {/* Bottom Copyright */}
-        <div className="border-t border-gray-200 pt-8 mt-8 text-center text-gray-500 text-sm">
+        <div className="border-t border-gray-200 pt-8 mt-8 text-center text-gray-500 text-sm space-y-2">
           <p className="space-x-4">
-            <span>&copy; Industrin.net. Alla rättigheter förbehållna.</span>
+            <span>&copy; {new Date().getFullYear()} TWCC AB. Alla rättigheter förbehållna.</span>
             <a href="/villkor" className="hover:text-gray-700">Användarvillkor</a>
             <a href="/integritetspolicy" className="hover:text-gray-700">Integritetspolicy</a>
+          </p>
+          <p className="text-xs text-gray-400">
+            Vi använder enbart nödvändiga sessionscookies för inloggning. Inga spårnings- eller marknadsföringscookies.{' '}
+            <a href="/integritetspolicy#cookies" className="hover:text-gray-600 underline">Läs mer</a>
           </p>
         </div>
       </div>

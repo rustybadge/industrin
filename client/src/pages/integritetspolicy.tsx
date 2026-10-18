@@ -17,144 +17,165 @@ export default function Integritetspolicy() {
 
         <h1 className="custom-size text-2xl sm:text-4xl font-bold mb-8 text-[#171717]">Integritetspolicy</h1>
 
-        <div className="text-gray-700">
-          <p className="text-lg leading-relaxed mb-8">Senast uppdaterad: Augusti 2025</p>
-          
-          <p className="leading-relaxed mb-6">
-            Vi på Industrin.se värnar om din personliga integritet. Denna policy beskriver hur vi samlar in, använder och skyddar dina personuppgifter och hur vi använder cookies på vår webbplats.
-          </p>
+        <div className="text-gray-700 space-y-8">
+          <p className="text-base text-gray-500">Senast uppdaterad: Oktober 2026</p>
 
-          <h2 className="custom-size text-lg sm:text-2xl font-bold text-[#1f2937] mt-8 mb-4">1. Vilka uppgifter vi samlar in</h2>
-          <p className="leading-relaxed mb-4">
-            När du använder Industrin.se kan vi behandla följande information:
-          </p>
-          <p className="leading-relaxed mb-4">
-            <strong>Kontaktuppgifter:</strong> Namn, e-postadress och telefonnummer när du skickar en offertförfrågan eller gör anspråk på en företagsprofil.
-          </p>
-          <p className="leading-relaxed mb-4">
-            <strong>Användaruppgifter:</strong> Information om hur du använder vår webbplats, t.ex. sökningar, klick och formulärinmatning.
-          </p>
-          <p className="leading-relaxed mb-4">
-            <strong>Företagsinformation:</strong> Uppgifter som du själv tillhandahåller när du uppdaterar en företagsprofil (logotyper, beskrivning, adress, webbplats etc.).
-          </p>
-          <p className="leading-relaxed mb-6">
-            Vi samlar inte in känsliga personuppgifter.
-          </p>
-
-          <h2 className="custom-size text-lg sm:text-2xl font-bold text-[#1f2937] mt-8 mb-4">2. Syfte med behandlingen</h2>
-          <p className="leading-relaxed mb-4">
-            Vi behandlar personuppgifter för att:
-          </p>
-          <ul className="list-disc pl-6 mb-6 space-y-2">
-            <li>Visa företagsprofiler och möjliggöra kontakt mellan användare och serviceföretag.</li>
-            <li>Hantera offertförfrågningar och anspråk på företagsprofiler.</li>
-            <li>Förbättra och utveckla funktionaliteten på Industrin.se.</li>
-            <li>Uppfylla lagstadgade skyldigheter.</li>
-          </ul>
-
-          <h2 className="custom-size text-lg sm:text-2xl font-bold text-[#1f2937] mt-8 mb-4">3. Rättslig grund</h2>
-          <p className="leading-relaxed mb-4">
-            Behandlingen sker baserat på:
-          </p>
-          <p className="leading-relaxed mb-4">
-            <strong>Avtal:</strong> När du begär kontakt med ett företag via vår tjänst.
-          </p>
-          <p className="leading-relaxed mb-4">
-            <strong>Samtycke:</strong> När du väljer att ta emot kommunikation från oss.
-          </p>
-          <p className="leading-relaxed mb-6">
-            <strong>Berättigat intresse:</strong> För att kunna driva, underhålla och förbättra vår tjänst.
-          </p>
-
-          <h2 className="custom-size text-lg sm:text-2xl font-bold text-[#1f2937] mt-8 mb-4">4. Lagringstid</h2>
-          <p className="leading-relaxed mb-4">
-            Vi sparar personuppgifter endast så länge det är nödvändigt för ändamålet eller enligt lag.
-          </p>
-          <p className="leading-relaxed mb-4">
-            Offertförfrågningar sparas normalt i upp till 12 månader.
-          </p>
-          <p className="leading-relaxed mb-6">
-            Företagsprofiler sparas så länge företaget har en aktiv närvaro på Industrin.se.
-          </p>
-
-          <h2 className="custom-size text-lg sm:text-2xl font-bold text-[#1f2937] mt-8 mb-4">5. Utlämnande av uppgifter</h2>
-          <p className="leading-relaxed mb-4">
-            Vi delar endast personuppgifter med:
-          </p>
-          <ul className="list-disc pl-6 mb-4 space-y-2">
-            <li>Det företag du valt att kontakta via en offertförfrågan.</li>
-            <li>Leverantörer som hjälper oss att driva webbplatsen (t.ex. drift, e-posttjänster) under bindande sekretessavtal.</li>
-            <li>Myndigheter om vi är skyldiga enligt lag.</li>
-          </ul>
-          <p className="leading-relaxed mb-6">
-            Vi säljer aldrig personuppgifter vidare.
-          </p>
-
-          <h2 className="custom-size text-lg sm:text-2xl font-bold text-[#1f2937] mt-8 mb-4">6. Cookies och spårning</h2>
-          <h3 className="custom-size text-base sm:text-lg font-semibold text-[#1f2937] mt-6 mb-3">Vad är cookies?</h3>
-          <p className="leading-relaxed mb-6">
-            Cookies är små textfiler som lagras i din webbläsare och gör det möjligt för vår webbplats att fungera optimalt och förbättra din upplevelse.
-          </p>
-
-          <h3 className="custom-size text-base sm:text-lg font-semibold text-[#1f2937] mt-6 mb-3">Vilka cookies använder vi?</h3>
-          <p className="leading-relaxed mb-4">
-            <strong>Nödvändiga cookies:</strong> För grundläggande funktionalitet som att visa företagslistor och hantera formulär.
-          </p>
-          <p className="leading-relaxed mb-4">
-            <strong>Funktionscookies:</strong> Sparar t.ex. dina senaste sökningar och filterval.
-          </p>
-          <p className="leading-relaxed mb-4">
-            <strong>Analyscookies:</strong> Hjälper oss förstå hur webbplatsen används och hur vi kan förbättra den (t.ex. Google Analytics).
-          </p>
-          <p className="leading-relaxed mb-6">
-            <strong>Marknadsföringscookies (frivilliga):</strong> Kan användas för att visa relevant annonsering i framtiden.
-          </p>
-
-          <h3 className="custom-size text-base sm:text-lg font-semibold text-[#1f2937] mt-6 mb-3">Tredjepartscookies</h3>
-          <p className="leading-relaxed mb-6">
-            Vissa cookies sätts av externa leverantörer för analys eller länkade tjänster. Vi ansvarar inte för dessa aktörers egna integritetspolicyer.
-          </p>
-
-          <h3 className="custom-size text-base sm:text-lg font-semibold text-[#1f2937] mt-6 mb-3">Hantering av cookies</h3>
-          <p className="leading-relaxed mb-6">
-            Vid första besöket får du möjlighet att acceptera eller neka icke-nödvändiga cookies. Du kan när som helst radera eller blockera cookies i din webbläsare, men vissa funktioner kan då sluta fungera korrekt.
-          </p>
-
-          <h2 className="custom-size text-lg sm:text-2xl font-bold text-[#1f2937] mt-8 mb-4">7. Dina rättigheter</h2>
-          <p className="leading-relaxed mb-4">
-            Du har rätt att:
-          </p>
-          <ul className="list-disc pl-6 mb-6 space-y-2">
-            <li>Begära information om vilka uppgifter vi har om dig.</li>
-            <li>Begära rättelse av felaktiga uppgifter.</li>
-            <li>Begära radering när det är tillåtet enligt lag.</li>
-            <li>Invända mot viss behandling eller be oss begränsa användningen.</li>
-            <li>Lämna klagomål till Integritetsskyddsmyndigheten (IMY) om du anser att vi hanterar uppgifter felaktigt.</li>
-          </ul>
-
-          <h2 className="custom-size text-lg sm:text-2xl font-bold text-[#1f2937] mt-8 mb-4">8. Säkerhet</h2>
-          <p className="leading-relaxed mb-6">
-            Vi vidtar tekniska och organisatoriska åtgärder för att skydda dina personuppgifter mot obehörig åtkomst, förlust eller missbruk.
-          </p>
-
-          <h2 className="custom-size text-lg sm:text-2xl font-bold text-[#1f2937] mt-8 mb-4">9. Ändringar i denna policy</h2>
-          <p className="leading-relaxed mb-6">
-            Vi kan uppdatera denna policy om vår tjänst eller lagstiftningen förändras. Senaste versionen publiceras alltid på denna sida.
-          </p>
-
-          <h2 className="custom-size text-lg sm:text-2xl font-bold text-[#1f2937] mt-8 mb-4">10. Kontakt</h2>
-          <p className="leading-relaxed mb-4">
-            Om du har frågor om hur vi hanterar dina uppgifter, kontakta oss:
-          </p>
-          <p className="leading-relaxed mb-2">
-            <strong>Industrin.se</strong>
-          </p>
-          <p className="leading-relaxed mb-2">
-            E-post: [din e-postadress]
-          </p>
           <p className="leading-relaxed">
-            Adress: [din företagsadress]
+            Industrin.net är en tjänst som ägs och drivs av <strong>TWCC AB (The West Coast Collective)</strong>, registrerat i Sverige. Vi värnar om din personliga integritet och behandlar personuppgifter i enlighet med EU:s dataskyddsförordning (GDPR).
           </p>
+
+          <section>
+            <h2 className="custom-size text-lg sm:text-2xl font-bold text-[#1f2937] mb-4">1. Personuppgiftsansvarig</h2>
+            <p className="leading-relaxed">
+              TWCC AB (The West Coast Collective) är personuppgiftsansvarig för behandlingen av dina uppgifter på Industrin.net.
+              Kontakt: <a href="mailto:info@industrin.net" className="text-blue-600 hover:underline">info@industrin.net</a>.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="custom-size text-lg sm:text-2xl font-bold text-[#1f2937] mb-4">2. Vilka uppgifter vi samlar in</h2>
+            <p className="leading-relaxed mb-4">Vi behandlar personuppgifter i följande situationer:</p>
+            <div className="space-y-4">
+              <div>
+                <p className="font-semibold mb-1">Serviceförfrågningar</p>
+                <p className="leading-relaxed text-sm">
+                  När du skickar en förfrågan via Industrin.net samlar vi in ditt namn, e-postadress, telefonnummer (valfritt), företagsnamn (valfritt), beskrivning av behovet samt ort och region. Dessa uppgifter vidarebefordras till relevanta serviceföretag i ditt område.
+                </p>
+              </div>
+              <div>
+                <p className="font-semibold mb-1">Ägaransökningar</p>
+                <p className="leading-relaxed text-sm">
+                  När ett företag ansöker om att ta över sin profil samlar vi in sökandens namn, e-postadress och telefonnummer för att verifiera ansökan.
+                </p>
+              </div>
+              <div>
+                <p className="font-semibold mb-1">Företagskonton</p>
+                <p className="leading-relaxed text-sm">
+                  När en ägaransökan godkänns skapas ett konto via vår autentiseringstjänst (Clerk). Vi behandlar namn och e-postadress kopplat till kontot.
+                </p>
+              </div>
+              <div>
+                <p className="font-semibold mb-1">Företagsprofiler</p>
+                <p className="leading-relaxed text-sm">
+                  Uppgifter som du lägger till i din företagsprofil — beskrivning, adress, kontaktuppgifter, logotyp m.m. — behandlas och visas publikt på sajten.
+                </p>
+              </div>
+            </div>
+            <p className="leading-relaxed mt-4">Vi samlar inte in känsliga personuppgifter.</p>
+          </section>
+
+          <section>
+            <h2 className="custom-size text-lg sm:text-2xl font-bold text-[#1f2937] mb-4">3. Rättslig grund</h2>
+            <div className="space-y-3">
+              <p className="leading-relaxed">
+                <strong>Avtalets fullgörande:</strong> Behandling av uppgifter vid serviceförfrågningar och ägaransökningar sker för att tillhandahålla den tjänst du begärt.
+              </p>
+              <p className="leading-relaxed">
+                <strong>Berättigat intresse:</strong> Vi behandlar uppgifter för att driva, underhålla och förbättra tjänsten, samt för att matcha köpare med relevanta serviceföretag.
+              </p>
+              <p className="leading-relaxed">
+                <strong>Rättslig förpliktelse:</strong> I de fall lag kräver det.
+              </p>
+            </div>
+          </section>
+
+          <section>
+            <h2 className="custom-size text-lg sm:text-2xl font-bold text-[#1f2937] mb-4">4. Lagringstid</h2>
+            <ul className="list-disc pl-6 space-y-2">
+              <li>Serviceförfrågningar sparas i upp till 12 månader.</li>
+              <li>Ägaransökningar sparas normalt i upp till 24 månader.</li>
+              <li>Företagskonton och profildata sparas så länge kontot är aktivt.</li>
+              <li>Vi raderar uppgifter tidigare på begäran, om inte annan lag hindrar det.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="custom-size text-lg sm:text-2xl font-bold text-[#1f2937] mb-4">5. Utlämnande av uppgifter</h2>
+            <p className="leading-relaxed mb-4">Vi delar personuppgifter med:</p>
+            <ul className="list-disc pl-6 space-y-3 mb-4">
+              <li>
+                <strong>Serviceföretag på plattformen</strong> — när du skickar en serviceförfrågan vidarebefordras relevanta uppgifter (namn, e-post, telefon, beskrivning) till matchade företag.
+              </li>
+              <li>
+                <strong>Clerk Inc</strong> — autentisering och kontohantering.{' '}
+                <a href="https://clerk.com/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Clerks integritetspolicy</a>.
+              </li>
+              <li>
+                <strong>Resend Inc</strong> — e-postleverans av transaktionella meddelanden.{' '}
+                <a href="https://resend.com/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Resends integritetspolicy</a>.
+              </li>
+              <li>
+                <strong>Neon Inc</strong> — databasvärd för plattformens data.{' '}
+                <a href="https://neon.tech/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Neons integritetspolicy</a>.
+              </li>
+              <li>
+                <strong>Netlify Inc / Render Inc</strong> — hosting av frontend respektive backend.
+              </li>
+            </ul>
+            <p className="leading-relaxed">
+              Alla leverantörer behandlar data under bindande databehandlaravtal (DPA). Vi säljer aldrig personuppgifter vidare. Leverantörerna är baserade i USA — överföring sker i enlighet med standardavtalsklausuler (SCCs).
+            </p>
+          </section>
+
+          <section>
+            <h2 className="custom-size text-lg sm:text-2xl font-bold text-[#1f2937] mb-4">6. Cookies</h2>
+            <p className="leading-relaxed mb-4">
+              Industrin.net använder <strong>enbart nödvändiga cookies</strong>. Vi använder inga analys-, spårnings- eller marknadsföringscookies.
+            </p>
+            <div className="bg-gray-50 border border-gray-200 rounded p-4">
+              <p className="font-semibold text-sm mb-2">Nödvändiga sessionscookies (Clerk)</p>
+              <p className="text-sm leading-relaxed text-gray-600">
+                Dessa cookies sätts av vår autentiseringstjänst för att hålla dig inloggad som företagsanvändare. De är tekniskt nödvändiga för inloggningsfunktionen och kräver inte samtycke enligt ePrivacy-direktivet.
+              </p>
+            </div>
+            <p className="text-sm text-gray-500 mt-3">
+              Du kan när som helst rensa cookies i din webbläsare, men det kan innebära att du loggas ut.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="custom-size text-lg sm:text-2xl font-bold text-[#1f2937] mb-4">7. Dina rättigheter</h2>
+            <p className="leading-relaxed mb-4">Enligt GDPR har du rätt att:</p>
+            <ul className="list-disc pl-6 space-y-2 mb-4">
+              <li><strong>Tillgång</strong> — begära en kopia av de uppgifter vi har om dig.</li>
+              <li><strong>Rättelse</strong> — begära att felaktiga uppgifter korrigeras.</li>
+              <li><strong>Radering</strong> — begära att dina uppgifter raderas när det är tillåtet.</li>
+              <li><strong>Begränsning</strong> — begära att behandlingen begränsas i vissa fall.</li>
+              <li><strong>Dataportabilitet</strong> — få ut dina uppgifter i ett strukturerat format.</li>
+              <li><strong>Invändning</strong> — invända mot behandling som grundar sig på berättigat intresse.</li>
+            </ul>
+            <p className="leading-relaxed">
+              Skicka din begäran till{' '}
+              <a href="mailto:info@industrin.net" className="text-blue-600 hover:underline">info@industrin.net</a>.
+              Vi besvarar begäran inom 30 dagar.
+            </p>
+            <p className="leading-relaxed mt-4">
+              Du kan också lämna klagomål till <strong>Integritetsskyddsmyndigheten (IMY)</strong> på{' '}
+              <a href="https://www.imy.se" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">imy.se</a>.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="custom-size text-lg sm:text-2xl font-bold text-[#1f2937] mb-4">8. Säkerhet</h2>
+            <p className="leading-relaxed">
+              Vi vidtar tekniska och organisatoriska åtgärder för att skydda dina personuppgifter mot obehörig åtkomst, förlust eller missbruk. All kommunikation sker krypterat via HTTPS.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="custom-size text-lg sm:text-2xl font-bold text-[#1f2937] mb-4">9. Ändringar</h2>
+            <p className="leading-relaxed">
+              Vi kan uppdatera denna policy om tjänsten eller lagstiftningen förändras. Senaste versionen publiceras alltid på denna sida med uppdaterat datum.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="custom-size text-lg sm:text-2xl font-bold text-[#1f2937] mb-4">10. Kontakt</h2>
+            <p className="leading-relaxed">
+              <strong>TWCC AB (The West Coast Collective)</strong><br />
+              E-post: <a href="mailto:info@industrin.net" className="text-blue-600 hover:underline">info@industrin.net</a>
+            </p>
+          </section>
         </div>
       </div>
     </div>
