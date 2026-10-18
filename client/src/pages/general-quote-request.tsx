@@ -166,8 +166,10 @@ export default function GeneralQuoteRequest() {
                 <CheckCircle className="h-16 w-16 text-green-600 mx-auto mb-6" />
                 <h1 className="text-2xl font-bold text-gray-900 mb-4">Förfrågan mottagen</h1>
                 <p className="text-gray-600 mb-6 leading-relaxed max-w-2xl mx-auto">
-                  Tack! Din förfrågan har skickats till {matchedCount > 0 ? `${matchedCount} serviceföretag` : 'relevanta serviceföretag'} i ditt område.
-                  Du får svar direkt via e-post när ett företag hör av sig.
+                  {matchedCount > 0
+                    ? `Tack! Din förfrågan har skickats till ${matchedCount} serviceföretag i ditt område. Du får svar direkt via e-post när ett företag hör av sig.`
+                    : 'Tack! Vi har tagit emot din förfrågan och återkommer inom kort.'
+                  }
                 </p>
                 <div className="space-y-3">
                   <Button
