@@ -1,18 +1,15 @@
 import { Link } from "wouter";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { MapPin, AlertCircle } from "lucide-react";
+import { MapPin } from "lucide-react";
 import type { Company } from "@shared/schema";
-import { isGenericDescription } from "@/utils/data-quality";
 
 interface CompanyCardProps {
   company: Company & { isClaimed: boolean };
 }
 
 export default function CompanyCard({ company }: CompanyCardProps) {
-  // Use Swedish description if available, otherwise fall back to English
   const displayDescription = company.description_sv || company.description;
-  const profileIncomplete = isGenericDescription(displayDescription);
 
   return (
     <Link href={`/companies/${company.slug}`}>
@@ -20,34 +17,17 @@ export default function CompanyCard({ company }: CompanyCardProps) {
         <CardContent className="p-6 h-full flex flex-col">
           <div className="mb-4">
             <h4 className="font-medium hover:text-primary transition-colors text-[#171717] mb-2">{company.name}</h4>
-            <div className="flex flex-wrap gap-1.5">
-              {company.tier === 'premium' && (
-                <Badge variant="secondary" className="bg-amber-50 text-amber-800 border border-amber-200">
-                  Premium
-                </Badge>
-              )}
-              {profileIncomplete && (
-                <Badge
-                  variant="outline"
-                  className="text-gray-400 border-gray-200 bg-white text-xs font-normal flex items-center gap-1"
-                >
-                  <AlertCircle className="h-3 w-3" />
-                  Ofullständig profil
-                </Badge>
-              )}
-            </div>
+            {company.tier === 'premium' && (
+              <Badge variant="secondary" className="bg-amber-50 text-amber-800 border border-amber-200">
+                Premium
+              </Badge>
+            )}
           </div>
 
           <div className="flex-grow mb-6">
-            {profileIncomplete ? (
-              <p className="text-sm text-gray-400 italic">
-                Det här företaget har inte fyllt i sin profil än.
-              </p>
-            ) : (
-              <p className="text-sm text-gray-600 line-clamp-3">
-                {displayDescription}
-              </p>
-            )}
+            <p className="text-sm text-gray-600 line-clamp-3">
+              {displayDescription}
+            </p>
           </div>
 
           <div className="flex items-center justify-between mt-auto">
@@ -61,8 +41,6 @@ export default function CompanyCard({ company }: CompanyCardProps) {
               </Badge>
             )}
           </div>
-
-
         </CardContent>
       </Card>
     </Link>
