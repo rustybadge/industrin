@@ -3,7 +3,7 @@ import { Link, useLocation } from "wouter";
 import heroBg from "@/assets/images/hero-pattern.png";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, ClipboardList, Zap, Mail } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { api } from "@/lib/api";
 import SmartSearch, { type SearchTag } from "@/components/search/smart-search";
 import CompanyCard from "@/components/company/company-card";
@@ -109,40 +109,46 @@ export default function Home() {
       {/* ── HOW IT WORKS ─────────────────────────────────────────── */}
       <section className="bg-[#f9f9f9] border-y border-[#f0f0f0] py-14 sm:py-20">
         <div className="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
-          <h2
-            className="text-[#1d1d1d] text-xl sm:text-2xl font-medium tracking-tight mb-10 text-center"
-            style={{ letterSpacing: "-0.5px" }}
-          >
+          <p className="text-xs font-semibold text-[#092490] tracking-widest uppercase mb-8 text-center">
             Så fungerar det
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-4xl mx-auto">
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-0 max-w-3xl mx-auto">
             {[
               {
-                icon: <ClipboardList className="h-6 w-6 text-[#092490]" />,
-                step: "1",
+                n: "01",
                 title: "Beskriv vad du behöver",
-                body: "Välj kategori och fyll i ett kort formulär — tar under en minut. Ingen registrering krävs.",
+                body: "Välj kategori och fyll i ett kort formulär. Tar under en minut. Ingen registrering krävs.",
               },
               {
-                icon: <Zap className="h-6 w-6 text-[#092490]" />,
-                step: "2",
+                n: "02",
                 title: "Vi matchar serviceföretag",
-                body: "Din förfrågan skickas direkt till relevanta serviceföretag i ditt område.",
+                body: "Din förfrågan skickas direkt till relevanta företag i ditt område.",
               },
               {
-                icon: <Mail className="h-6 w-6 text-[#092490]" />,
-                step: "3",
+                n: "03",
                 title: "Du får svar direkt",
-                body: "Företagen hör av sig till dig via e-post. Du väljer vem du vill gå vidare med.",
+                body: "Företagen hör av sig via e-post. Du väljer vem du vill gå vidare med.",
               },
-            ].map(({ icon, step, title, body }) => (
-              <div key={step} className="flex flex-col items-start">
-                <div className="flex items-center justify-center w-10 h-10 bg-[#e8ecf8] mb-4">
-                  {icon}
-                </div>
-                <p className="text-xs font-semibold text-[#092490] tracking-widest uppercase mb-1">Steg {step}</p>
-                <h3 className="text-[#1d1d1d] font-medium text-base mb-2">{title}</h3>
-                <p className="text-[#666] text-sm leading-relaxed">{body}</p>
+            ].map(({ n, title, body }, i) => (
+              <div
+                key={n}
+                className={`flex flex-col px-0 sm:px-8 py-6 sm:py-0 ${i < 2 ? "border-b sm:border-b-0 sm:border-r border-[#e5e5e5]" : ""}`}
+              >
+                <span
+                  className="font-medium text-[#d0d5e8] mb-4 select-none"
+                  style={{ fontSize: "36px", lineHeight: 1, letterSpacing: "-1px", fontFamily: "PP Neue Montreal, Inter Tight, sans-serif" }}
+                >
+                  {n}
+                </span>
+                <h3
+                  className="text-[#1d1d1d] font-medium mb-2"
+                  style={{ fontSize: "14px", letterSpacing: "-0.2px" }}
+                >
+                  {title}
+                </h3>
+                <p className="text-[#888] leading-relaxed" style={{ fontSize: "13px" }}>
+                  {body}
+                </p>
               </div>
             ))}
           </div>
