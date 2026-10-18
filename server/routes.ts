@@ -971,6 +971,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get all companies with profile + contacts (admin)
+  app.get("/api/admin/service-requests", requireAuth(), ensureAdmin, async (req, res) => {
+    try {
+      const result = await pool.query(
+        `SELECT id, service_type, urgency, location, region, name, email, phone,
+                company_name, description, preferred_contact, submitted_at
+         FROM general_quote_requests
+         ORDER BY submitted_at DESC
+         LIMIT 200`
+      );
+      res.json(result.rows);
+    } catch (error) {
+      console.error("Error fetching service requests:", error);
+      res.status(500).json({ message: "Failed to fetch service requests" });
+    }
+  });
+
   app.get("/api/admin/outreach-companies", requireAuth(), ensureAdmin, async (req, res) => {
     try {
       const companies = await storage.getCompaniesForOutreach();
@@ -1220,30 +1236,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const dashboardUrl = process.env.COMPANY_PORTAL_URL ?? 'https://www.industrin.net/company/dashboard';
 
       // Email matched companies (best-effort, non-blocking)
-      const notifications = matchedCompanies
-        .filter(c => c.contactEmail)
-        .map(c =>
-          mailer.send(c.contactEmail!, serviceRequestNotification({
-            companyName: c.name,
-            serviceType,
-            urgency,
-            location: location || matchRegion || 'Sverige',
-            description,
-            dashboardUrl,
-          }))
-        );
+      const companiesWithEmail = matchedCompanies.filter(c => c.contactEmail);
+      const notifications = companiesWithEmail.map(c =>
+        mailer.send(c.contactEmail!, serviceRequestNotification({
+          companyName: c.name,
+          serviceType,
+          urgency,
+          location: location || matchRegion || 'Sverige',
+          description,
+          dashboardUrl,
+        }))
+      );
       await Promise.allSettled(notifications);
+      const emailedCount = companiesWithEmail.length;
 
-      // Confirmation to buyer
+      // Always notify admin so no request goes unnoticed
+      await mailer.send(ADMIN_EMAIL, {
+        subject: `Ny serviceförfrågan – ${serviceType}, ${location || matchRegion || 'okänd ort'}`,
+        html: `<h2>Ny förfrågan via Industrin.net</h2>
+               <p><strong>Tjänst:</strong> ${escapeHtml(serviceType)}</p>
+               <p><strong>Prioritet:</strong> ${escapeHtml(urgency)}</p>
+               <p><strong>Ort:</strong> ${escapeHtml(location || '')} (${escapeHtml(matchRegion || '')})</p>
+               <p><strong>Beskrivning:</strong> ${escapeHtml(description)}</p>
+               <p><strong>Från:</strong> ${escapeHtml(name)} &lt;${escapeHtml(email)}&gt;${phone ? ` · ${escapeHtml(phone)}` : ''}</p>
+               <hr/>
+               <p>Företag i regionen matchade: ${matchedCompanies.length} &nbsp;|&nbsp; Notifierade via e-post: ${emailedCount}</p>
+               ${emailedCount === 0 ? '<p style="color:red"><strong>Obs: Inga matchande företag hade e-postadress – manuell uppföljning kan behövas.</strong></p>' : ''}`,
+      });
+
+      // Confirmation to buyer — show how many were actually emailed
+      const buyerMessage = emailedCount > 0
+        ? `Vi har skickat din förfrågan till ${emailedCount} serviceföretag i ditt område. Du hör av dig direkt när ett företag svarar.`
+        : `Vi har tagit emot din förfrågan. Vi återkommer inom kort.`;
+
       await mailer.send(email, {
         subject: 'Vi har tagit emot din förfrågan – Industrin.net',
         html: `<p>Hej ${escapeHtml(name)},</p>
-               <p>Vi har tagit emot din förfrågan om <strong>${escapeHtml(serviceType)}</strong> och skickat den till ${matchedCompanies.length} relevanta serviceföretag i ditt område.</p>
-               <p>Du hör av dig direkt när ett företag svarar.</p>
+               <p>${buyerMessage}</p>
                <p>Med vänlig hälsning,<br/>Industrin.net</p>`,
       });
 
-      res.status(201).json({ id: requestId, matchedCount: matchedCompanies.length });
+      res.status(201).json({ id: requestId, matchedCount: emailedCount });
     } catch (error) {
       console.error("Error creating general quote request:", error);
       res.status(500).json({ message: "Kunde inte spara förfrågan" });

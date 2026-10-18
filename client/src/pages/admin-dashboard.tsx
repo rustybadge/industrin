@@ -80,7 +80,7 @@ export default function AdminDashboard() {
   const [, navigate] = useLocation();
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  const [selectedTab, setSelectedTab] = useState<'overview' | 'claims' | 'companies' | 'outreach'>('overview');
+  const [selectedTab, setSelectedTab] = useState<'overview' | 'claims' | 'companies' | 'outreach' | 'requests'>('overview');
   const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(null);
   const [expandedCompanyId, setExpandedCompanyId] = useState<string | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
@@ -213,6 +213,22 @@ export default function AdminDashboard() {
     enabled: !!selectedCompanyId && !!admin,
     retry: 1,
     retryDelay: 1000,
+  });
+
+  // Service requests (buyer submissions)
+  type ServiceRequest = { id: string; service_type: string; urgency: string; location: string | null; region: string | null; name: string; email: string; phone: string | null; company_name: string | null; description: string; submitted_at: string };
+  const { data: serviceRequests, isLoading: serviceRequestsLoading } = useQuery<ServiceRequest[]>({
+    queryKey: ['/api/admin/service-requests'],
+    queryFn: async () => {
+      const token = await getAdminToken();
+      const response = await fetch('/api/admin/service-requests', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) throw new Error('Failed to fetch');
+      return response.json();
+    },
+    enabled: !!admin && selectedTab === 'requests',
+    retry: 1,
   });
 
   // Outreach companies — separate lightweight query (single JOIN, no profiles/contacts)
@@ -567,6 +583,16 @@ export default function AdminDashboard() {
               }`}
             >
               Utskick
+            </button>
+            <button
+              onClick={() => setSelectedTab('requests')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                selectedTab === 'requests'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Förfrågningar
             </button>
           </div>
         </div>
@@ -1275,6 +1301,67 @@ export default function AdminDashboard() {
                     );
                   })}
                 </div>
+              </div>
+            )}
+          </div>
+        )}
+        {selectedTab === 'requests' && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-gray-900">Förfrågningar</h2>
+              {serviceRequests && (
+                <span className="text-sm text-gray-500">{serviceRequests.length} totalt</span>
+              )}
+            </div>
+
+            {serviceRequestsLoading ? (
+              <div className="text-center py-12">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4" />
+                <p className="text-gray-500 text-sm">Laddar förfrågningar…</p>
+              </div>
+            ) : !serviceRequests || serviceRequests.length === 0 ? (
+              <div className="text-center py-12 text-gray-500">
+                Inga förfrågningar har skickats in ännu.
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {serviceRequests.map(req => (
+                  <Card key={req.id} className="border border-gray-200">
+                    <CardContent className="p-5">
+                      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-wrap items-center gap-2 mb-2">
+                            <span className="font-semibold text-gray-900">{req.service_type}</span>
+                            {req.urgency === 'akut' && (
+                              <Badge className="bg-red-100 text-red-700 border-red-200 border text-xs">Akut</Badge>
+                            )}
+                            {req.urgency === 'planerad' && (
+                              <Badge variant="outline" className="text-gray-500 text-xs">Planerad</Badge>
+                            )}
+                            <span className="text-xs text-gray-400">
+                              {new Date(req.submitted_at).toLocaleString('sv-SE', { dateStyle: 'short', timeStyle: 'short' })}
+                            </span>
+                          </div>
+                          <p className="text-sm text-gray-600 mb-3 line-clamp-2">{req.description}</p>
+                          <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
+                            <span><MapPin className="h-3 w-3 inline mr-1" />{req.location || '—'}{req.region ? `, ${req.region}` : ''}</span>
+                            <span><strong>Från:</strong> {req.name}{req.company_name ? ` · ${req.company_name}` : ''}</span>
+                            <a href={`mailto:${req.email}`} className="text-blue-600 hover:underline">{req.email}</a>
+                            {req.phone && <span>{req.phone}</span>}
+                          </div>
+                        </div>
+                        <div className="flex-shrink-0">
+                          <a
+                            href={`mailto:${req.email}?subject=Svar på din serviceförfrågan via Industrin.net`}
+                            className="inline-flex items-center text-xs px-3 py-2 border border-gray-200 rounded hover:border-gray-400 text-gray-600 hover:text-gray-900 transition-colors"
+                          >
+                            Svara manuellt
+                          </a>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
               </div>
             )}
           </div>
