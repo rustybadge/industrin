@@ -11,7 +11,7 @@ export function createLimiter(max: number, windowMs: number, now: () => number =
   return {
     hit(key) {
       const t = now();
-      if (buckets.size > 5000) for (const [k, b] of buckets) if (b.reset <= t) buckets.delete(k);
+      if (buckets.size > 5000) for (const [k, b] of Array.from(buckets)) if (b.reset <= t) buckets.delete(k);
       const b = buckets.get(key);
       if (!b || b.reset <= t) { buckets.set(key, { n: 1, reset: t + windowMs }); return true; }
       b.n += 1;

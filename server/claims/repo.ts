@@ -162,7 +162,7 @@ export async function finalizeApproval(p: {
         await client.query(
           `INSERT INTO company_services (company_id, service_category_id, source)
            SELECT $1, unnest($2::text[]), 'claim' ON CONFLICT DO NOTHING`,
-          [claim.company_id, [...ids]],
+          [claim.company_id, Array.from(ids)],
         );
         categoriesWritten = ids.size;
         // Legacy text[] column still drives site search/filters; keep it in step.
